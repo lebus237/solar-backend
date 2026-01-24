@@ -1,7 +1,7 @@
-import { CommandBus } from '@/shared/infrastructure/bus/command_bus'
+import { CommandBus } from '#shared/infrastructure/bus/command_bus'
 import { ApplicationService } from '@adonisjs/core/types'
-import { UpdateStoreHandler } from '@/kernel/store/application/command_handler/update_store_handler'
-import { CreateStoreHandler } from '@/kernel/store/application/command_handler/create_store_handler'
+import { UpdateStoreHandler } from '#kernel/store/application/command_handler/update_store_handler'
+import { CreateStoreHandler } from '#kernel/store/application/command_handler/create_store_handler'
 
 export default class CqrsProvider {
   constructor(protected app: ApplicationService) {}

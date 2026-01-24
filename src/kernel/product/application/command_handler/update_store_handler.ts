@@ -1,6 +1,6 @@
-import { CommandHandler } from '@/shared/application/use-cases/command_handler'
-import { StoreRepository } from '@/kernel/store/core/store_repository'
-import { Store } from '@/kernel/store/core/store'
+import { CommandHandler } from '#shared/application/use-cases/command_handler'
+import { StoreRepository } from '#kernel/store/core/store_repository'
+import { Store } from '#kernel/store/core/store'
 import { UpdateStoreCommand } from '../command/update_store_command'
 
 export class UpdateStoreHandler implements CommandHandler<UpdateStoreCommand> {

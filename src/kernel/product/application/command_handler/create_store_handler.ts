@@ -1,7 +1,7 @@
-import { CommandHandler } from '@/shared/application/use-cases/command_handler'
-import { CreateStoreCommand } from '@/kernel/store/application/command/create_store_command'
-import { Store } from '@/kernel/store/core/store'
-import { StoreRepository } from '@/kernel/store/core/store_repository'
+import { CommandHandler } from '#shared/application/use-cases/command_handler'
+import { CreateStoreCommand } from '#kernel/store/application/command/create_store_command'
+import { Store } from '#kernel/store/core/store'
+import { StoreRepository } from '#kernel/store/core/store_repository'
 
 export class CreateStoreHandler implements CommandHandler<CreateStoreCommand> {
   constructor(private repository: StoreRepository) {}

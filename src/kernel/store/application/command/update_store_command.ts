@@ -1,4 +1,4 @@
-import { Command } from '@/shared/application/use-cases/command'
+import { Command } from '#shared/application/use-cases/command'
 
 export class UpdateStoreCommand implements Command {
   readonly timestamp: Date

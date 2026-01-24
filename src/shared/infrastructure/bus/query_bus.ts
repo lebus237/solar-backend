@@ -1,5 +1,5 @@
-import { QueryHandler } from '@/shared/application/use-cases/query_handler'
-import { Query } from '@/shared/application/use-cases/query'
+import { QueryHandler } from '#shared/application/use-cases/query_handler'
+import { Query } from '#shared/application/use-cases/query'
 
 export class QueryBus {
   private handlers: Map<string, QueryHandler<any, any>> = new Map()

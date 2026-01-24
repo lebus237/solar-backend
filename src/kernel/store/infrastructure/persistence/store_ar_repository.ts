@@ -1,5 +1,5 @@
-import { StoreRepository } from '@/kernel/store/core/store_repository'
-import { Store } from '@/kernel/store/core/store'
+import { StoreRepository } from '#kernel/store/core/store_repository'
+import { Store } from '#kernel/store/core/store'
 
 export class StoreARRepository implements StoreRepository {
   findById(id: any): Promise<Store> {

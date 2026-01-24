@@ -1,4 +1,4 @@
-import { Command } from '@/shared/application/use-cases/command'
+import { Command } from '#shared/application/use-cases/command'
 import { ApplicationService, ContainerBindings } from '@adonisjs/core/types'
 import { CommandConstructor, Handler } from './types'
 
