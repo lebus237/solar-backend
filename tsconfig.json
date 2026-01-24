@@ -4,10 +4,6 @@
     "rootDir": "./",
     "outDir": "./build",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": false,
-    "paths": {
-      "#kernel/*": ["./src/kernel/*"],
-      "#shared/*": ["./src/shared/*"]
-    }
+    "allowImportingTsExtensions": false
   }
 }

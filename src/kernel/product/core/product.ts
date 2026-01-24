@@ -1,10 +1,10 @@
-export class Store {
+export class Product {
   constructor(
     private id: any,
     private designation: string,
     private domainName: string,
-    private createdAt: any = null,
-    private updatedAt: any = null
+    private createdAt: Date | null = null,
+    private updatedAt: Date | null = null
   ) {}
 
   getId(): any {
@@ -17,5 +17,12 @@ export class Store {
 
   getDesignation(): string {
     return this.designation
+  }
+
+  getCreatedAt(): Date | null {
+    return this.createdAt
+  }
+  getUpdatedAt(): Date | null {
+    return this.updatedAt
   }
 }

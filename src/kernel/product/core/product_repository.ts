@@ -1,8 +1,8 @@
-import { Store } from '#kernel/store/core/store'
 import { RepositoryInterface } from '#shared/domain/repository_interface'
+import { Product } from './product'
 
 export interface ProductRepository extends RepositoryInterface {
-  save(entity: Store): Promise<void>
-  findById(id: any): Promise<Store>
+  save(entity: Product): Promise<void>
+  findById(id: any): Promise<Product>
   delete(id: any): Promise<void>
 }

@@ -1,6 +1,6 @@
 import { Command } from '#shared/application/use-cases/command'
 
-export class CreateStoreCommand implements Command {
+export class CreateProductCommand implements Command {
   readonly timestamp: Date
 
   constructor(

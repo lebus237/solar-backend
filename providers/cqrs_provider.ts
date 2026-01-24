@@ -2,6 +2,8 @@ import { CommandBus } from '#shared/infrastructure/bus/command_bus'
 import { ApplicationService } from '@adonisjs/core/types'
 import { UpdateStoreHandler } from '#kernel/store/application/command_handler/update_store_handler'
 import { CreateStoreHandler } from '#kernel/store/application/command_handler/create_store_handler'
+import { CreateProductHandler } from '#kernel/product/application/command-handler/create_product_handler'
+import { UpdateProductHandler } from '#kernel/product/application/command-handler/update_product_handler'
 
 export default class CqrsProvider {
   constructor(protected app: ApplicationService) {}
@@ -11,7 +13,9 @@ export default class CqrsProvider {
       const commandBus = new CommandBus(this.app)
 
       commandBus.register('CreateStoreCommand', CreateStoreHandler, ['StoreRepository'])
-      commandBus.register('UpdateStoreCommand', UpdateStoreHandler, ['ProductRepository'])
+      commandBus.register('UpdateStoreCommand', UpdateStoreHandler, ['StoreRepository'])
+      commandBus.register('CreateProductCommand', CreateProductHandler, ['ProductRepository'])
+      commandBus.register('UpdateProductCommand', UpdateProductHandler, ['ProductRepository'])
 
       return commandBus
     })
