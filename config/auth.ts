@@ -8,7 +8,7 @@ const authConfig = defineConfig({
     api: tokensGuard({
       provider: tokensUserProvider({
         tokens: 'accessTokens',
-        model: () => import('#database/ar/user'),
+        model: () => import('../database/active-records-models/user'),
       }),
     }),
   },
