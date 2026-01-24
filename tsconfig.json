@@ -6,8 +6,8 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": false,
     "paths": {
-      "@/kernel/*": ["./src/kernel/*"],
-      "@/shared/*": ["./src/shared/*"]
+      "#kernel/*": ["./src/kernel/*"],
+      "#shared/*": ["./src/shared/*"]
     }
   }
 }
