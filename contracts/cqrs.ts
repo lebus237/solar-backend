@@ -1,5 +1,5 @@
-import { CommandBus } from '@/shared/infrastructure/bus/command.bus'
-import { QueryBus } from '@/shared/infrastructure/bus/query.bus'
+import { CommandBus } from '@/shared/infrastructure/bus/command_bus'
+import { QueryBus } from '@/shared/infrastructure/bus/query_bus'
 
 declare module '@adonisjs/core/types' {
   interface ContainerBindings {
