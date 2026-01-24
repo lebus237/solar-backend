@@ -9,7 +9,7 @@ export default class CqrsProvider {
   constructor(protected app: ApplicationService) {}
 
   public register() {
-    this.app.container.singleton('CQRS/CommandBus', () => {
+    this.app.container.singleton('CQRS/CommandBus', async () => {
       const commandBus = new CommandBus(this.app)
 
       commandBus.register('CreateStoreCommand', CreateStoreHandler, ['StoreRepository'])
