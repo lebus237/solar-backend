@@ -4,7 +4,6 @@ export class UpdateProductCategoryCommand implements Command {
   readonly timestamp: Date
   constructor(
     public readonly categoryId: any,
-    public readonly categorySlug: string,
     public readonly designation: string,
     public readonly type: 'CATEGORY' | 'TAG',
     public readonly parentId: any

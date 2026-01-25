@@ -10,8 +10,7 @@ export class UpdateProductCategoryHandler implements CommandHandler<UpdateProduc
       command.categoryId,
       command.designation,
       command.type,
-      command.parentId,
-      command.categorySlug
+      command.parentId
     )
     return this.repository.save(category)
   }
