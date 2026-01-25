@@ -1,5 +1,5 @@
 import { ProductRepository } from '#kernel/product/core/repository/product_repository'
-import { default as ProductActiveRecord } from '#database/active-records-models/product'
+import { default as ProductActiveRecord } from '#database/active-records/product'
 import { Product } from '#kernel/product/core/entity/product'
 
 export class ProductARRepository implements ProductRepository {

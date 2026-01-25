@@ -29,7 +29,7 @@ router
     router.group(() => {
       router.resource('store', StoreController)
       router.resource('product', ProductController).use('*', middleware.auth())
-      router.resource('product_category', ProductCategoryController).use('*', middleware.auth())
+      router.resource('product-category', ProductCategoryController).use('*', middleware.auth())
     })
     // .middleware(middleware.auth())
   })

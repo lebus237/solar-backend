@@ -3,7 +3,7 @@ import { AppAbstractController } from '#shared/user_interface/controller/app_abs
 import { CreateProductCommand } from '#kernel/product/application/command/create_product_command'
 import { createProductSchema, updateProductSchema } from '#validators/product_validator'
 import { UpdateProductCommand } from '#kernel/product/application/command/update_product_command'
-import ActiveRecord from '#database/active-records-models/product'
+import ActiveRecord from '#database/active-records/product'
 
 export default class ProductController extends AppAbstractController {
   constructor() {

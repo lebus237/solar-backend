@@ -6,7 +6,7 @@ import {
 } from '#validators/product_validator'
 import { CreateProductCategoryCommand } from '#kernel/product/application/command/create_product_category_command'
 import { UpdateProductCategoryCommand } from '#kernel/product/application/command/update_product_category_command'
-import ActiveRecord from '#database/active-records-models/product_category'
+import ActiveRecord from '#database/active-records/product_category'
 
 export default class ProductCategoryController extends AppAbstractController {
   constructor() {

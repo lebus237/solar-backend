@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon'
 import { BaseModel, beforeCreate, belongsTo, column } from '@adonisjs/lucid/orm'
 import crypto from 'node:crypto'
-import ProductCategory from '#database/active-records-models/product_category'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import ProductCategory from '#database/active-records/product_category'
 
 export default class Product extends BaseModel {
   @column({ isPrimary: true })

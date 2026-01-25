@@ -1,4 +1,4 @@
-import { default as ActiveRecord } from '#database/active-records-models/product_category'
+import { default as ActiveRecord } from '#database/active-records/product_category'
 import { ProductCategoryRepository } from '#kernel/product/core/repository/product_category_repository'
 import { ProductCategory } from '#kernel/product/core/entity/product_category'
 
