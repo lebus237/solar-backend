@@ -33,7 +33,7 @@ export const createProductCategorySchema = vine.compile(
 export const updateProductCategorySchema = vine.compile(
   vine.object({
     designation: vine.string().minLength(2),
-    type: vine.enum(['CATEGORY', 'TAG']).optional(),
+    type: vine.enum(['CATEGORY', 'TAG']),
     parentId: vine.string().uuid().optional(),
   })
 )

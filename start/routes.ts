@@ -9,6 +9,9 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
+
+const ProductCategoryController = () => import('#controllers/product/product_category_controller')
+const ProductController = () => import('#controllers/product/product_controller')
 const StoreController = () => import('#controllers/store/store_controller')
 const AuthController = () => import('#controllers/authentication/auth_controller')
 
@@ -25,6 +28,8 @@ router
 
     router.group(() => {
       router.resource('store', StoreController)
+      router.resource('product', ProductController).use('*', middleware.auth())
+      router.resource('product_category', ProductCategoryController).use('*', middleware.auth())
     })
     // .middleware(middleware.auth())
   })
