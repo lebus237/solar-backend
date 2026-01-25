@@ -9,5 +9,6 @@ declare module '@adonisjs/core/types' {
 
     'StoreRepository': RepositoryInterface
     'ProductRepository': RepositoryInterface
+    'ProductCategoryRepository': RepositoryInterface
   }
 }
