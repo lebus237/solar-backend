@@ -9,9 +9,9 @@ export class Product {
     private pictureUrl: string,
     private price: number,
     private brand?: string,
-    private slug?: string,
-    private isAvailable?: boolean,
-    private isDeleted?: boolean,
+    private readonly slug?: string,
+    private readonly isAvailable?: boolean,
+    private readonly isDeleted?: boolean,
     private createdAt?: Date,
     private updatedAt?: Date
   ) {

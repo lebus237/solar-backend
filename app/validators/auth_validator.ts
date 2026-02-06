@@ -5,7 +5,7 @@ export const registerSchema = vine.compile(
     email: vine
       .string()
       .email()
-      .normalizeEmail()
+      .normalizeEmail({ all_lowercase: true })
       .unique(async (db, value) => {
         const match = await db.from('users').select('id').where('email', value).first()
 
@@ -19,7 +19,7 @@ export const registerSchema = vine.compile(
 
 export const loginSchema = vine.compile(
   vine.object({
-    email: vine.string().email().normalizeEmail(),
+    email: vine.string().email().normalizeEmail({ all_lowercase: true }),
     password: vine.string(),
   })
 )
