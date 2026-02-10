@@ -2,6 +2,7 @@ import { ApplicationService } from '@adonisjs/core/types'
 import { StoreARRepository } from '#kernel/store/infrastructure/persistence/store_ar_repository'
 import { ProductARRepository } from '#kernel/product/infrastructure/persistence/product_ar_repository'
 import { ProductCategoryARRepository } from '#kernel/product/infrastructure/persistence/product_category_ar_repository'
+import { MarketServiceARRepository } from '#kernel/market/infrastructure/persistence/market_service_ar_repository'
 
 export default class RepositoryProvider {
   constructor(protected app: ApplicationService) {}
@@ -16,6 +17,9 @@ export default class RepositoryProvider {
       })
       this.app.container.bind('ProductCategoryRepository', () => {
         return new ProductCategoryARRepository()
+      })
+      this.app.container.bind('MarketServiceRepository', () => {
+        return new MarketServiceARRepository()
       })
     }
   }
