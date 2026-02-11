@@ -38,6 +38,7 @@ export interface UploadResult {
   thumbnailUrl?: string
   error?: string
   metadata?: {
+    originalName: string
     size: number
     mimeType: string
     uploadedAt: Date
@@ -49,6 +50,7 @@ export interface FileInfo {
   originalName: string
   mimeType: string
   size: number
+  type?: MediaType
 }
 
 export interface ProviderConfig {

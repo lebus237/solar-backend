@@ -1,5 +1,5 @@
 import { MediaUploadService } from '#core/application/services/media-upload/media_upload_service'
-import { StorageProviderFactory } from '#shared/infrastructure/factory/storage_provider.factory'
+import { StorageProviderFactory } from '#infra/factory/storage_provider.factory'
 import { ApplicationService } from '@adonisjs/core/types'
 
 export default class RepositoryProvider {

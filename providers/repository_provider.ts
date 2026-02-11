@@ -21,6 +21,9 @@ export default class RepositoryProvider {
       this.app.container.bind('MarketServiceRepository', () => {
         return new MarketServiceARRepository()
       })
+      this.app.container.bind('ImageMediaRepository', () => {
+        return new MarketServiceARRepository()
+      })
     }
   }
 

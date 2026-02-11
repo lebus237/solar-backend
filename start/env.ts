@@ -32,4 +32,11 @@ export default await Env.create(new URL('../', import.meta.url), {
   STORAGE_BASE_PATH: Env.schema.string(),
   LOCAL_STORAGE_PATH: Env.schema.string(),
   LOCAL_STORAGE_URL: Env.schema.string(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring the drive package
+  |----------------------------------------------------------
+  */
+  DRIVE_DISK: Env.schema.enum(['fs'] as const),
 })

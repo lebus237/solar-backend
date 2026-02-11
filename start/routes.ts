@@ -31,7 +31,7 @@ router
       router.resource('store', StoreController)
       router.resource('product', ProductController).use('*', middleware.auth())
       router.resource('product-category', ProductCategoryController).use('*', middleware.auth())
-      router.resource('image_media', ImageMediasController).use('*', middleware.auth())
+      router.resource('image-media', ImageMediasController).use('*', middleware.auth())
     })
   })
   .prefix('/api')

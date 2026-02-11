@@ -1,8 +1,5 @@
-import {
-  LocalProviderConfig,
-  LocalStorageProvider,
-} from '#shared/infrastructure/storage-provider/local_storage_provider'
-import { StorageProviderInterface } from '../../application/services/upload/provider_interface'
+import { LocalProviderConfig, LocalStorageProvider } from '#infra/local_storage_provider'
+import { StorageProviderInterface } from '#shared/application/services/upload/provider_interface'
 import env from '#start/env'
 
 export enum ProviderType {
@@ -65,6 +62,8 @@ export class StorageProviderFactory {
           storagePath: env.get('STORAGE_BASE_PATH') || './storage',
           baseUrl: env.get('LOCAL_STORAGE_URL') || 'http://localhost:3000/uploads',
           basePath: env.get('STORAGE_BASE_PATH'),
+          imageBasePath: env.get('IMAGE_STORAGE_BASE_PATH'),
+          documentBasePath: env.get('DOCUMENT_STORAGE_BASE_PATH'),
         })
 
       default:

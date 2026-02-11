@@ -6,6 +6,7 @@ import { CreateProductHandler } from '#kernel/product/application/command-handle
 import { UpdateProductHandler } from '#kernel/product/application/command-handler/update_product_handler'
 import { CreateProductCategoryHandler } from '#kernel/product/application/command-handler/create_product_category_handler'
 import { UpdateProductCategoryHandler } from '#kernel/product/application/command-handler/update_product_category_handler'
+import { StoreImageHandler } from '#kernel/medias/application/command_handler/store_image.handler'
 
 export default class CqrsProvider {
   constructor(protected app: ApplicationService) {}
@@ -14,6 +15,7 @@ export default class CqrsProvider {
     this.app.container.singleton('CQRS/CommandBus', async () => {
       const commandBus = new CommandBus(this.app)
 
+      //PRODUCT COMMANDS
       commandBus.register('CreateStoreCommand', CreateStoreHandler, ['StoreRepository'])
       commandBus.register('UpdateStoreCommand', UpdateStoreHandler, ['StoreRepository'])
       commandBus.register('CreateProductCommand', CreateProductHandler, ['ProductRepository'])
@@ -23,6 +25,12 @@ export default class CqrsProvider {
       ])
       commandBus.register('UpdateProductCategoryCommand', UpdateProductCategoryHandler, [
         'ProductCategoryRepository',
+      ])
+
+      //MEDIA COMMANDS
+      commandBus.register('StoreImageCommand', StoreImageHandler, [
+        'ImageMediaRepository',
+        'MediaUploadService',
       ])
 
       return commandBus

@@ -65,6 +65,7 @@ export class FileValidator {
    * Check if a MIME type is an image
    */
   static isImage(mimeType: string): boolean {
+    console.log({ mimeType })
     return FileValidator.IMAGE_FORMATS.includes(mimeType as ImageFormat)
   }
 

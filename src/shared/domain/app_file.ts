@@ -16,7 +16,7 @@ export class AppFile {
   }
 
   get mimeType(): any {
-    return this.file.type
+    return `${this.file.type}/${this.file.subtype}`
   }
 
   get metadata(): any {

@@ -1,4 +1,5 @@
 import { FileInfo, UploadResult, UploadOptions } from './types'
+import { MultipartFile } from '@adonisjs/core/bodyparser'
 
 /**
  * Storage Provider Interface
@@ -8,7 +9,7 @@ export interface StorageProviderInterface {
   /**
    * Upload a file to the storage provider
    */
-  upload(file: FileInfo, options?: UploadOptions): Promise<UploadResult>
+  upload(fileInfo: FileInfo, file?: MultipartFile, options?: UploadOptions): Promise<UploadResult>
 
   /**
    * Delete a file from storage

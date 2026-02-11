@@ -4,7 +4,7 @@ import { CommandHandler } from '#shared/application/use-cases/command_handler'
 import { StoreImageCommand } from '#kernel/medias/application/command/store_image_command'
 import { ImageMedia } from '#kernel/medias/domain/image_media'
 
-export class StoreImageCommandHandler implements CommandHandler<StoreImageCommand> {
+export class StoreImageHandler implements CommandHandler<StoreImageCommand> {
   constructor(
     private repository: ImageMediaRepository,
     private uploadService: MediaUploader
@@ -18,11 +18,11 @@ export class StoreImageCommandHandler implements CommandHandler<StoreImageComman
         mimeType: command.file.mimeType,
         size: command.file.size,
       },
-      { metadata: command.file.metadata }
+      command.file.getFile()
     )
 
     if (!upload.success) {
-      throw new Error('Method not implemented.')
+      throw new Error(`${upload.error}`)
     }
 
     await this.repository.save(

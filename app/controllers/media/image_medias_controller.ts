@@ -25,7 +25,7 @@ export default class ImageMediasController extends AppAbstractController {
     const payload = await request.validateUsing(mediaSchema)
 
     if (!file) {
-      return response.badRequest()
+      return response.badRequest({ errors: { image: 'Image is required' } })
     }
 
     await this.handleCommand(new StoreImageCommand(new AppFile(file), payload.title, payload.alt))

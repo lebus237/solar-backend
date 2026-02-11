@@ -1,4 +1,3 @@
-import { FileValidator } from './validator'
 import { StorageProviderInterface } from '#shared/application/services/upload/provider_interface'
 import {
   FileInfo,
@@ -7,6 +6,8 @@ import {
   UploadResult,
 } from '#shared/application/services/upload/types'
 import { MediaUploader } from '#shared/application/services/upload/media_uploader'
+import { FileValidator } from '#core/application/services/media-upload/validator'
+import { MultipartFile } from '@adonisjs/core/bodyparser'
 
 export class MediaUploadService implements MediaUploader {
   private provider: StorageProviderInterface
@@ -32,9 +33,13 @@ export class MediaUploadService implements MediaUploader {
   /**
    * Upload a file with validation
    */
-  async uploadFile(file: FileInfo, options?: UploadOptions): Promise<UploadResult> {
+  async uploadFile(
+    fileInfo: FileInfo,
+    file?: MultipartFile,
+    options?: UploadOptions
+  ): Promise<UploadResult> {
     // Validate file
-    const validation = FileValidator.validate(file.mimeType, file.size, options)
+    const validation = FileValidator.validate(fileInfo.mimeType, fileInfo.size, options)
 
     if (!validation.valid) {
       return {
@@ -44,43 +49,55 @@ export class MediaUploadService implements MediaUploader {
     }
 
     // Upload using the current provider
-    return await this.provider.upload(file, options)
+    return await this.provider.upload(
+      { ...fileInfo, type: this.getMediaType(fileInfo.mimeType) as MediaType },
+      file,
+      options
+    )
   }
 
   /**
    * Upload multiple files
    */
-  async uploadMultiple(files: FileInfo[], options?: UploadOptions): Promise<UploadResult[]> {
-    const uploadPromises = files.map((file) => this.uploadFile(file, options))
-    return await Promise.all(uploadPromises)
-  }
+  // async uploadMultiple(files: FileInfo[], options?: UploadOptions): Promise<UploadResult[]> {
+  //   const uploadPromises = files.map((file) => this.uploadFile(file, options))
+  //   return await Promise.all(uploadPromises)
+  // }
 
   /**
    * Upload an image with specific validation
    */
-  async uploadImage(file: FileInfo, options?: UploadOptions): Promise<UploadResult> {
-    if (!FileValidator.isImage(file.mimeType)) {
+  async uploadImage(
+    fileInfo: FileInfo,
+    file?: MultipartFile,
+    options?: UploadOptions
+  ): Promise<UploadResult> {
+    if (!FileValidator.isImage(fileInfo.mimeType)) {
       return {
         success: false,
         error: 'File is not a valid image',
       }
     }
 
-    return await this.uploadFile(file, options)
+    return await this.uploadFile(fileInfo, file, options)
   }
 
   /**
    * Upload a document with specific validation
    */
-  async uploadDocument(file: FileInfo, options?: UploadOptions): Promise<UploadResult> {
-    if (!FileValidator.isDocument(file.mimeType)) {
+  async uploadDocument(
+    fileInfo: FileInfo,
+    file?: MultipartFile,
+    options?: UploadOptions
+  ): Promise<UploadResult> {
+    if (!FileValidator.isDocument(fileInfo.mimeType)) {
       return {
         success: false,
         error: 'File is not a valid document',
       }
     }
 
-    return await this.uploadFile(file, options)
+    return await this.uploadFile(fileInfo, file, options)
   }
 
   /**

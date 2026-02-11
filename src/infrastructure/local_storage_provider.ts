@@ -1,24 +1,36 @@
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
-import { FileInfo, UploadOptions, UploadResult } from '#shared/application/services/upload/types'
+import {
+  FileInfo,
+  MediaType,
+  UploadOptions,
+  UploadResult,
+} from '#shared/application/services/upload/types'
 import { cuid as uuidv4 } from '@adonisjs/core/helpers'
 import { StorageProviderInterface } from '#shared/application/services/upload/provider_interface'
+import { MultipartFile } from '@adonisjs/core/bodyparser'
 
 export interface LocalProviderConfig {
   storagePath: string
   baseUrl: string // e.g., 'http://localhost:3000/uploads'
   basePath?: string
+  imageBasePath?: string
+  documentBasePath?: string
 }
 
 export class LocalStorageProvider implements StorageProviderInterface {
   private storagePath: string
   private baseUrl: string
   private basePath: string
+  private imageBasePath?: string
+  private documentBasePath?: string
 
   constructor(config: LocalProviderConfig) {
     this.storagePath = config.storagePath
     this.baseUrl = config.baseUrl
     this.basePath = config.basePath || 'uploads'
+    this.imageBasePath = config.imageBasePath
+    this.documentBasePath = config.documentBasePath
     this.ensureStorageDirectory()
   }
 
@@ -31,34 +43,33 @@ export class LocalStorageProvider implements StorageProviderInterface {
     }
   }
 
-  async upload(file: FileInfo, options?: UploadOptions): Promise<UploadResult> {
+  async upload(
+    fileInfo: FileInfo,
+    file: MultipartFile,
+    _options?: UploadOptions
+  ): Promise<UploadResult> {
     try {
-      const fileName = this.generateFileName(file.originalName)
-      const filePath = path.join(this.storagePath, this.basePath, fileName)
-      const relativeKey = path.join(this.basePath, fileName)
+      const fileName = this.generateFileName(fileInfo.originalName)
+      const relativeKey = path.join(
+        fileInfo.type === MediaType.IMAGE
+          ? (this.imageBasePath as string)
+          : (this.documentBasePath as string),
+        fileName
+      )
 
       // Write file
-      await fs.writeFile(filePath, file.buffer)
+      await file.moveToDisk(relativeKey)
 
-      // Write metadata
-      const metadata = {
-        originalName: file.originalName,
-        size: file.size,
-        mimeType: file.mimeType,
-        uploadedAt: new Date().toISOString(),
-        ...(options?.metadata || {}),
-      }
-      await fs.writeFile(`${filePath}.meta.json`, JSON.stringify(metadata, null, 2))
-
-      const url = `${this.baseUrl}/${relativeKey}`
+      const url = file.meta.url
 
       return {
         success: true,
         url,
         key: relativeKey,
         metadata: {
-          size: file.size,
-          mimeType: file.mimeType,
+          originalName: fileInfo.originalName,
+          size: fileInfo.size,
+          mimeType: fileInfo.mimeType,
           uploadedAt: new Date(),
         },
       }

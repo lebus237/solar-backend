@@ -50,6 +50,7 @@ export default defineConfig({
     () => import('#providers/repository_provider'),
     () => import('#providers/cqrs_provider'),
     () => import('#providers/service_provider'),
+    () => import('@adonisjs/drive/drive_provider'),
   ],
 
   /*

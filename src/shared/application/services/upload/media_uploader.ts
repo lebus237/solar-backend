@@ -1,5 +1,6 @@
 import { StorageProviderInterface } from '#shared/application/services/upload/provider_interface'
 import { FileInfo, MediaType, UploadOptions, UploadResult } from './types'
+import { MultipartFile } from '@adonisjs/core/bodyparser'
 
 export interface MediaUploader {
   /**
@@ -15,22 +16,34 @@ export interface MediaUploader {
   /**
    * Upload a file with validation
    */
-  uploadFile(file: FileInfo, options?: UploadOptions): Promise<UploadResult>
+  uploadFile(
+    fileInfo: FileInfo,
+    file?: MultipartFile,
+    options?: UploadOptions
+  ): Promise<UploadResult>
 
   /**
    * Upload multiple files
    */
-  uploadMultiple(files: FileInfo[], options?: UploadOptions): Promise<UploadResult[]>
+  // uploadMultiple(files: FileInfo[], options?: UploadOptions): Promise<UploadResult[]>
 
   /**
    * Upload an image with specific validation
    */
-  uploadImage(file: FileInfo, options?: UploadOptions): Promise<UploadResult>
+  uploadImage(
+    fileInfo: FileInfo,
+    file?: MultipartFile,
+    options?: UploadOptions
+  ): Promise<UploadResult>
 
   /**
    * Upload a document with specific validation
    */
-  uploadDocument(file: FileInfo, options?: UploadOptions): Promise<UploadResult>
+  uploadDocument(
+    fileInfo: FileInfo,
+    file?: MultipartFile,
+    options?: UploadOptions
+  ): Promise<UploadResult>
 
   /**
    * Delete a file
