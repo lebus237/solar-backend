@@ -1,8 +1,8 @@
-import { StorageProviderInterface } from '#shared/application/services/upload/provider_interface'
+import { StorageProviderInterface } from '#shared/application/services/upload/storage_provider_interface'
 import { FileInfo, MediaType, UploadOptions, UploadResult } from './types'
 import { MultipartFile } from '@adonisjs/core/bodyparser'
 
-export interface MediaUploader {
+export interface MediaManagerInterface {
   /**
    * Switch to a different storage provider
    */
@@ -48,7 +48,7 @@ export interface MediaUploader {
   /**
    * Delete a file
    */
-  deleteFile(key: string): Promise<boolean>
+  deleteFile(key: string): Promise<boolean | void>
 
   /**
    * Get a signed URL for temporary access

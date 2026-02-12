@@ -7,12 +7,13 @@ import {
   UploadResult,
 } from '#shared/application/services/upload/types'
 import { cuid as uuidv4 } from '@adonisjs/core/helpers'
-import { StorageProviderInterface } from '#shared/application/services/upload/provider_interface'
+import { StorageProviderInterface } from '#shared/application/services/upload/storage_provider_interface'
 import { MultipartFile } from '@adonisjs/core/bodyparser'
+import drive from '@adonisjs/drive/services/main'
 
 export interface LocalProviderConfig {
   storagePath: string
-  baseUrl: string // e.g., 'http://localhost:3000/uploads'
+  baseUrl: string
   basePath?: string
   imageBasePath?: string
   documentBasePath?: string
@@ -20,27 +21,26 @@ export interface LocalProviderConfig {
 
 export class LocalStorageProvider implements StorageProviderInterface {
   private storagePath: string
-  private baseUrl: string
-  private basePath: string
+  private basePath?: string
   private imageBasePath?: string
   private documentBasePath?: string
+  private diskDriver = drive.use()
 
   constructor(config: LocalProviderConfig) {
     this.storagePath = config.storagePath
-    this.baseUrl = config.baseUrl
-    this.basePath = config.basePath || 'uploads'
+    this.basePath = config.basePath
     this.imageBasePath = config.imageBasePath
     this.documentBasePath = config.documentBasePath
-    this.ensureStorageDirectory()
+    // this.ensureStorageDirectory()
   }
 
   private async ensureStorageDirectory(): Promise<void> {
-    const fullPath = path.join(this.storagePath, this.basePath)
-    try {
-      await fs.access(fullPath)
-    } catch {
-      await fs.mkdir(fullPath, { recursive: true })
-    }
+    // const fullPath = path.join(this.storagePath, this.basePath)
+    // try {
+    //   await fs.access(fullPath)
+    // } catch {
+    //   await fs.mkdir(fullPath, { recursive: true })
+    // }
   }
 
   async upload(
@@ -83,60 +83,25 @@ export class LocalStorageProvider implements StorageProviderInterface {
 
   async delete(key: string): Promise<boolean> {
     try {
-      const filePath = path.join(this.storagePath, key)
-      const metaPath = `${filePath}.meta.json`
-
-      await fs.unlink(filePath)
-
-      // Try to delete metadata file (ignore if doesn't exist)
-      try {
-        await fs.unlink(metaPath)
-      } catch {}
-
-      return true
-    } catch (error) {
-      console.error('Delete failed:', error)
-      return false
-    }
-  }
-
-  async getSignedUrl(key: string, expiresIn?: number): Promise<string> {
-    // For local storage, we just return the public URL
-    // In production, you might implement token-based access
-    console.log('Getting signed URL for', key, expiresIn)
-    return `${this.baseUrl}/${key}`
-  }
-
-  async exists(key: string): Promise<boolean> {
-    try {
-      const filePath = path.join(this.storagePath, key)
-      await fs.access(filePath)
+      await this.diskDriver.delete(key)
       return true
     } catch {
       return false
     }
   }
 
+  async getSignedUrl(key: string, expiresIn?: number): Promise<string> {
+    return await this.diskDriver.getSignedUrl(key, {
+      expiresIn: expiresIn || 60 * 60 * 24 * 30,
+    })
+  }
+
+  async exists(key: string): Promise<boolean> {
+    return await this.diskDriver.exists(key)
+  }
+
   async getMetadata(key: string): Promise<Record<string, any> | null> {
-    try {
-      const filePath = path.join(this.storagePath, key)
-      const metaPath = `${filePath}.meta.json`
-
-      const [stats, metaContent] = await Promise.all([
-        fs.stat(filePath),
-        fs.readFile(metaPath, 'utf-8').catch(() => null),
-      ])
-
-      const metadata = metaContent ? JSON.parse(metaContent) : {}
-
-      return {
-        size: stats.size,
-        lastModified: stats.mtime,
-        ...metadata,
-      }
-    } catch (error) {
-      return null
-    }
+    return await this.diskDriver.getMetaData(key)
   }
 
   private generateFileName(originalName: string): string {

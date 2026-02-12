@@ -1,7 +1,7 @@
 import { ImageMediaRepository } from '#kernel/medias/domain/image_media_repository'
 import { ImageMedia } from '#kernel/medias/domain/image_media'
 import { default as EntityActiveRecord } from '#database/active-records/image_media'
-import { IdentifierInterface } from '#shared/domain/identifier_interface'
+import { AppId } from '#shared/domain/app_id'
 export class ImageMediaARRepository implements ImageMediaRepository {
   async save(entity: ImageMedia): Promise<string | void> {
     const object = {
@@ -11,6 +11,7 @@ export class ImageMediaARRepository implements ImageMediaRepository {
       metadata: entity['metadata'],
       createdAt: entity['createdAt'] as any,
       updatedAt: entity['updatedAt'] as any,
+      relativeKey: entity['relativeKey'],
     }
 
     if (entity.getId()) {
@@ -27,15 +28,21 @@ export class ImageMediaARRepository implements ImageMediaRepository {
     const image = await EntityActiveRecord.findOrFail(_id)
 
     return new ImageMedia(
-      new IdentifierInterface(image.id),
+      new AppId(image.id),
       image.title,
       image.url,
       image.altDescription,
-      JSON.parse(image.metadata),
+      image.metadata,
       image.createdAt as any,
       image.updatedAt as any,
+      image.relativeKey,
       image.createdBy
     )
+  }
+
+  async delete(id: string): Promise<void> {
+    const image = await EntityActiveRecord.findOrFail(id)
+    await image.delete()
   }
 
   async findByUrl(_url: string): Promise<ImageMedia | null> {
@@ -46,13 +53,14 @@ export class ImageMediaARRepository implements ImageMediaRepository {
     }
 
     return new ImageMedia(
-      new IdentifierInterface(image.id),
+      new AppId(image.id),
       image.title,
       image.url,
       image.altDescription,
-      JSON.parse(image.metadata),
+      image.metadata,
       image.createdAt as any,
       image.updatedAt as any,
+      image.relativeKey,
       image.createdBy
     )
   }

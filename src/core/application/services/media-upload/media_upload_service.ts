@@ -1,15 +1,15 @@
-import { StorageProviderInterface } from '#shared/application/services/upload/provider_interface'
+import { StorageProviderInterface } from '#shared/application/services/upload/storage_provider_interface'
 import {
   FileInfo,
   MediaType,
   UploadOptions,
   UploadResult,
 } from '#shared/application/services/upload/types'
-import { MediaUploader } from '#shared/application/services/upload/media_uploader'
+import { MediaManagerInterface } from '#shared/application/services/upload/media_manager_interface'
 import { FileValidator } from '#core/application/services/media-upload/validator'
 import { MultipartFile } from '@adonisjs/core/bodyparser'
 
-export class MediaUploadService implements MediaUploader {
+export class MediaUploadService implements MediaManagerInterface {
   private provider: StorageProviderInterface
 
   constructor(provider: StorageProviderInterface) {
@@ -103,7 +103,7 @@ export class MediaUploadService implements MediaUploader {
   /**
    * Delete a file
    */
-  async deleteFile(key: string): Promise<boolean> {
+  async deleteFile(key: string): Promise<boolean | void> {
     return await this.provider.delete(key)
   }
 

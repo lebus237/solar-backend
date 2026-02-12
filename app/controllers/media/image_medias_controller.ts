@@ -6,6 +6,8 @@ import {
 } from '#kernel/medias/application/command/store_image_command'
 import { AppFile } from '#shared/domain/app_file'
 import { mediaSchema } from '#validators/media_schema'
+import { DeleteImageCommand } from '#kernel/medias/application/command/delete_image_command'
+import { AppId } from '#shared/domain/app_id'
 
 export default class ImageMediasController extends AppAbstractController {
   constructor() {
@@ -55,5 +57,9 @@ export default class ImageMediasController extends AppAbstractController {
   // /**
   //  * Delete record
   //  */
-  // async destroy({ params }: HttpContext) {}
+  async destroy({ request }: HttpContext) {
+    const params = request.params()
+
+    await this.handleCommand(new DeleteImageCommand(AppId.fromString(params.id)))
+  }
 }

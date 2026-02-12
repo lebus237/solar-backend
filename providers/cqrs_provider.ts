@@ -7,6 +7,7 @@ import { UpdateProductHandler } from '#kernel/product/application/command-handle
 import { CreateProductCategoryHandler } from '#kernel/product/application/command-handler/create_product_category_handler'
 import { UpdateProductCategoryHandler } from '#kernel/product/application/command-handler/update_product_category_handler'
 import { StoreImageHandler } from '#kernel/medias/application/command_handler/store_image.handler'
+import { DeleteImageHandler } from '#kernel/medias/application/command_handler/delete_image_handler'
 
 export default class CqrsProvider {
   constructor(protected app: ApplicationService) {}
@@ -29,6 +30,10 @@ export default class CqrsProvider {
 
       //MEDIA COMMANDS
       commandBus.register('StoreImageCommand', StoreImageHandler, [
+        'ImageMediaRepository',
+        'MediaUploadService',
+      ])
+      commandBus.register('DeleteImageCommand', DeleteImageHandler, [
         'ImageMediaRepository',
         'MediaUploadService',
       ])

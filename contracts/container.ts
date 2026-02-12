@@ -1,7 +1,7 @@
 import { CommandBus } from '#shared/infrastructure/bus/command_bus'
 import { QueryBus } from '#shared/infrastructure/bus/query_bus'
 import { RepositoryInterface } from '#shared/domain/repository_interface'
-import { MediaUploader } from '#shared/application/services/upload/media_uploader'
+import { MediaManagerInterface } from '#shared/application/services/upload/media_manager_interface'
 
 declare module '@adonisjs/core/types' {
   interface ContainerBindings {
@@ -16,6 +16,6 @@ declare module '@adonisjs/core/types' {
     'ImageMediaRepository': RepositoryInterface
 
     //SERVICE
-    'MediaUploadService': MediaUploader
+    'MediaUploadService': MediaManagerInterface
   }
 }

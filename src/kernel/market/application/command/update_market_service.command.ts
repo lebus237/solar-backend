@@ -1,12 +1,12 @@
 import { MarketServiceFeature } from '#kernel/market/domain/type/market_service_feature_type'
 import { Command } from '#shared/application/use-cases/command'
-import { IdentifierInterface } from '#shared/domain/identifier_interface'
+import { AppId } from '#shared/domain/app_id'
 
 export class UpdateMarketServiceCommand implements Command {
   readonly timestamp: Date
 
   constructor(
-    public serviceId: IdentifierInterface,
+    public serviceId: AppId,
     public designation: string,
     public thumbnail: string,
     public shortDescription?: string,

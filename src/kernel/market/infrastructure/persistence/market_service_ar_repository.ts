@@ -1,6 +1,6 @@
 import { MarketService } from '#kernel/market/domain/entity/market_service'
 import { MarketServiceRepository } from '#kernel/market/domain/repository/market_service_repository'
-import { IdentifierInterface } from '#shared/domain/identifier_interface'
+import { AppId } from '#shared/domain/app_id'
 
 export class MarketServiceARRepository implements MarketServiceRepository {
   save(entity: MarketService): Promise<void> {
@@ -8,12 +8,12 @@ export class MarketServiceARRepository implements MarketServiceRepository {
     return Promise.resolve()
   }
 
-  getById(id: IdentifierInterface): Promise<MarketService> {
+  getById(id: AppId): Promise<MarketService> {
     console.log('Getting market service by ID:', id)
     throw new Error('Method not implemented.')
   }
 
-  delete(id: IdentifierInterface): Promise<void> {
+  delete(id: AppId): Promise<void> {
     console.log('Deleting market service by ID:', id)
     throw new Error('Method not implemented.')
   }

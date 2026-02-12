@@ -1,5 +1,5 @@
 import { ImageMediaRepository } from '#kernel/medias/domain/image_media_repository'
-import { MediaUploader } from '#shared/application/services/upload/media_uploader'
+import { MediaManagerInterface } from '#shared/application/services/upload/media_manager_interface'
 import { CommandHandler } from '#shared/application/use-cases/command_handler'
 import {
   StoreImageCommand,
@@ -13,7 +13,7 @@ export class StoreImageHandler implements CommandHandler<
 > {
   constructor(
     private repository: ImageMediaRepository,
-    private uploadService: MediaUploader
+    private uploadService: MediaManagerInterface
   ) {}
 
   async handle(command: StoreImageCommand): Promise<StoreImageCommandReturnType> {
@@ -39,7 +39,8 @@ export class StoreImageHandler implements CommandHandler<
         command.altDescription,
         upload.metadata,
         null,
-        null
+        null,
+        upload.key
       )
     )) as string
 

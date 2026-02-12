@@ -14,7 +14,7 @@ export interface StorageProviderInterface {
   /**
    * Delete a file from storage
    */
-  delete(key: string): Promise<boolean>
+  delete(key: string): Promise<boolean | void>
 
   /**
    * Get a signed URL for temporary access

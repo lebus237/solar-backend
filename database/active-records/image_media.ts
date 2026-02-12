@@ -18,6 +18,9 @@ export default class ImageMedia extends BaseModel {
   @column()
   declare url: string
 
+  @column({ columnName: 'relative_key' })
+  declare relativeKey: string
+
   @column({ columnName: 'created_by' })
   declare createdBy: any
 

@@ -1,5 +1,5 @@
 import { LocalProviderConfig, LocalStorageProvider } from '#infra/local_storage_provider'
-import { StorageProviderInterface } from '#shared/application/services/upload/provider_interface'
+import { StorageProviderInterface } from '#shared/application/services/upload/storage_provider_interface'
 import env from '#start/env'
 
 export enum ProviderType {
