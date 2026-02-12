@@ -1,7 +1,7 @@
 import { MarketService } from '#kernel/market/domain/entity/market_service'
 import { MarketServiceRepository } from '#kernel/market/domain/repository/market_service_repository'
 import { AppId } from '#shared/domain/app_id'
-import { default as EntityManager } from '#database/active-records/market_service'
+import EntityManager from '#database/active-records/market_service'
 
 export class MarketServiceARRepository implements MarketServiceRepository {
   async save(entity: MarketService): Promise<void> {
@@ -12,6 +12,7 @@ export class MarketServiceARRepository implements MarketServiceRepository {
       shortDescription: entity['shortDescription'],
       contentDescription: entity.getContent(),
       features: JSON.stringify(entity.getFeatures()),
+      slug: entity.getSlug(),
     }
 
     !entity.getId()

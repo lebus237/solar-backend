@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { afterFind, BaseModel, column } from '@adonisjs/lucid/orm'
+import { afterFind, BaseModel, beforeCreate, column } from '@adonisjs/lucid/orm'
 import crypto from 'node:crypto'
 
 export default class MarketService extends BaseModel {
@@ -35,8 +35,14 @@ export default class MarketService extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  @afterFind()
-  static async parseData(marketService: MarketService) {
-    marketService.features = JSON.parse(marketService.features)
+  @beforeCreate()
+  static generate(marketService: MarketService) {
+    marketService.id = crypto.randomUUID()
   }
+  // @afterFind()
+  // static async parseData(marketService: MarketService) {
+  //   if (marketService.features) {
+  //     marketService.features = JSON.parse(marketService.features)
+  //   }
+  // }
 }

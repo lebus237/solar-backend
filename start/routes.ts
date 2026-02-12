@@ -37,7 +37,7 @@ router
 
     router
       .group(() => {
-        router.resource('market-services', MarketServiceController).use('*', middleware.auth())
+        router.resource('services', MarketServiceController).use('*', middleware.auth())
       })
       .prefix('/market')
   })
