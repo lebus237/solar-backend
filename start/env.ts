@@ -28,10 +28,6 @@ export default await Env.create(new URL('../', import.meta.url), {
   DB_USER: Env.schema.string(),
   DB_PASSWORD: Env.schema.string.optional(),
   DB_DATABASE: Env.schema.string(),
-  STORAGE_PROVIDER: Env.schema.string(),
-  STORAGE_BASE_PATH: Env.schema.string(),
-  LOCAL_STORAGE_PATH: Env.schema.string(),
-  LOCAL_STORAGE_URL: Env.schema.string(),
 
   /*
   |----------------------------------------------------------
@@ -39,4 +35,14 @@ export default await Env.create(new URL('../', import.meta.url), {
   |----------------------------------------------------------
   */
   DRIVE_DISK: Env.schema.enum(['fs'] as const),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring storage provider
+  |----------------------------------------------------------
+  */
+  STORAGE_PROVIDER: Env.schema.string(),
+  STORAGE_BASE_PATH: Env.schema.string(),
+  LOCAL_STORAGE_PATH: Env.schema.string(),
+  LOCAL_STORAGE_URL: Env.schema.string(),
 })
