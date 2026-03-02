@@ -15,7 +15,6 @@ export default class ProductCategoryController extends AppAbstractController {
 
   public async index({ response, request }: HttpContext) {
     const query = request.qs()
-    console.log(query)
     const result = await ActiveRecord.query()
       .whereILike('designation', `%${query.q || ''}%`)
       .orderBy('created_at', 'desc')
@@ -28,15 +27,11 @@ export default class ProductCategoryController extends AppAbstractController {
     const categoryId = await request.param('id')
     const result = await ActiveRecord.find(categoryId)
 
-    console.log(result, categoryId)
-
     return response.accepted({ data: result })
   }
 
   public async store({ request, response }: HttpContext) {
     const payload = await request.validateUsing(createProductCategorySchema)
-
-    console.log(payload)
 
     await this.handleCommand(
       new CreateProductCategoryCommand(payload.designation, payload.type, payload.parentId)
@@ -47,8 +42,6 @@ export default class ProductCategoryController extends AppAbstractController {
   public async update({ request, response }: HttpContext) {
     const payload = await request.validateUsing(updateProductCategorySchema)
     const categoryId = await request.param('id')
-
-    console.log(request.body)
 
     await this.handleCommand(
       new UpdateProductCategoryCommand(

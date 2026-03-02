@@ -12,7 +12,6 @@ export default class ProductController extends AppAbstractController {
 
   public async index({ response, request }: HttpContext) {
     const query = request.qs()
-    console.log(query)
     const result = await ActiveRecord.query()
       .whereILike('designation', `%${query.q || ''}%`)
       .paginate(query.page || 1, query.limit || 10)

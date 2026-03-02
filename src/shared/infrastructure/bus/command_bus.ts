@@ -4,7 +4,6 @@ import { CommandConstructor, Handler } from './types'
 
 export class CommandBus {
   private handlers: Map<string, Handler<any, any>> = new Map()
-  private dependencyArray: Array<any> = []
 
   constructor(private app: ApplicationService) {}
 
@@ -24,12 +23,19 @@ export class CommandBus {
       throw new Error(`No handler registered for command: ${commandName}`)
     }
 
+    /**
+     * IMPORTANT:
+     * Dependencies must be per-execution.
+     * If stored on the instance, they will leak across requests/commands,
+     * and handlers may receive extra constructor args from previous commands.
+     */
+    const dependencyArray: Array<any> = []
     for (const depElement of handler.deps) {
       const instance = await this.app.container.make(depElement)
-      this.dependencyArray.push(instance)
+      dependencyArray.push(instance)
     }
 
-    const handlerInstance = new handler.handler(...this.dependencyArray)
+    const handlerInstance = new handler.handler(...dependencyArray)
 
     return await handlerInstance.handle(command)
   }
