@@ -113,4 +113,74 @@ export default class ProductController extends AppAbstractController {
     )
     return response.noContent()
   }
+
+  public async groupedByCategory({ response, request }: HttpContext) {
+    const query = request.qs()
+    const page = Number(query.page) || 1
+    const limit = Number(query.limit) || 10
+
+    const result = await ActiveRecord.query()
+      .whereILike('designation', `%${query.q || ''}%`)
+      .orderBy('category_id')
+      .paginate(page, limit)
+
+    const mediaUploadService = (await app.container.make(
+      'MediaUploadService'
+    )) as MediaManagerInterface
+
+    const paginatedResult = result.toJSON()
+
+    const formattedProducts = await Promise.all(
+      paginatedResult.data.map(async (product: any) => {
+        let signedUrl = null
+        const relativeKey = product.picture?.relativeKey || product.picture?.relative_key
+        if (relativeKey) {
+          signedUrl = await mediaUploadService.getSignedUrl(relativeKey)
+        }
+        if (product.picture) {
+          delete product.picture.url
+        }
+
+        return {
+          id: product.id,
+          slug: product.slug,
+          designation: product.designation,
+          price: product.price,
+          categoryName: product.category?.designation,
+          categoryId: product.category?.id,
+          pictureUrl: signedUrl,
+          brand: product.brand,
+          createdAt: product.createdAt,
+          updatedAt: product.updatedAt,
+        }
+      })
+    )
+
+    // Group products by category
+    const groupedProducts = formattedProducts.reduce(
+      (
+        acc: Record<string, { categoryId: string; categoryName: string; products: any[] }>,
+        product
+      ) => {
+        const categoryId = product.categoryId || 'uncategorized'
+        const categoryName = product.categoryName || 'Uncategorized'
+
+        if (!acc[categoryId]) {
+          acc[categoryId] = {
+            categoryId,
+            categoryName,
+            products: [],
+          }
+        }
+        acc[categoryId].products.push(product)
+        return acc
+      },
+      {}
+    )
+
+    return response.ok({
+      meta: paginatedResult.meta,
+      data: Object.values(groupedProducts),
+    })
+  }
 }

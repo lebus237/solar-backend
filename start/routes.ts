@@ -30,6 +30,9 @@ router
 
     router.group(() => {
       router.resource('store', StoreController)
+      router
+        .get('product/grouped-by-category', [ProductController, 'groupedByCategory'])
+        .use(middleware.auth())
       router.resource('product', ProductController).use('*', middleware.auth())
       router.resource('product-category', ProductCategoryController).use('*', middleware.auth())
       router.resource('image-media', ImageMediasController).use('*', middleware.auth())
