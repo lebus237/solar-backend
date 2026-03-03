@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { afterFind, BaseModel, beforeCreate, column } from '@adonisjs/lucid/orm'
+import { afterFind, afterFetch, BaseModel, beforeCreate, column } from '@adonisjs/lucid/orm'
 import crypto from 'node:crypto'
 import ProductCategory from '#database/active-records/product_category'
 import ImageMedia from '#database/active-records/image_media'
@@ -54,7 +54,25 @@ export default class Product extends BaseModel {
 
   @afterFind()
   static async afterFind(product: Product) {
-    product.picture = await ImageMedia.find(product.pictureId)
-    product.category = await ProductCategory.find(product.categoryId)
+    if (product.pictureId) {
+      product.picture = await ImageMedia.find(product.pictureId)
+    }
+    if (product.categoryId) {
+      product.category = await ProductCategory.find(product.categoryId)
+    }
+  }
+
+  @afterFetch()
+  static async afterFetch(products: Product[]) {
+    await Promise.all(
+      products.map(async (product) => {
+        if (product.pictureId) {
+          product.picture = await ImageMedia.find(product.pictureId)
+        }
+        if (product.categoryId) {
+          product.category = await ProductCategory.find(product.categoryId)
+        }
+      })
+    )
   }
 }
