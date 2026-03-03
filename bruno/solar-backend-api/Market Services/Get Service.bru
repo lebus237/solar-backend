@@ -1,0 +1,25 @@
+meta {
+  name: Get Service
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/api/market/services/{{service_id}}
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("should return 202 on success", function() {
+    expect(res.status).toBe(202);
+  });
+
+  test("should return service data", function() {
+    const body = res.body;
+    expect(body.data).toBeTruthy();
+  });
+}

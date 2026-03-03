@@ -1,0 +1,31 @@
+meta {
+  name: Update Service
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{base_url}}/api/market/services/{{service_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "designation": "Updated Service Name",
+    "thumbnailId": "",
+    "thumbnailUrl": "https://example.com/thumb.jpg",
+    "shortDescription": "Updated short description",
+    "features": []
+  }
+}
+
+tests {
+  test("should return 204 on success", function() {
+    expect(res.status).toBe(204);
+  });
+}

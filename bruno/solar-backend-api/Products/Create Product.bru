@@ -1,0 +1,32 @@
+meta {
+  name: Create Product
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/product
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "designation": "Product Name",
+    "description": "Product description",
+    "categoryId": "",
+    "pictureId": "",
+    "price": 99.99,
+    "brand": "Brand Name"
+  }
+}
+
+tests {
+  test("should return 201 on success", function() {
+    expect(res.status).toBe(201);
+  });
+}

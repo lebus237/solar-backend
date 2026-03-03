@@ -1,0 +1,334 @@
+{
+  "name": "Solar Backend API",
+  "version": "1",
+  "type": "collection",
+  "uid": "solar-backend-api",
+  "collections": [
+    {
+      "name": "Authentication",
+      "uid": "authentication",
+      "items": [
+        {
+          "uid": "register",
+          "name": "Register",
+          "type": "http-request",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/register",
+            "body": {
+              "mode": "json",
+              "json": "{{register_payload}}"
+            }
+          }
+        },
+        {
+          "uid": "login",
+          "name": "Login",
+          "type": "http-request",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/login",
+            "body": {
+              "mode": "json",
+              "json": "{{login_payload}}"
+            }
+          }
+        },
+        {
+          "uid": "me",
+          "name": "Get Current User",
+          "type": "http-request",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/me",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            }
+          }
+        },
+        {
+          "uid": "logout",
+          "name": "Logout",
+          "type": "http-request",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/logout",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Store",
+      "uid": "store",
+      "items": [
+        {
+          "uid": "create-store",
+          "name": "Create Store",
+          "type": "http-request",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/store",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            },
+            "body": {
+              "mode": "json",
+              "json": "{{store_payload}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "uid": "products",
+      "items": [
+        {
+          "uid": "list-products",
+          "name": "List Products",
+          "type": "http-request",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/product",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            }
+          }
+        },
+        {
+          "uid": "create-product",
+          "name": "Create Product",
+          "type": "http-request",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/product",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            },
+            "body": {
+              "mode": "json",
+              "json": "{{create_product_payload}}"
+            }
+          }
+        },
+        {
+          "uid": "get-product",
+          "name": "Get Product",
+          "type": "http-request",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/product/{{product_id}}",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            }
+          }
+        },
+        {
+          "uid": "update-product",
+          "name": "Update Product",
+          "type": "http-request",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/product/{{product_id}}",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            },
+            "body": {
+              "mode": "json",
+              "json": "{{update_product_payload}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product Categories",
+      "uid": "product-categories",
+      "items": [
+        {
+          "uid": "list-categories",
+          "name": "List Categories",
+          "type": "http-request",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/product-category",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            }
+          }
+        },
+        {
+          "uid": "create-category",
+          "name": "Create Category",
+          "type": "http-request",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/product-category",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            },
+            "body": {
+              "mode": "json",
+              "json": "{{create_category_payload}}"
+            }
+          }
+        },
+        {
+          "uid": "get-category",
+          "name": "Get Category",
+          "type": "http-request",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/product-category/{{category_id}}",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            }
+          }
+        },
+        {
+          "uid": "update-category",
+          "name": "Update Category",
+          "type": "http-request",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/product-category/{{category_id}}",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            },
+            "body": {
+              "mode": "json",
+              "json": "{{update_category_payload}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Image Media",
+      "uid": "image-media",
+      "items": [
+        {
+          "uid": "upload-image",
+          "name": "Upload Image",
+          "type": "http-request",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/image-media",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "type": "file",
+                  "name": "image",
+                  "value": ""
+                },
+                {
+                  "type": "text",
+                  "name": "title",
+                  "value": ""
+                },
+                {
+                  "type": "text",
+                  "name": "alt",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "uid": "delete-image",
+          "name": "Delete Image",
+          "type": "http-request",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/image-media/{{image_id}}",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Market Services",
+      "uid": "market-services",
+      "items": [
+        {
+          "uid": "list-services",
+          "name": "List Services",
+          "type": "http-request",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/market/services",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            }
+          }
+        },
+        {
+          "uid": "create-service",
+          "name": "Create Service",
+          "type": "http-request",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/market/services",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            },
+            "body": {
+              "mode": "json",
+              "json": "{{create_service_payload}}"
+            }
+          }
+        },
+        {
+          "uid": "get-service",
+          "name": "Get Service",
+          "type": "http-request",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/market/services/{{service_id}}",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            }
+          }
+        },
+        {
+          "uid": "update-service",
+          "name": "Update Service",
+          "type": "http-request",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/market/services/{{service_id}}",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            },
+            "body": {
+              "mode": "json",
+              "json": "{{update_service_payload}}"
+            }
+          }
+        },
+        {
+          "uid": "delete-service",
+          "name": "Delete Service",
+          "type": "http-request",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/market/services/{{service_id}}",
+            "headers": {
+              "Authorization": "Bearer {{access_token}}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

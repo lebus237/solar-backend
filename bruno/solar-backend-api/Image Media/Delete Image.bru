@@ -1,0 +1,20 @@
+meta {
+  name: Delete Image
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{base_url}}/api/image-media/{{image_id}}
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("should return 204 on success", function() {
+    expect(res.status).toBe(204);
+  });
+}

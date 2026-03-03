@@ -1,0 +1,25 @@
+meta {
+  name: Get Product
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/api/product/{{product_id}}
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("should return 200 on success", function() {
+    expect(res.status).toBe(200);
+  });
+
+  test("should return product data", function() {
+    const body = res.body;
+    expect(body.data.product).toBeTruthy();
+  });
+}

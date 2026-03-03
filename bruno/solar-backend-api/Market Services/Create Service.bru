@@ -1,0 +1,31 @@
+meta {
+  name: Create Service
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/market/services
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "designation": "Service Name",
+    "thumbnailId": "",
+    "thumbnailUrl": "https://example.com/thumb.jpg",
+    "shortDescription": "Short description",
+    "features": []
+  }
+}
+
+tests {
+  test("should return 201 on success", function() {
+    expect(res.status).toBe(201);
+  });
+}

@@ -1,0 +1,32 @@
+meta {
+  name: Update Product
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{base_url}}/api/product/{{product_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "designation": "Updated Product Name",
+    "description": "Updated description",
+    "categoryId": "",
+    "pictureId": "",
+    "price": 149.99,
+    "brand": "Updated Brand"
+  }
+}
+
+tests {
+  test("should return 204 on success", function() {
+    expect(res.status).toBe(204);
+  });
+}
