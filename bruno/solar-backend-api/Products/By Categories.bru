@@ -1,0 +1,27 @@
+meta {
+  name: By Categories
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{base_url}}/api/product
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("should return 200 on success", function() {
+    expect(res.status).toBe(200);
+  });
+  
+  test("should return products array", function() {
+    const body = res.body;
+    expect(body.data).toBeTruthy();
+    expect(Array.isArray(body.data)).toBeTruthy();
+  });
+}
