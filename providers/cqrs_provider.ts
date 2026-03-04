@@ -12,6 +12,9 @@ import { CreateMarketServiceHandler } from '#kernel/market/application/command_h
 import { UpdateMarketServiceHandler } from '#kernel/market/application/command_handler/update_market_service_handler'
 import { UpdateMarketServiceDescriptionHandler } from '#kernel/market/application/command_handler/update_market_service_description.handler'
 import { DeleteMarketServiceHandler } from '#kernel/market/application/command_handler/delete_market_service_handler'
+import { AddStockHandler } from '#kernel/product/application/command-handler/add_stock_handler'
+import { RemoveStockHandler } from '#kernel/product/application/command-handler/remove_stock_handler'
+import { SetStockHandler } from '#kernel/product/application/command-handler/set_stock_handler'
 
 export default class CqrsProvider {
   constructor(protected app: ApplicationService) {}
@@ -56,6 +59,20 @@ export default class CqrsProvider {
       commandBus.register('DeleteImageCommand', DeleteImageHandler, [
         'ImageMediaRepository',
         'MediaUploadService',
+      ])
+
+      //STOCK COMMANDS
+      commandBus.register('AddStockCommand', AddStockHandler, [
+        'ProductRepository',
+        'StockMovementRepository',
+      ])
+      commandBus.register('RemoveStockCommand', RemoveStockHandler, [
+        'ProductRepository',
+        'StockMovementRepository',
+      ])
+      commandBus.register('SetStockCommand', SetStockHandler, [
+        'ProductRepository',
+        'StockMovementRepository',
       ])
 
       return commandBus

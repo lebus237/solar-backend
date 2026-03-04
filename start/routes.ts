@@ -16,6 +16,7 @@ const ProductController = () => import('#controllers/product/product_controller'
 const MarketServiceController = () => import('#controllers/market/market_services_controller')
 const StoreController = () => import('#controllers/store/store_controller')
 const AuthController = () => import('#controllers/authentication/auth_controller')
+const StockController = () => import('#controllers/product/stock_controller')
 
 router
   .group(() => {
@@ -39,6 +40,20 @@ router
         .use(middleware.auth())
       router.resource('product-category', ProductCategoryController).use('*', middleware.auth())
       router.resource('image-media', ImageMediasController).use('*', middleware.auth())
+
+      // Stock routes
+      router
+        .group(() => {
+          router.get('/:id/stock', [StockController, 'show'])
+          router.post('/:id/stock/add', [StockController, 'add'])
+          router.post('/:id/stock/remove', [StockController, 'remove'])
+          router.put('/:id/stock', [StockController, 'set'])
+          router.get('/:id/stock/history', [StockController, 'history'])
+        })
+        .prefix('product')
+        .use(middleware.auth())
+
+      router.get('/products/low-stock', [StockController, 'lowStock']).use(middleware.auth())
     })
 
     router

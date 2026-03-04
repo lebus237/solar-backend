@@ -23,11 +23,15 @@ export class Product {
     private updatedAt?: Date,
     private mainImageUrl: string | null = null,
     private categoryName: string | null = null,
-    private images: ProductImage[] = []
+    private images: ProductImage[] = [],
+    private stockQuantity: number = 0,
+    private lowStockThreshold: number = 10
   ) {
     this.slug = slug ?? string.slug(this.designation + '-' + string.generateRandom(8)).toLowerCase()
     this.isAvailable = isAvailable ?? false
     this.isDeleted = isDeleted ?? false
+    this.stockQuantity = stockQuantity ?? 0
+    this.lowStockThreshold = lowStockThreshold ?? 10
   }
 
   getId(): any {
@@ -64,5 +68,29 @@ export class Product {
 
   getImages(): ProductImage[] {
     return this.images
+  }
+
+  getStockQuantity(): number {
+    return this.stockQuantity
+  }
+
+  getLowStockThreshold(): number {
+    return this.lowStockThreshold
+  }
+
+  setStockQuantity(quantity: number): void {
+    this.stockQuantity = quantity
+  }
+
+  setLowStockThreshold(threshold: number): void {
+    this.lowStockThreshold = threshold
+  }
+
+  isLowStock(): boolean {
+    return this.stockQuantity > 0 && this.stockQuantity <= this.lowStockThreshold
+  }
+
+  isOutOfStock(): boolean {
+    return this.stockQuantity <= 0
   }
 }

@@ -4,6 +4,7 @@ import { ProductARRepository } from '#kernel/product/infrastructure/persistence/
 import { ProductCategoryARRepository } from '#kernel/product/infrastructure/persistence/product_category_ar_repository'
 import { MarketServiceARRepository } from '#kernel/market/infrastructure/persistence/market_service_ar_repository'
 import { ImageMediaARRepository } from '#kernel/medias/infrastructure/persistence/image_media_ar_repository'
+import { StockMovementARRepository } from '#kernel/product/infrastructure/persistence/stock_movement_ar_repository'
 
 export default class RepositoryProvider {
   constructor(protected app: ApplicationService) {}
@@ -24,6 +25,9 @@ export default class RepositoryProvider {
       })
       this.app.container.bind('ImageMediaRepository', () => {
         return new ImageMediaARRepository()
+      })
+      this.app.container.bind('StockMovementRepository', () => {
+        return new StockMovementARRepository()
       })
     }
   }

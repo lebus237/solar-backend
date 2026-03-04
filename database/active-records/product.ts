@@ -36,6 +36,12 @@ export default class Product extends BaseModel {
   @column({ columnName: 'is_deleted' })
   declare isDeleted: boolean
 
+  @column({ columnName: 'stock_quantity' })
+  declare stockQuantity: number
+
+  @column({ columnName: 'low_stock_threshold' })
+  declare lowStockThreshold: number
+
   // @ts-ignore
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

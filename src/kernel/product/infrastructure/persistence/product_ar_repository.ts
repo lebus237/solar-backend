@@ -32,7 +32,9 @@ export class ProductARRepository implements ProductRepository {
       product.updatedAt as any,
       product.mainImage?.url || null,
       product.category?.designation || null,
-      images
+      images,
+      product.stockQuantity,
+      product.lowStockThreshold
     )
   }
 
@@ -48,6 +50,8 @@ export class ProductARRepository implements ProductRepository {
       slug: entity['slug'] as any,
       isAvailable: entity['isAvailable'],
       isDeleted: entity['isDeleted'],
+      stockQuantity: entity['stockQuantity'],
+      lowStockThreshold: entity['lowStockThreshold'],
     }
 
     let productRecord: EntityActiveRecord
