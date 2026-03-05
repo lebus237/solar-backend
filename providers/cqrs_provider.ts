@@ -24,6 +24,7 @@ import { CancelOrderHandler } from '#kernel/order/application/command-handler/ca
 import { ListCustomersHandler } from '#kernel/customer/application/query-handler/list_customers_handler'
 import { GetCustomerHandler } from '#kernel/customer/application/query-handler/get_customer_handler'
 import { ListCustomerAddressesHandler } from '#kernel/customer/application/query-handler/list_customer_addresses_handler'
+import { UpdateCustomerHandler } from '#kernel/customer/application/command-handler/update_customer_handler'
 
 export default class CqrsProvider {
   constructor(protected app: ApplicationService) {}
@@ -86,6 +87,7 @@ export default class CqrsProvider {
 
       //CUSTOMER COMMANDS
       commandBus.register('CreateCustomerCommand', CreateCustomerHandler, ['CustomerRepository'])
+      commandBus.register('UpdateCustomerCommand', UpdateCustomerHandler, ['CustomerRepository'])
       commandBus.register('CreateAddressCommand', CreateAddressHandler, [
         'CustomerRepository',
         'AddressRepository',

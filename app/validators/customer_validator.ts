@@ -11,10 +11,10 @@ export const createCustomerSchema = vine.compile(
 
 export const updateCustomerSchema = vine.compile(
   vine.object({
-    firstName: vine.string().trim().minLength(2).maxLength(100).optional(),
-    lastName: vine.string().trim().minLength(2).maxLength(100).optional(),
-    phone: vine.string().trim().minLength(10).maxLength(20).optional(),
-    email: vine.string().trim().email().maxLength(255).nullable().optional(),
+    firstName: vine.string().trim().minLength(2).maxLength(100),
+    lastName: vine.string().trim().minLength(2).maxLength(100),
+    phone: vine.string().trim().minLength(10).maxLength(20),
+    email: vine.string().trim().email().maxLength(255).optional(),
   })
 )
 

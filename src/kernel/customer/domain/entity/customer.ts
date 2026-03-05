@@ -6,8 +6,8 @@ export class Customer {
     private userId: string | null,
     private firstName: string,
     private lastName: string,
-    private email: string,
-    private phone: string | null,
+    private phone: string,
+    private email?: string,
     private addresses: Address[] = [],
     private createdAt?: Date,
     private updatedAt?: Date
@@ -33,7 +33,7 @@ export class Customer {
     return `${this.firstName} ${this.lastName}`
   }
 
-  getEmail(): string {
+  getEmail(): string | undefined {
     return this.email
   }
 
@@ -54,19 +54,19 @@ export class Customer {
   }
 
   // Setters
-  setFirstName(firstName: string): void {
-    this.firstName = firstName
+  setFirstName(firstName?: string): void {
+    this.firstName = firstName ?? this.firstName
   }
 
-  setLastName(lastName: string): void {
-    this.lastName = lastName
+  setLastName(lastName?: string): void {
+    this.lastName = lastName ?? this.lastName
   }
 
-  setEmail(email: string | null): void {
-    this.email = email ?? ''
+  setEmail(email?: string): void {
+    this.email = email
   }
 
-  setPhone(phone: string | null): void {
-    this.phone = phone
+  setPhone(phone?: string): void {
+    this.phone = phone ?? this.phone
   }
 }

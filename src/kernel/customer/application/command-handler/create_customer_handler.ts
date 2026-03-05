@@ -12,8 +12,8 @@ export class CreateCustomerHandler implements CommandHandler<CreateCustomerComma
       command.userId || null,
       command.firstName,
       command.lastName,
-      command.email,
-      command.phone || null
+      command.phone,
+      command.email
     )
 
     await this.customerRepository.save(customer)
