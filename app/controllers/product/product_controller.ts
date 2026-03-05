@@ -41,11 +41,16 @@ export default class ProductController extends AppAbstractController {
           slug: product.slug,
           designation: product.designation,
           price: product.price,
-          categoryName: product.category?.designation,
-          categoryId: product.category?.id,
-          mainImageUrl: mainImageSignedUrl,
-          mainImageAlt: product.mainImage?.altDescription,
-          mainImageTitle: product.mainImage?.title,
+          category: {
+            designation: product.category?.designation,
+            id: product.category?.id,
+          },
+          mainImage: {
+            url: mainImageSignedUrl,
+            alt: product.mainImage?.altDescription,
+            title: product.mainImage?.title,
+          },
+          stockQuantity: product.stockQuantity,
           brand: product.brand,
           createdAt: product.createdAt,
           updatedAt: product.updatedAt,
@@ -60,6 +65,11 @@ export default class ProductController extends AppAbstractController {
     const productId = await request.param('id')
 
     const product = await ActiveRecord.find(productId)
+
+    if(!product){
+      return response.notFound({ message: 'Product not found' })
+    }
+
     const mediaUploadService = (await app.container.make(
       'MediaUploadService'
     )) as MediaManagerInterface

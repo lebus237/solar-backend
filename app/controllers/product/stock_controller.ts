@@ -9,7 +9,7 @@ import {
   setStockSchema,
   stockHistorySchema,
 } from '#validators/stock_validator'
-import ActiveRecord from '#database/active-records/product'
+import ProductActiveRecord from '#database/active-records/product'
 import StockMovementActiveRecord from '#database/active-records/stock_movement'
 
 export default class StockController extends AppAbstractController {
@@ -19,7 +19,7 @@ export default class StockController extends AppAbstractController {
 
   public async show({ request, response }: HttpContext) {
     const productId = request.param('id')
-    const product = await ActiveRecord.find(productId)
+    const product = await ProductActiveRecord.find(productId)
 
     if (!product) {
       return response.notFound({ message: 'Product not found' })
@@ -95,7 +95,7 @@ export default class StockController extends AppAbstractController {
     const page = Number(query.page) || 1
     const limit = Number(query.limit) || 10
 
-    const result = await ActiveRecord.query()
+    const result = await ProductActiveRecord.query()
       .where('stock_quantity', '>', 0)
       .whereRaw('stock_quantity <= low_stock_threshold')
       .orderBy('stock_quantity', 'asc')
