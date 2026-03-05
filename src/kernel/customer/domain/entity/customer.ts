@@ -37,7 +37,7 @@ export class Customer {
     return this.email
   }
 
-  getPhone(): string | null {
+  getPhone(): string {
     return this.phone
   }
 

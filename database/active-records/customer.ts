@@ -1,11 +1,5 @@
 import { DateTime } from 'luxon'
-import {
-  afterFind,
-  afterFetch,
-  BaseModel,
-  beforeCreate,
-  column,
-} from '@adonisjs/lucid/orm'
+import { afterFind, afterFetch, BaseModel, beforeCreate, column } from '@adonisjs/lucid/orm'
 import crypto from 'node:crypto'
 import Address from '#database/active-records/address'
 
@@ -23,10 +17,10 @@ export default class Customer extends BaseModel {
   declare lastName: string
 
   @column()
-  declare email: string
+  declare email: string | null
 
   @column()
-  declare phone: string | null
+  declare phone: string
 
   // @ts-ignore
   @column.dateTime({ autoCreate: true })

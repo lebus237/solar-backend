@@ -12,6 +12,7 @@
       "#core/*": ["./src/core/*"],
       "#infra/*": ["./src/infrastructure/*"],
       "#shared/*": ["./src/shared/*"]
-    }
+    },
+    "strictNullChecks": true
   }
 }

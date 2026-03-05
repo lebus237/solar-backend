@@ -5,7 +5,8 @@ export const createCustomerSchema = vine.compile(
     firstName: vine.string().trim().minLength(2).maxLength(100),
     lastName: vine.string().trim().minLength(2).maxLength(100),
     phone: vine.string().trim().minLength(10).maxLength(20),
-    email: vine.string().trim().email().maxLength(255).nullable().optional(),
+    email: vine.string().trim().email().maxLength(255).optional(),
+    userId: vine.string().trim().uuid().optional(),
   })
 )
 

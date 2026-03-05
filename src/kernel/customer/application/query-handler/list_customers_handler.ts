@@ -7,8 +7,8 @@ export interface CustomerDTO {
   id: string | null
   firstName: string
   lastName: string
-  phone: string | null
-  email: string
+  phone: string
+  email?: string
   createdAt: Date | undefined
   updatedAt: Date | undefined
 }

@@ -53,7 +53,8 @@ export default class CustomerController extends AppAbstractController {
         payload.firstName,
         payload.lastName,
         payload.phone,
-        payload.email ?? undefined
+        payload.email,
+        payload.userId
       )
     )
 
@@ -72,7 +73,7 @@ export default class CustomerController extends AppAbstractController {
         payload.firstName,
         payload.lastName,
         payload.phone,
-        payload.email ?? undefined
+        payload.email
       )
     )
 

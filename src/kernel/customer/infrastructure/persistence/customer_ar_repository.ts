@@ -30,8 +30,8 @@ export class CustomerARRepository implements CustomerRepository {
       customer.userId,
       customer.firstName,
       customer.lastName,
-      customer.email,
       customer.phone,
+      customer.email as string,
       addresses,
       customer.createdAt as any,
       customer.updatedAt as any
@@ -66,8 +66,8 @@ export class CustomerARRepository implements CustomerRepository {
       customer.userId,
       customer.firstName,
       customer.lastName,
-      customer.email,
       customer.phone,
+      customer.email as string,
       addresses,
       customer.createdAt as any,
       customer.updatedAt as any
@@ -121,8 +121,8 @@ export class CustomerARRepository implements CustomerRepository {
         customer.userId,
         customer.firstName,
         customer.lastName,
-        customer.email,
         customer.phone,
+        customer.email as string,
         addresses,
         customer.createdAt as any,
         customer.updatedAt as any
