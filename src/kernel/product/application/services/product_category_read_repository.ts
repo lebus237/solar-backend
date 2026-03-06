@@ -9,15 +9,17 @@ import { PaginatedSearchSortQueryOptions } from '#shared/application/query-optio
 
 export type ProductCategoryListProductsSortField = 'created_at' | 'designation' | 'price'
 
-export interface ProductCategoryProductsQueryOptions
-  extends PaginatedSearchSortQueryOptions<ProductCategoryListProductsSortField> {
+export interface ProductCategoryProductsQueryOptions extends PaginatedSearchSortQueryOptions<ProductCategoryListProductsSortField> {
   categoryId: string
 }
 
-export interface ProductCategoryReadRepository {
+export interface ProductCategoryCollection {
   list(params: PaginatedSearchQueryOptions): Promise<PaginatedResultDto<ProductCategoryListItemDto>>
-  getById(categoryId: string): Promise<ProductCategoryDetailsDto | null>
   listProducts(
     params: ProductCategoryProductsQueryOptions
   ): Promise<PaginatedResultDto<CategoryProductListItemDto>>
+}
+
+export interface ProductCategoryReadModel {
+  getById(categoryId: string): Promise<ProductCategoryDetailsDto | null>
 }

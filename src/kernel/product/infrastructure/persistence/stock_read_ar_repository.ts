@@ -1,6 +1,9 @@
 import Product from '#database/active-records/product'
 import StockMovement from '#database/active-records/stock_movement'
-import { StockReadRepository } from '#kernel/product/application/services/stock_read_repository'
+import {
+  StockCollection,
+  StockReadModel,
+} from '#kernel/product/application/services/stock_read_repository'
 import { PaginatedResultDto } from '#kernel/product/application/dto/product_read_dto'
 import {
   LowStockProductDto,
@@ -9,7 +12,7 @@ import {
 } from '#kernel/product/application/dto/stock_read_dto'
 import { mapPaginatedResult } from '#shared/infrastructure/query/paginated_result'
 
-export class StockReadARRepository implements StockReadRepository {
+export class StockReadARRepository implements StockCollection, StockReadModel {
   async getProductStock(productId: string): Promise<ProductStockDto | null> {
     const product = await Product.find(productId)
 

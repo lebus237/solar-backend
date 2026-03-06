@@ -129,11 +129,12 @@ export default class CqrsProvider {
       //CUSTOMER QUERIES
       const customerRepository = await this.app.container.make('CustomerRepository')
       const addressRepository = await this.app.container.make('AddressRepository')
-      const productReadRepository = await this.app.container.make('ProductReadRepository')
-      const productCategoryReadRepository = await this.app.container.make(
-        'ProductCategoryReadRepository'
-      )
-      const stockReadRepository = await this.app.container.make('StockReadRepository')
+      const productCollection = await this.app.container.make('ProductCollection')
+      const productReadModel = await this.app.container.make('ProductReadModel')
+      const productCategoryCollection = await this.app.container.make('ProductCategoryCollection')
+      const productCategoryReadModel = await this.app.container.make('ProductCategoryReadModel')
+      const stockCollection = await this.app.container.make('StockCollection')
+      const stockReadModel = await this.app.container.make('StockReadModel')
 
       queryBus.register('ListCustomersQuery', new ListCustomersHandler(customerRepository))
       queryBus.register('GetCustomerQuery', new GetCustomerHandler(customerRepository))
@@ -141,29 +142,29 @@ export default class CqrsProvider {
         'ListCustomerAddressesQuery',
         new ListCustomerAddressesHandler(addressRepository)
       )
-      queryBus.register('ListProductsQuery', new ListProductsHandler(productReadRepository))
-      queryBus.register('GetProductQuery', new GetProductHandler(productReadRepository))
+      queryBus.register('ListProductsQuery', new ListProductsHandler(productCollection))
+      queryBus.register('GetProductQuery', new GetProductHandler(productReadModel))
       queryBus.register(
         'ListProductsGroupedByCategoryQuery',
-        new ListProductsGroupedByCategoryHandler(productReadRepository)
+        new ListProductsGroupedByCategoryHandler(productCollection)
       )
       queryBus.register(
         'ListProductCategoriesQuery',
-        new ListProductCategoriesHandler(productCategoryReadRepository)
+        new ListProductCategoriesHandler(productCategoryCollection)
       )
       queryBus.register(
         'GetProductCategoryQuery',
-        new GetProductCategoryHandler(productCategoryReadRepository)
+        new GetProductCategoryHandler(productCategoryReadModel)
       )
       queryBus.register(
         'ListProductsByCategoryQuery',
-        new ListProductsByCategoryHandler(productCategoryReadRepository)
+        new ListProductsByCategoryHandler(productCategoryCollection)
       )
-      queryBus.register('GetProductStockQuery', new GetProductStockHandler(stockReadRepository))
-      queryBus.register('GetStockHistoryQuery', new GetStockHistoryHandler(stockReadRepository))
+      queryBus.register('GetProductStockQuery', new GetProductStockHandler(stockReadModel))
+      queryBus.register('GetStockHistoryQuery', new GetStockHistoryHandler(stockCollection))
       queryBus.register(
         'ListLowStockProductsQuery',
-        new ListLowStockProductsHandler(stockReadRepository)
+        new ListLowStockProductsHandler(stockCollection)
       )
 
       return queryBus

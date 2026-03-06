@@ -1,5 +1,8 @@
 import Product from '#database/active-records/product'
-import { ProductReadRepository } from '#kernel/product/application/services/product_read_repository'
+import {
+  ProductCollection,
+  ProductReadModel,
+} from '#kernel/product/application/services/product_read_repository'
 import {
   GroupedProductsByCategoryDto,
   PaginatedResultDto,
@@ -30,7 +33,7 @@ type ProductActiveRecordWithRelations = Product & {
   } | null
 }
 
-export class ProductReadARRepository implements ProductReadRepository {
+export class ProductReadARRepository implements ProductCollection, ProductReadModel {
   constructor(private readonly mediaManager: MediaManagerInterface) {}
 
   async list(params: {
@@ -41,7 +44,7 @@ export class ProductReadARRepository implements ProductReadRepository {
     sortDirection: 'asc' | 'desc'
   }): Promise<PaginatedResultDto<ProductListItemDto>> {
     const result = await Product.query()
-      .preload('category')
+      .preload('product_categories')
       .preload('mainImage')
       .whereILike('designation', `%${params.search}%`)
       .orderBy(params.sortBy, params.sortDirection)

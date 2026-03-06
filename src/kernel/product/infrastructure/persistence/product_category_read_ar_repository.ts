@@ -1,8 +1,9 @@
 import ProductCategory from '#database/active-records/product_category'
 import Product from '#database/active-records/product'
 import {
+  ProductCategoryCollection,
   ProductCategoryProductsQueryOptions,
-  ProductCategoryReadRepository,
+  ProductCategoryReadModel,
 } from '#kernel/product/application/services/product_category_read_repository'
 import { PaginatedResultDto } from '#kernel/product/application/dto/product_read_dto'
 import {
@@ -25,7 +26,9 @@ type CategoryProductRecord = Product & {
   } | null
 }
 
-export class ProductCategoryReadARRepository implements ProductCategoryReadRepository {
+export class ProductCategoryReadARRepository
+  implements ProductCategoryCollection, ProductCategoryReadModel
+{
   constructor(private readonly mediaManager: MediaManagerInterface) {}
 
   private static readonly sortableFields = ['created_at', 'designation', 'price'] as const

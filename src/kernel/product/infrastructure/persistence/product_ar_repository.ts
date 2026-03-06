@@ -5,8 +5,8 @@ import { Product } from '#kernel/product/domain/entity/product'
 import { ProductImage } from '#kernel/product/domain/entity/product_image'
 import { ProductCategory } from '#kernel/product/domain/entity/product_category'
 import crypto from 'node:crypto'
-import { E_ROW_NOT_FOUND } from '@adonisjs/lucid/errors'
 import { ProductNotFoundError } from '#kernel/product/application/errors/product_not_found_error'
+import { E_ROW_NOT_FOUND } from '@adonisjs/lucid/build/src/errors'
 
 const MAX_ADDITIONAL_IMAGES = 2
 

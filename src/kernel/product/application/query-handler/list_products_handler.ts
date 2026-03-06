@@ -1,13 +1,13 @@
 import { QueryHandler } from '#shared/application/use-cases/query_handler'
 import { ListProductsQuery } from '../queries/list_products_query'
 import { PaginatedResultDto, ProductListItemDto } from '../dto/product_read_dto'
-import { ProductReadRepository } from '../services/product_read_repository'
+import { ProductCollection } from '../services/product_read_repository'
 
 export class ListProductsHandler implements QueryHandler<
   ListProductsQuery,
   PaginatedResultDto<ProductListItemDto>
 > {
-  constructor(private readonly productReadRepository: ProductReadRepository) {}
+  constructor(private readonly productReadRepository: ProductCollection) {}
 
   async handle(query: ListProductsQuery): Promise<PaginatedResultDto<ProductListItemDto>> {
     return this.productReadRepository.list({

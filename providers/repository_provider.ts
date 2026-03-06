@@ -48,17 +48,30 @@ export default class RepositoryProvider {
       this.app.container.bind('ProductImageRepository', () => {
         return new ProductImageARRepository()
       })
-      this.app.container.bind('ProductReadRepository', async () => {
+      this.app.container.bind('ProductCollection', async () => {
         const mediaUploadService = await this.app.container.make('MediaUploadService')
 
         return new ProductReadARRepository(mediaUploadService)
       })
-      this.app.container.bind('ProductCategoryReadRepository', async () => {
+      this.app.container.bind('ProductReadModel', async () => {
+        const mediaUploadService = await this.app.container.make('MediaUploadService')
+
+        return new ProductReadARRepository(mediaUploadService)
+      })
+      this.app.container.bind('ProductCategoryCollection', async () => {
         const mediaUploadService = await this.app.container.make('MediaUploadService')
 
         return new ProductCategoryReadARRepository(mediaUploadService)
       })
-      this.app.container.bind('StockReadRepository', () => {
+      this.app.container.bind('ProductCategoryReadModel', async () => {
+        const mediaUploadService = await this.app.container.make('MediaUploadService')
+
+        return new ProductCategoryReadARRepository(mediaUploadService)
+      })
+      this.app.container.bind('StockCollection', () => {
+        return new StockReadARRepository()
+      })
+      this.app.container.bind('StockReadModel', () => {
         return new StockReadARRepository()
       })
     }

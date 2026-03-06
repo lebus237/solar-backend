@@ -2,13 +2,13 @@ import { QueryHandler } from '#shared/application/use-cases/query_handler'
 import { ListProductsByCategoryQuery } from '../queries/list_products_by_category_query'
 import { PaginatedResultDto } from '../dto/product_read_dto'
 import { CategoryProductListItemDto } from '../dto/product_category_read_dto'
-import { ProductCategoryReadRepository } from '../services/product_category_read_repository'
+import { ProductCategoryCollection } from '../services/product_category_read_repository'
 
 export class ListProductsByCategoryHandler implements QueryHandler<
   ListProductsByCategoryQuery,
   PaginatedResultDto<CategoryProductListItemDto>
 > {
-  constructor(private readonly repository: ProductCategoryReadRepository) {}
+  constructor(private readonly repository: ProductCategoryCollection) {}
 
   async handle(
     query: ListProductsByCategoryQuery

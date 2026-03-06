@@ -10,8 +10,11 @@ export interface StockHistoryQueryOptions extends PaginatedQueryOptions {
   productId: string
 }
 
-export interface StockReadRepository {
-  getProductStock(productId: string): Promise<ProductStockDto | null>
+export interface StockCollection {
   getStockHistory(params: StockHistoryQueryOptions): Promise<PaginatedResultDto<StockMovementDto>>
   listLowStockProducts(params: PaginatedQueryOptions): Promise<PaginatedResultDto<LowStockProductDto>>
+}
+
+export interface StockReadModel {
+  getProductStock(productId: string): Promise<ProductStockDto | null>
 }
