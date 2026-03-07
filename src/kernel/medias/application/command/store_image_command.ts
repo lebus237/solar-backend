@@ -8,8 +8,8 @@ export class StoreImageCommand implements Command {
 
   constructor(
     public readonly file: AppFile,
-    public readonly title: string,
-    public readonly altDescription: string
+    public readonly title: string = '',
+    public readonly altDescription: string = ''
   ) {
     this.timestamp = new Date()
   }

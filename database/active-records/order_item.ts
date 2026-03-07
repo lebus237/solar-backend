@@ -1,6 +1,9 @@
 import { DateTime } from 'luxon'
-import { BaseModel, beforeCreate, column } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeCreate, belongsTo, column } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import crypto from 'node:crypto'
+import Order from '#database/active-records/order'
+import Product from '#database/active-records/product'
 
 export default class OrderItem extends BaseModel {
   @column({ isPrimary: true })
@@ -26,6 +29,16 @@ export default class OrderItem extends BaseModel {
 
   @column({ columnName: 'total_price' })
   declare totalPrice: number
+
+  @belongsTo(() => Order, {
+    foreignKey: 'orderId',
+  })
+  declare order: BelongsTo<typeof Order>
+
+  @belongsTo(() => Product, {
+    foreignKey: 'productId',
+  })
+  declare product: BelongsTo<typeof Product>
 
   // @ts-ignore
   @column.dateTime({ autoCreate: true })

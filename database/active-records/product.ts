@@ -1,5 +1,13 @@
 import { DateTime } from 'luxon'
-import { afterFind, afterFetch, BaseModel, beforeCreate, column } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  beforeCreate,
+  belongsTo,
+  column,
+  hasMany,
+  manyToMany,
+} from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import crypto from 'node:crypto'
 import ProductCategory from '#database/active-records/product_category'
 import ImageMedia from '#database/active-records/image_media'
@@ -50,59 +58,35 @@ export default class Product extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  declare mainImage: ImageMedia | null
-  declare images: ImageMedia[]
+  @belongsTo(() => ImageMedia, {
+    foreignKey: 'mainImageId',
+  })
+  declare mainImage: BelongsTo<typeof ImageMedia>
 
-  declare category: ProductCategory | null
+  @belongsTo(() => ProductCategory, {
+    foreignKey: 'categoryId',
+  })
+  declare category: BelongsTo<typeof ProductCategory>
+
+  @hasMany(() => ProductImage, {
+    foreignKey: 'productId',
+  })
+  declare productImages: HasMany<typeof ProductImage>
+
+  @manyToMany(() => ImageMedia, {
+    pivotTable: 'product_images',
+    localKey: 'id',
+    pivotForeignKey: 'product_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'image_id',
+    pivotColumns: ['sort_order'],
+    serializeAs: 'images',
+    pivotTimestamps: true,
+  })
+  declare images: ManyToMany<typeof ImageMedia>
 
   @beforeCreate()
   static async beforeCreate(product: Product) {
     product.id = crypto.randomUUID()
-  }
-
-  @afterFind()
-  static async afterFind(product: Product) {
-    if (product.mainImageId) {
-      product.mainImage = await ImageMedia.find(product.mainImageId)
-    }
-    if (product.categoryId) {
-      product.category = await ProductCategory.find(product.categoryId)
-    }
-    // Load additional images from junction table
-    const productImages = await ProductImage.query()
-      .where('product_id', product.id)
-      .orderBy('sort_order', 'asc')
-
-    const imageIds = productImages.map((pi) => pi.imageId)
-    if (imageIds.length > 0) {
-      product.images = await ImageMedia.query().whereIn('id', imageIds)
-    } else {
-      product.images = []
-    }
-  }
-
-  @afterFetch()
-  static async afterFetch(products: Product[]) {
-    await Promise.all(
-      products.map(async (product) => {
-        if (product.mainImageId) {
-          product.mainImage = await ImageMedia.find(product.mainImageId)
-        }
-        if (product.categoryId) {
-          product.category = await ProductCategory.find(product.categoryId)
-        }
-        // Load additional images from junction table
-        const productImages = await ProductImage.query()
-          .where('product_id', product.id)
-          .orderBy('sort_order', 'asc')
-
-        const imageIds = productImages.map((pi) => pi.imageId)
-        if (imageIds.length > 0) {
-          product.images = await ImageMedia.query().whereIn('id', imageIds)
-        } else {
-          product.images = []
-        }
-      })
-    )
   }
 }

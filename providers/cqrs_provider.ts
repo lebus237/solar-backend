@@ -27,15 +27,15 @@ import { ListCustomersHandler } from '#kernel/customer/application/query-handler
 import { GetCustomerHandler } from '#kernel/customer/application/query-handler/get_customer_handler'
 import { ListCustomerAddressesHandler } from '#kernel/customer/application/query-handler/list_customer_addresses_handler'
 import { UpdateCustomerHandler } from '#kernel/customer/application/command-handler/update_customer_handler'
-import { ListProductsHandler } from '#kernel/product/application/query-handler/list_products_handler'
 import { GetProductHandler } from '#kernel/product/application/query-handler/get_product_handler'
+import { ListProductsHandler } from '#kernel/product/application/query-handler/list_products_handler'
+import { ListProductsGroupedByCategoryHandler } from '#kernel/product/application/query-handler/list_products_grouped_by_category_handler'
 import { ListProductCategoriesHandler } from '#kernel/product/application/query-handler/list_product_categories_handler'
-import { GetProductCategoryHandler } from '#kernel/product/application/query-handler/get_product_category_handler'
 import { ListProductsByCategoryHandler } from '#kernel/product/application/query-handler/list_products_by_category_handler'
+import { GetProductCategoryHandler } from '#kernel/product/application/query-handler/get_product_category_handler'
 import { GetProductStockHandler } from '#kernel/product/application/query-handler/get_product_stock_handler'
 import { GetStockHistoryHandler } from '#kernel/product/application/query-handler/get_stock_history_handler'
 import { ListLowStockProductsHandler } from '#kernel/product/application/query-handler/list_low_stock_products_handler'
-import { ListProductsGroupedByCategoryHandler } from '#kernel/product/application/query-handler/list_products_grouped_by_category_handler'
 
 export default class CqrsProvider {
   constructor(protected app: ApplicationService) {}

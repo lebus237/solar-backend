@@ -3,9 +3,9 @@ import { AppAbstractController } from '#shared/user_interface/controller/app_abs
 import { CreateProductCommand } from '#kernel/product/application/command/create_product_command'
 import { createProductSchema, updateProductSchema } from '#validators/product_validator'
 import { UpdateProductCommand } from '#kernel/product/application/command/update_product_command'
-import { ListProductsQuery } from '#kernel/product/application/queries/list_products_query'
-import { GetProductQuery } from '#kernel/product/application/queries/get_product_query'
-import { ListProductsGroupedByCategoryQuery } from '#kernel/product/application/queries/list_products_grouped_by_category_query'
+import { ListProductsGroupedByCategoryQuery } from '#kernel/product/application/query/list_products_grouped_by_category_query'
+import { GetProductQuery } from '#kernel/product/application/query/get_product_query'
+import { ListProductsQuery } from '#kernel/product/application/query/list_products_query'
 
 export default class ProductController extends AppAbstractController {
   constructor() {
@@ -16,11 +16,9 @@ export default class ProductController extends AppAbstractController {
     const query = request.qs()
     const result = await this.handleQuery(
       new ListProductsQuery(
-        Number(query.page) || 1,
-        Number(query.limit) || 10,
-        String(query.q || ''),
-        'created_at',
-        query.sort === 'asc' ? 'asc' : 'desc'
+        this.parseQueryPagination(query),
+        this.parseQuerySearch(query),
+        this.parseQuerySort(query)
       )
     )
 
@@ -73,9 +71,8 @@ export default class ProductController extends AppAbstractController {
     const query = request.qs()
     const result = await this.handleQuery(
       new ListProductsGroupedByCategoryQuery(
-        Number(query.page) || 1,
-        Number(query.limit) || 10,
-        String(query.q || '')
+        this.parseQueryPagination(query),
+        this.parseQuerySearch(query)
       )
     )
 

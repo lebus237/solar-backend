@@ -1,16 +1,14 @@
 import Product from '#database/active-records/product'
-import {
-  ProductCollection,
-  ProductReadModel,
-} from '#kernel/product/application/services/product_read_repository'
+import { ProductCollection } from '#kernel/product/application/collection/product_collection'
 import {
   GroupedProductsByCategoryDto,
-  PaginatedResultDto,
-  ProductDetailsDto,
   ProductListItemDto,
 } from '#kernel/product/application/dto/product_read_dto'
+import { PaginatedResultDto } from '#shared/application/collection/paginated_result'
 import { MediaManagerInterface } from '#shared/application/services/upload/media_manager_interface'
 import { mapPaginatedResult } from '#shared/infrastructure/query/paginated_result'
+import { ListProductsQuery } from '#kernel/product/application/query/list_products_query'
+import { ListProductsGroupedByCategoryQuery } from '#kernel/product/application/query/list_products_grouped_by_category_query'
 
 type ProductActiveRecordWithRelations = Product & {
   mainImage?: {
@@ -33,22 +31,16 @@ type ProductActiveRecordWithRelations = Product & {
   } | null
 }
 
-export class ProductReadARRepository implements ProductCollection, ProductReadModel {
+export class ProductARCollection implements ProductCollection {
   constructor(private readonly mediaManager: MediaManagerInterface) {}
 
-  async list(params: {
-    page: number
-    limit: number
-    search: string
-    sortBy: 'created_at'
-    sortDirection: 'asc' | 'desc'
-  }): Promise<PaginatedResultDto<ProductListItemDto>> {
+  async list(query: ListProductsQuery): Promise<PaginatedResultDto<ProductListItemDto>> {
     const result = await Product.query()
-      .preload('product_categories')
+      .preload('category')
       .preload('mainImage')
-      .whereILike('designation', `%${params.search}%`)
-      .orderBy(params.sortBy, params.sortDirection)
-      .paginate(params.page, params.limit)
+      .whereILike('designation', `%${query.searchQuery.search}%`)
+      .orderBy(query.order.field, query.order.direction)
+      .paginate(query.pagination.page, query.pagination.limit)
 
     return mapPaginatedResult<ProductActiveRecordWithRelations, ProductListItemDto>(
       result as any,
@@ -80,66 +72,15 @@ export class ProductReadARRepository implements ProductCollection, ProductReadMo
     )
   }
 
-  async getById(productId: string): Promise<ProductDetailsDto | null> {
-    const product = (await Product.query()
-      .where('id', productId)
-      .preload('category')
-      .preload('mainImage')
-      .preload('images')
-      .first()) as ProductActiveRecordWithRelations | null
-
-    if (!product) {
-      return null
-    }
-
-    const mainImageUrl = await this.getSignedUrl(product.mainImage?.relativeKey)
-
-    const images = await Promise.all(
-      (product.images || []).map(async (image) => ({
-        id: image.id,
-        url: await this.getSignedUrl(image.relativeKey),
-        alt: image.altDescription ?? null,
-        title: image.title ?? null,
-      }))
-    )
-
-    return {
-      id: product.id,
-      slug: product.slug,
-      categoryId: product.categoryId ?? null,
-      designation: product.designation,
-      description: product.description,
-      price: product.price,
-      brand: product.brand ?? null,
-      isAvailable: product.isAvailable,
-      isDeleted: product.isDeleted,
-      createdAt: product.createdAt,
-      updatedAt: product.updatedAt,
-      category: {
-        id: product.category?.id ?? null,
-        designation: product.category?.designation ?? null,
-      },
-      mainImage: {
-        id: product.mainImage?.id ?? null,
-        url: mainImageUrl,
-        alt: product.mainImage?.altDescription ?? null,
-        title: product.mainImage?.title ?? null,
-      },
-      images,
-    }
-  }
-
-  async listGroupedByCategory(params: {
-    page: number
-    limit: number
-    search: string
-  }): Promise<PaginatedResultDto<GroupedProductsByCategoryDto>> {
+  async listGroupedByCategory(
+    params: ListProductsGroupedByCategoryQuery
+  ): Promise<PaginatedResultDto<GroupedProductsByCategoryDto>> {
     const paginatedCategories = await Product.query()
-      .whereILike('designation', `%${params.search}%`)
+      .whereILike('designation', `%${params.searchQuery.search}%`)
       .whereNotNull('category_id')
       .groupBy('category_id')
       .orderBy('category_id', 'asc')
-      .paginate(params.page, params.limit)
+      .paginate(params.pagination.page, params.pagination.limit)
 
     const categoryPage = paginatedCategories.toJSON()
     const categoryIds = categoryPage.data

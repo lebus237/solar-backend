@@ -6,7 +6,10 @@ import { AddressType } from '#kernel/customer/domain/type/address_type'
 
 export class CustomerARRepository implements CustomerRepository {
   async findById(id: string): Promise<Customer> {
-    const customer = await EntityActiveRecord.findOrFail(id)
+    const customer = await EntityActiveRecord.query()
+      .where('id', id)
+      .preload('addresses')
+      .firstOrFail()
 
     const addresses = (customer.addresses || []).map((addr) => {
       return new Address(
@@ -39,7 +42,10 @@ export class CustomerARRepository implements CustomerRepository {
   }
 
   async findByEmail(email: string): Promise<Customer | null> {
-    const customer = await EntityActiveRecord.findBy('email', email)
+    const customer = await EntityActiveRecord.query()
+      .where('email', email)
+      .preload('addresses')
+      .first()
     if (!customer) {
       return null
     }
@@ -96,7 +102,7 @@ export class CustomerARRepository implements CustomerRepository {
   }
 
   async findAll(): Promise<Customer[]> {
-    const customers = await EntityActiveRecord.all()
+    const customers = await EntityActiveRecord.query().preload('addresses')
 
     return customers.map((customer) => {
       const addresses = (customer.addresses || []).map((addr) => {

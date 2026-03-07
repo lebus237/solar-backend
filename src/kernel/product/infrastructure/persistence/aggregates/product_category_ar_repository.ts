@@ -3,7 +3,7 @@ import { ProductCategoryRepository } from '#kernel/product/domain/repository/pro
 import { ProductCategory } from '#kernel/product/domain/entity/product_category'
 
 export class ProductCategoryARRepository implements ProductCategoryRepository {
-  async findById(id: any): Promise<ProductCategory> {
+  async find(id: any): Promise<ProductCategory> {
     const category = await ActiveRecord.find(id)
 
     if (category) {

@@ -9,9 +9,9 @@ import {
   setStockSchema,
   stockHistorySchema,
 } from '#validators/stock_validator'
-import { GetProductStockQuery } from '#kernel/product/application/queries/get_product_stock_query'
-import { GetStockHistoryQuery } from '#kernel/product/application/queries/get_stock_history_query'
-import { ListLowStockProductsQuery } from '#kernel/product/application/queries/list_low_stock_products_query'
+import { GetProductStockQuery } from '#kernel/product/application/query/get_product_stock_query'
+import { GetStockHistoryQuery } from '#kernel/product/application/query/get_stock_history_query'
+import { ListLowStockProductsQuery } from '#kernel/product/application/query/list_low_stock_products_query'
 
 export default class StockController extends AppAbstractController {
   constructor() {
@@ -58,7 +58,7 @@ export default class StockController extends AppAbstractController {
     const productId = request.param('id')
     const query = await request.validateUsing(stockHistorySchema)
     const result = (await this.handleQuery(
-      new GetStockHistoryQuery(productId, query.page || 1, query.limit || 20)
+      new GetStockHistoryQuery(productId, this.parseQueryPagination(query))
     )) as any
 
     return response.ok({
@@ -70,7 +70,7 @@ export default class StockController extends AppAbstractController {
   public async lowStock({ request, response }: HttpContext) {
     const query = request.qs()
     const result = (await this.handleQuery(
-      new ListLowStockProductsQuery(Number(query.page) || 1, Number(query.limit) || 10)
+      new ListLowStockProductsQuery(this.parseQueryPagination(query))
     )) as any
 
     return response.ok({

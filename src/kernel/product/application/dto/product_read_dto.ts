@@ -48,11 +48,6 @@ export interface ProductDetailsDto {
   }>
 }
 
-export interface PaginatedResultDto<T> {
-  meta: Record<string, unknown>
-  data: T[]
-}
-
 export interface GroupedProductsByCategoryDto {
   categoryId: string
   categoryName: string

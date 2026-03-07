@@ -1,4 +1,4 @@
-import { PaginatedResultDto } from '#kernel/product/application/dto/product_read_dto'
+import { PaginatedResultDto } from '#shared/application/collection/paginated_result'
 
 type PaginateJsonResult<T> = {
   meta: PaginatedResultDto<T>['meta']

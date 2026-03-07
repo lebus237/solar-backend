@@ -1,7 +1,10 @@
 import { DateTime } from 'luxon'
-import { afterFind, afterFetch, BaseModel, beforeCreate, column } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeCreate, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import crypto from 'node:crypto'
 import Address from '#database/active-records/address'
+import Order from '#database/active-records/order'
+import User from '#database/active-records/user'
 
 export default class Customer extends BaseModel {
   @column({ isPrimary: true })
@@ -30,24 +33,23 @@ export default class Customer extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  declare addresses: Address[]
+  @belongsTo(() => User, {
+    foreignKey: 'userId',
+  })
+  declare user: BelongsTo<typeof User>
+
+  @hasMany(() => Address, {
+    foreignKey: 'customerId',
+  })
+  declare addresses: HasMany<typeof Address>
+
+  @hasMany(() => Order, {
+    foreignKey: 'customerId',
+  })
+  declare orders: HasMany<typeof Order>
 
   @beforeCreate()
   static async beforeCreate(customer: Customer) {
     customer.id = crypto.randomUUID()
-  }
-
-  @afterFind()
-  static async afterFind(customer: Customer) {
-    customer.addresses = await Address.query().where('customer_id', customer.id)
-  }
-
-  @afterFetch()
-  static async afterFetch(customers: Customer[]) {
-    await Promise.all(
-      customers.map(async (customer) => {
-        customer.addresses = await Address.query().where('customer_id', customer.id)
-      })
-    )
   }
 }

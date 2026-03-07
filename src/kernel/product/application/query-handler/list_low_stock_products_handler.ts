@@ -1,19 +1,17 @@
 import { QueryHandler } from '#shared/application/use-cases/query_handler'
-import { ListLowStockProductsQuery } from '../queries/list_low_stock_products_query'
-import { PaginatedResultDto } from '../dto/product_read_dto'
+import { PaginatedResultDto } from '#shared/application/collection/paginated_result'
 import { LowStockProductDto } from '../dto/stock_read_dto'
-import { StockCollection } from '../services/stock_read_repository'
+import { StockCollection } from '../collection/stock_collection'
+import { ListLowStockProductsQuery } from '../query/list_low_stock_products_query'
 
-export class ListLowStockProductsHandler implements QueryHandler<
-  ListLowStockProductsQuery,
-  PaginatedResultDto<LowStockProductDto>
-> {
+export class ListLowStockProductsHandler
+  implements QueryHandler<ListLowStockProductsQuery, PaginatedResultDto<LowStockProductDto>>
+{
   constructor(private readonly repository: StockCollection) {}
 
-  async handle(query: ListLowStockProductsQuery): Promise<PaginatedResultDto<LowStockProductDto>> {
-    return this.repository.listLowStockProducts({
-      page: query.page,
-      limit: query.limit,
-    })
+  async handle(
+    query: ListLowStockProductsQuery
+  ): Promise<PaginatedResultDto<LowStockProductDto>> {
+    return this.repository.listLowStockProducts(query)
   }
 }

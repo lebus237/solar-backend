@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon'
-import { beforeCreate, BaseModel, column } from '@adonisjs/lucid/orm'
+import { beforeCreate, BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import crypto from 'node:crypto'
+import Product from '#database/active-records/product'
 
 export default class StockMovement extends BaseModel {
   @column({ isPrimary: true })
@@ -23,6 +25,11 @@ export default class StockMovement extends BaseModel {
 
   @column()
   declare reason: string | null
+
+  @belongsTo(() => Product, {
+    foreignKey: 'productId',
+  })
+  declare product: BelongsTo<typeof Product>
 
   // @ts-ignore
   @column.dateTime({ autoCreate: true })

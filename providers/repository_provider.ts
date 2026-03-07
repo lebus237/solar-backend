@@ -1,17 +1,20 @@
 import { ApplicationService } from '@adonisjs/core/types'
 import { StoreARRepository } from '#kernel/store/infrastructure/persistence/store_ar_repository'
-import { ProductARRepository } from '#kernel/product/infrastructure/persistence/product_ar_repository'
-import { ProductCategoryARRepository } from '#kernel/product/infrastructure/persistence/product_category_ar_repository'
+import { ProductARRepository } from '#kernel/product/infrastructure/persistence/aggregates/product_ar_repository'
+import { ProductCategoryARRepository } from '#kernel/product/infrastructure/persistence/aggregates/product_category_ar_repository'
 import { MarketServiceARRepository } from '#kernel/market/infrastructure/persistence/market_service_ar_repository'
 import { ImageMediaARRepository } from '#kernel/medias/infrastructure/persistence/image_media_ar_repository'
-import { StockMovementARRepository } from '#kernel/product/infrastructure/persistence/stock_movement_ar_repository'
+import { StockMovementARRepository } from '#kernel/product/infrastructure/persistence/aggregates/stock_movement_ar_repository'
 import { CustomerARRepository } from '#kernel/customer/infrastructure/persistence/customer_ar_repository'
 import { AddressARRepository } from '#kernel/customer/infrastructure/persistence/address_ar_repository'
 import { OrderARRepository } from '#kernel/order/infrastructure/persistence/order_ar_repository'
-import { ProductImageARRepository } from '#kernel/product/infrastructure/persistence/product_image_ar_repository'
-import { ProductReadARRepository } from '#kernel/product/infrastructure/persistence/product_read_ar_repository'
-import { ProductCategoryReadARRepository } from '#kernel/product/infrastructure/persistence/product_category_read_ar_repository'
-import { StockReadARRepository } from '#kernel/product/infrastructure/persistence/stock_read_ar_repository'
+import { ProductImageARRepository } from '#kernel/product/infrastructure/persistence/aggregates/product_image_ar_repository'
+import { ProductARCollection } from '#kernel/product/infrastructure/persistence/projections/product_ar_collection'
+import { ProductARReadModel } from '#kernel/product/infrastructure/persistence/projections/product_ar_read_model'
+import { ProductCategoryARCollection } from '#kernel/product/infrastructure/persistence/projections/product_category_ar_collection'
+import { ProductCategoryARReadModel } from '#kernel/product/infrastructure/persistence/projections/product_category_ar_read_model'
+import { StockARCollection } from '#kernel/product/infrastructure/persistence/projections/stock_ar_collection'
+import { StockARReadModel } from '#kernel/product/infrastructure/persistence/projections/stock_ar_read_model'
 
 export default class RepositoryProvider {
   constructor(protected app: ApplicationService) {}
@@ -51,28 +54,26 @@ export default class RepositoryProvider {
       this.app.container.bind('ProductCollection', async () => {
         const mediaUploadService = await this.app.container.make('MediaUploadService')
 
-        return new ProductReadARRepository(mediaUploadService)
+        return new ProductARCollection(mediaUploadService)
       })
       this.app.container.bind('ProductReadModel', async () => {
         const mediaUploadService = await this.app.container.make('MediaUploadService')
 
-        return new ProductReadARRepository(mediaUploadService)
+        return new ProductARReadModel(mediaUploadService)
       })
       this.app.container.bind('ProductCategoryCollection', async () => {
         const mediaUploadService = await this.app.container.make('MediaUploadService')
 
-        return new ProductCategoryReadARRepository(mediaUploadService)
+        return new ProductCategoryARCollection(mediaUploadService)
       })
       this.app.container.bind('ProductCategoryReadModel', async () => {
-        const mediaUploadService = await this.app.container.make('MediaUploadService')
-
-        return new ProductCategoryReadARRepository(mediaUploadService)
+        return new ProductCategoryARReadModel()
       })
       this.app.container.bind('StockCollection', () => {
-        return new StockReadARRepository()
+        return new StockARCollection()
       })
       this.app.container.bind('StockReadModel', () => {
-        return new StockReadARRepository()
+        return new StockARReadModel()
       })
     }
   }

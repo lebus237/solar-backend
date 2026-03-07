@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon'
-import { afterFind, afterFetch, BaseModel, beforeCreate, column } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeCreate, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import crypto from 'node:crypto'
+import Customer from '#database/active-records/customer'
 import OrderItem from '#database/active-records/order_item'
 
 export default class Order extends BaseModel {
@@ -82,24 +84,18 @@ export default class Order extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  declare items: OrderItem[]
+  @belongsTo(() => Customer, {
+    foreignKey: 'customerId',
+  })
+  declare customer: BelongsTo<typeof Customer>
+
+  @hasMany(() => OrderItem, {
+    foreignKey: 'orderId',
+  })
+  declare items: HasMany<typeof OrderItem>
 
   @beforeCreate()
   static async beforeCreate(order: Order) {
     order.id = crypto.randomUUID()
-  }
-
-  @afterFind()
-  static async afterFind(order: Order) {
-    order.items = await OrderItem.query().where('order_id', order.id)
-  }
-
-  @afterFetch()
-  static async afterFetch(orders: Order[]) {
-    await Promise.all(
-      orders.map(async (order) => {
-        order.items = await OrderItem.query().where('order_id', order.id)
-      })
-    )
   }
 }

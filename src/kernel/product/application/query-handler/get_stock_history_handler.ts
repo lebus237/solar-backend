@@ -1,8 +1,8 @@
 import { QueryHandler } from '#shared/application/use-cases/query_handler'
-import { GetStockHistoryQuery } from '../queries/get_stock_history_query'
-import { PaginatedResultDto } from '../dto/product_read_dto'
 import { StockMovementDto } from '../dto/stock_read_dto'
-import { StockCollection } from '../services/stock_read_repository'
+import { GetStockHistoryQuery } from '../query/get_stock_history_query'
+import { StockCollection } from '#kernel/product/application/collection/stock_collection'
+import { PaginatedResultDto } from '#shared/application/collection/paginated_result'
 
 export class GetStockHistoryHandler implements QueryHandler<
   GetStockHistoryQuery,
@@ -11,10 +11,6 @@ export class GetStockHistoryHandler implements QueryHandler<
   constructor(private readonly repository: StockCollection) {}
 
   async handle(query: GetStockHistoryQuery): Promise<PaginatedResultDto<StockMovementDto>> {
-    return this.repository.getStockHistory({
-      productId: query.productId,
-      page: query.page,
-      limit: query.limit,
-    })
+    return this.repository.getStockHistory(query)
   }
 }

@@ -6,10 +6,9 @@ import {
 } from '#validators/product_validator'
 import { CreateProductCategoryCommand } from '#kernel/product/application/command/create_product_category_command'
 import { UpdateProductCategoryCommand } from '#kernel/product/application/command/update_product_category_command'
-import { ListProductCategoriesQuery } from '#kernel/product/application/queries/list_product_categories_query'
-import { GetProductCategoryQuery } from '#kernel/product/application/queries/get_product_category_query'
-import { ListProductsByCategoryQuery } from '#kernel/product/application/queries/list_products_by_category_query'
-import { ProductCategoryListProductsSortField } from '#kernel/product/application/services/product_category_read_repository'
+import { ListProductCategoriesQuery } from '#kernel/product/application/query/list_product_categories_query'
+import { GetProductCategoryQuery } from '#kernel/product/application/query/get_product_category_query'
+import { ListProductsByCategoryQuery } from '#kernel/product/application/query/list_products_by_category_query'
 
 export default class ProductCategoryController extends AppAbstractController {
   constructor() {
@@ -19,11 +18,7 @@ export default class ProductCategoryController extends AppAbstractController {
   public async index({ response, request }: HttpContext) {
     const query = request.qs()
     const result = await this.handleQuery(
-      new ListProductCategoriesQuery(
-        Number(query.page) || 1,
-        Number(query.limit) || 10,
-        String(query.q || '')
-      )
+      new ListProductCategoriesQuery(this.parseQueryPagination(query), this.parseQuerySearch(query))
     )
 
     return response.ok(result)
@@ -40,25 +35,12 @@ export default class ProductCategoryController extends AppAbstractController {
     const categoryId = await request.param('id')
     const query = request.qs()
 
-    const orderBy = query.orderBy || 'created_at'
-    const orderDirection = query.orderDirection === 'asc' ? 'asc' : 'desc'
-    const allowedSortFields: ProductCategoryListProductsSortField[] = [
-      'created_at',
-      'designation',
-      'price',
-    ]
-    const sortBy = allowedSortFields.includes(orderBy as ProductCategoryListProductsSortField)
-      ? (orderBy as ProductCategoryListProductsSortField)
-      : 'created_at'
-
     const result = await this.handleQuery(
       new ListProductsByCategoryQuery(
         categoryId,
-        Number(query.page) || 1,
-        Number(query.limit) || 10,
-        String(query.q || ''),
-        sortBy,
-        orderDirection
+        this.parseQueryPagination(query),
+        this.parseQuerySearch(query),
+        this.parseQuerySort(query)
       )
     )
 

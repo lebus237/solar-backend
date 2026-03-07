@@ -1,4 +1,4 @@
-import { SortDirection } from '#shared/application/query-options/sort_direction'
+type SortDirection = 'asc' | 'desc'
 
 export class QuerySort<TField extends string> {
   constructor(

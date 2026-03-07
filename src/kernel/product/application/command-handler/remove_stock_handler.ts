@@ -12,7 +12,7 @@ export class RemoveStockHandler implements CommandHandler<RemoveStockCommand> {
   ) {}
 
   async handle(command: RemoveStockCommand): Promise<void> {
-    const product = await this.productRepository.findById(command.productId)
+    const product = await this.productRepository.find(command.productId)
     const previousQuantity = product.getStockQuantity()
     const newQuantity = Math.max(0, previousQuantity - command.quantity)
 

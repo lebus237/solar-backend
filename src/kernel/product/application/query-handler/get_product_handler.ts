@@ -1,8 +1,8 @@
 import { QueryHandler } from '#shared/application/use-cases/query_handler'
-import { GetProductQuery } from '../queries/get_product_query'
 import { ProductDetailsDto } from '../dto/product_read_dto'
-import { ProductReadModel } from '../services/product_read_repository'
-import { ProductNotFoundError } from '../errors/product_not_found_error'
+import { GetProductQuery } from '../query/get_product_query'
+import { ProductReadModel } from '../read-model/product_read_model'
+import { ProductNotFoundError } from '#kernel/product/application/errors/product_not_found_error'
 
 export class GetProductHandler implements QueryHandler<GetProductQuery, ProductDetailsDto> {
   constructor(private readonly productReadRepository: ProductReadModel) {}

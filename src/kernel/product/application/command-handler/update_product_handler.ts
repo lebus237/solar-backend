@@ -7,7 +7,7 @@ import { ProductCategory } from '#kernel/product/domain/entity/product_category'
 export class UpdateProductHandler implements CommandHandler<UpdateProductCommand> {
   constructor(private repository: ProductRepository) {}
   async handle(command: UpdateProductCommand): Promise<void> {
-    const existingProduct = await this.repository.findById(command.productId)
+    const existingProduct = await this.repository.find(command.productId)
 
     const updatedProduct = new Product(
       existingProduct.getId(),

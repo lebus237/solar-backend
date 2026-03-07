@@ -3,6 +3,7 @@ import { CreateProductCommand } from '#kernel/product/application/command/create
 import { ProductRepository } from '#kernel/product/domain/repository/product_repository'
 import { Product } from '#kernel/product/domain/entity/product'
 import { ProductCategory } from '#kernel/product/domain/entity/product_category'
+import { ProductImage } from '#kernel/product/domain/entity/product_image'
 
 export class CreateProductHandler implements CommandHandler<CreateProductCommand> {
   constructor(private repository: ProductRepository) {}
@@ -13,8 +14,8 @@ export class CreateProductHandler implements CommandHandler<CreateProductCommand
       new ProductCategory(command.categoryId, ''),
       command.description,
       command.price,
-      { id: command.mainImageId },
-      command.imageIds.map((id) => ({ id }))
+      new ProductImage(command.mainImageId),
+      command.imageIds.map((id) => new ProductImage(id))
     )
 
     // Save product and additional images

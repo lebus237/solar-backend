@@ -1,5 +1,6 @@
 import app from '@adonisjs/core/services/app'
 import { HttpContext, ExceptionHandler } from '@adonisjs/core/http'
+import { errors as vineErrors } from '@vinejs/vine'
 import { DomainError } from '#shared/domain/errors/domain_error'
 import { ApplicationError } from '#shared/application/errors/application_error'
 
@@ -15,6 +16,17 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
+    if (error instanceof vineErrors.E_VALIDATION_ERROR) {
+      return ctx.response.status(422).send({
+        status: 'error',
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Validation failed',
+          details: error.messages,
+        },
+      })
+    }
+
     if (error instanceof DomainError || error instanceof ApplicationError) {
       const status = this.resolveStatus(error)
 

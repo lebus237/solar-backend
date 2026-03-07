@@ -1,8 +1,8 @@
 import { QueryHandler } from '#shared/application/use-cases/query_handler'
-import { GetProductStockQuery } from '../queries/get_product_stock_query'
 import { ProductStockDto } from '../dto/stock_read_dto'
-import { StockReadModel } from '../services/stock_read_repository'
 import { ProductNotFoundError } from '../errors/product_not_found_error'
+import { GetProductStockQuery } from '../query/get_product_stock_query'
+import { StockReadModel } from '../read-model/stock_read_model'
 
 export class GetProductStockHandler implements QueryHandler<GetProductStockQuery, ProductStockDto> {
   constructor(private readonly repository: StockReadModel) {}

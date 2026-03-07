@@ -3,6 +3,6 @@ import { Product } from '../entity/product'
 
 export interface ProductRepository extends RepositoryInterface {
   save(entity: Product): Promise<void>
-  findById(id: any): Promise<Product>
+  find(id: any): Promise<Product>
   delete(id: any): Promise<void>
 }

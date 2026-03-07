@@ -3,6 +3,7 @@ import { StockMovement } from '../entity/stock_movement'
 
 export interface StockMovementRepository extends RepositoryInterface {
   save(entity: StockMovement): Promise<void>
+  // find(id: string): Promise<StockMovement>
   findByProductId(
     productId: string,
     page?: number,

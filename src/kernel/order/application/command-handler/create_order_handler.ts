@@ -29,7 +29,7 @@ export class CreateOrderHandler implements CommandHandler<CreateOrderCommand, st
     const orderItems: OrderItem[] = []
 
     for (const item of command.items) {
-      const product = await this.productRepository.findById(item.productId)
+      const product = await this.productRepository.find(item.productId)
       const unitPrice = product['price']
       const totalPrice = unitPrice * item.quantity
       subtotal += totalPrice

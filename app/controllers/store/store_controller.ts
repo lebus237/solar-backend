@@ -13,6 +13,6 @@ export default class StoreController extends AppAbstractController {
     await this.handleCommand(
       new CreateStoreCommand(payload.designation, payload.domainUrl, payload.description)
     )
-    return response.created('created')
+    return response.created()
   }
 }
