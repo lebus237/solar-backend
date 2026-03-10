@@ -5,15 +5,16 @@ import { ProductRepository } from '#kernel/product/domain/repository/product_rep
 import { Product } from '#kernel/product/domain/entity/product'
 import { ProductCategory } from '#kernel/product/domain/entity/product_category'
 import { ProductImage } from '#kernel/product/domain/entity/product_image'
+import { asProductId, asProductCategoryId } from '#shared/domain/types/branded_types'
 
 test.group('UpdateProductHandler', () => {
   const createExistingProduct = () => {
-    const category = new ProductCategory('old-cat', 'Old Category')
+    const category = new ProductCategory(asProductCategoryId('old-cat'), 'Old Category')
     const mainImage = new ProductImage('old-main-img', 'https://example.com/old.jpg')
     const images = [new ProductImage('img-2'), new ProductImage('img-3')]
 
     return new Product(
-      'prod-1',
+      asProductId('prod-1'),
       'Old Designation',
       category,
       'Old Description',

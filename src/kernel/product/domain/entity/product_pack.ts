@@ -1,10 +1,11 @@
 import string from '@adonisjs/core/helpers/string'
 import { ProductImage } from '#kernel/product/domain/entity/product_image'
 import { ProductPackItem } from '#kernel/product/domain/entity/product_pack_item'
+import { ProductPackId } from '#shared/domain/types/branded_types'
 
 export class ProductPack {
   constructor(
-    private id: any,
+    private id: ProductPackId | null,
     private designation: string,
     private description: string | null,
     private price: number,
@@ -24,7 +25,7 @@ export class ProductPack {
     this.lowStockThreshold = lowStockThreshold ?? 10
   }
 
-  getId(): any {
+  getId(): ProductPackId | null {
     return this.id
   }
 

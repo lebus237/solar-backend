@@ -14,10 +14,10 @@ export class AppAbstractController {
     return await bus.execute<Command, ReturnType>(command)
   }
 
-  protected async handleQuery(command: Query) {
+  protected async handleQuery<TResult>(query: Query): Promise<TResult> {
     const bus = await app.container.make('CQRS/QueryBus')
 
-    return await bus.execute(command)
+    return await bus.execute<Query, TResult>(query)
   }
 
   protected async getService(service: keyof ContainerBindings) {

@@ -3,9 +3,11 @@ import { default as EntityActiveRecord } from '#database/active-records/customer
 import { Customer } from '#kernel/customer/domain/entity/customer'
 import { Address } from '#kernel/customer/domain/entity/address'
 import { AddressType } from '#kernel/customer/domain/type/address_type'
+import { CustomerId, asCustomerId, asUserId, asAddressId } from '#shared/domain/types/branded_types'
+import { DateTime } from 'luxon'
 
 export class CustomerARRepository implements CustomerRepository {
-  async findById(id: string): Promise<Customer> {
+  async findById(id: CustomerId): Promise<Customer> {
     const customer = await EntityActiveRecord.query()
       .where('id', id)
       .preload('addresses')
@@ -13,8 +15,8 @@ export class CustomerARRepository implements CustomerRepository {
 
     const addresses = (customer.addresses || []).map((addr) => {
       return new Address(
-        addr.id,
-        addr.customerId,
+        asAddressId(addr.id),
+        asCustomerId(addr.customerId),
         addr.type as AddressType,
         addr.addressLine1,
         addr.addressLine2,
@@ -23,21 +25,21 @@ export class CustomerARRepository implements CustomerRepository {
         addr.postalCode,
         addr.country,
         addr.isDefault,
-        addr.createdAt as any,
-        addr.updatedAt as any
+        this.toDate(addr.createdAt),
+        this.toDate(addr.updatedAt)
       )
     })
 
     return new Customer(
-      customer.id,
-      customer.userId,
+      asCustomerId(customer.id),
+      customer.userId ? asUserId(customer.userId) : null,
       customer.firstName,
       customer.lastName,
       customer.phone,
-      customer.email as string,
+      customer.email ?? undefined,
       addresses,
-      customer.createdAt as any,
-      customer.updatedAt as any
+      this.toDate(customer.createdAt),
+      this.toDate(customer.updatedAt)
     )
   }
 
@@ -52,8 +54,8 @@ export class CustomerARRepository implements CustomerRepository {
 
     const addresses = (customer.addresses || []).map((addr) => {
       return new Address(
-        addr.id,
-        addr.customerId,
+        asAddressId(addr.id),
+        asCustomerId(addr.customerId),
         addr.type as AddressType,
         addr.addressLine1,
         addr.addressLine2,
@@ -62,27 +64,27 @@ export class CustomerARRepository implements CustomerRepository {
         addr.postalCode,
         addr.country,
         addr.isDefault,
-        addr.createdAt as any,
-        addr.updatedAt as any
+        this.toDate(addr.createdAt),
+        this.toDate(addr.updatedAt)
       )
     })
 
     return new Customer(
-      customer.id,
-      customer.userId,
+      asCustomerId(customer.id),
+      customer.userId ? asUserId(customer.userId) : null,
       customer.firstName,
       customer.lastName,
       customer.phone,
-      customer.email as string,
+      customer.email ?? undefined,
       addresses,
-      customer.createdAt as any,
-      customer.updatedAt as any
+      this.toDate(customer.createdAt),
+      this.toDate(customer.updatedAt)
     )
   }
 
   async save(entity: Customer): Promise<void> {
     const object = {
-      userId: entity.getUserId() as any,
+      userId: entity.getUserId() as string | null,
       firstName: entity.getFirstName(),
       lastName: entity.getLastName(),
       email: entity.getEmail(),
@@ -90,13 +92,13 @@ export class CustomerARRepository implements CustomerRepository {
     }
 
     if (entity.getId()) {
-      await EntityActiveRecord.updateOrCreate({ id: entity.getId() as any }, object)
+      await EntityActiveRecord.updateOrCreate({ id: entity.getId() as any }, object as any)
     } else {
-      await EntityActiveRecord.create(object)
+      await EntityActiveRecord.create(object as any)
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: CustomerId): Promise<void> {
     const customer = await EntityActiveRecord.findOrFail(id)
     await customer.delete()
   }
@@ -107,8 +109,8 @@ export class CustomerARRepository implements CustomerRepository {
     return customers.map((customer) => {
       const addresses = (customer.addresses || []).map((addr) => {
         return new Address(
-          addr.id,
-          addr.customerId,
+          asAddressId(addr.id),
+          asCustomerId(addr.customerId),
           addr.type as AddressType,
           addr.addressLine1,
           addr.addressLine2,
@@ -117,22 +119,27 @@ export class CustomerARRepository implements CustomerRepository {
           addr.postalCode,
           addr.country,
           addr.isDefault,
-          addr.createdAt as any,
-          addr.updatedAt as any
+          this.toDate(addr.createdAt),
+          this.toDate(addr.updatedAt)
         )
       })
 
       return new Customer(
-        customer.id,
-        customer.userId,
+        asCustomerId(customer.id),
+        customer.userId ? asUserId(customer.userId) : null,
         customer.firstName,
         customer.lastName,
         customer.phone,
-        customer.email as string,
+        customer.email ?? undefined,
         addresses,
-        customer.createdAt as any,
-        customer.updatedAt as any
+        this.toDate(customer.createdAt),
+        this.toDate(customer.updatedAt)
       )
     })
+  }
+
+  private toDate(dateTime: DateTime | null | undefined): Date | undefined {
+    if (!dateTime) return undefined
+    return dateTime.toJSDate()
   }
 }

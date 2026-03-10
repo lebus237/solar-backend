@@ -1,41 +1,32 @@
-import { inject } from '@adonisjs/core'
 import { HttpContext } from '@adonisjs/core/http'
-import { CommandBus } from '#shared/infrastructure/bus/command_bus'
+import { AppAbstractController } from '#shared/user_interface/controller/app_abstract_controller'
 import { CreateOrderCommand } from '#kernel/order/application/command/create_order_command'
 import { UpdateOrderStatusCommand } from '#kernel/order/application/command/update_order_status_command'
 import { CancelOrderCommand } from '#kernel/order/application/command/cancel_order_command'
-import type { OrderRepository } from '#kernel/order/domain/repository/order_repository'
+import { ListOrdersQuery } from '#kernel/order/application/query/list_orders_query'
+import { GetOrderQuery } from '#kernel/order/application/query/get_order_query'
+import { GetOrderByNumberQuery } from '#kernel/order/application/query/get_order_by_number_query'
+import { ListCustomerOrdersQuery } from '#kernel/order/application/query/list_customer_orders_query'
 import { OrderStatus } from '#kernel/order/domain/type/order_status'
+import { Order } from '#kernel/order/domain/entity/order'
+import { PaginatedResultDto } from '#shared/application/collection/paginated_result'
 import {
   createOrderSchema,
   updateOrderStatusSchema,
   cancelOrderSchema,
 } from '#validators/order_validator'
 
-@inject()
-export default class OrderController {
-  constructor(
-    private commandBus: CommandBus,
-    private orderRepository: OrderRepository
-  ) {}
-
+export default class OrderController extends AppAbstractController {
   /**
    * list all orders (with optional status filter)
    */
   async index({ request, response }: HttpContext) {
     const status = request.input('status') as OrderStatus | undefined
-
-    let orders
-    if (status) {
-      const result = await this.orderRepository.findByStatus(status)
-      orders = result.data
-    } else {
-      orders = await this.orderRepository.findAll()
-    }
+    const orders = await this.handleQuery<Order[]>(new ListOrdersQuery(status))
 
     return response.ok({
       status: 'success',
-      data: orders.map((o: any) => this.serializeOrder(o)),
+      data: orders.map((o) => this.serializeOrder(o)),
     })
   }
 
@@ -43,7 +34,7 @@ export default class OrderController {
    * Get a single order by ID
    */
   async show({ params, response }: HttpContext) {
-    const order = await this.orderRepository.findById(params.id)
+    const order = await this.handleQuery<Order>(new GetOrderQuery(params.id))
     return response.ok({
       status: 'success',
       data: this.serializeOrder(order),
@@ -54,7 +45,9 @@ export default class OrderController {
    * Get order by order number
    */
   async findByOrderNumber({ params, response }: HttpContext) {
-    const order = await this.orderRepository.findByOrderNumber(params.orderNumber)
+    const order = await this.handleQuery<Order | null>(
+      new GetOrderByNumberQuery(params.orderNumber)
+    )
     if (!order) {
       return response.notFound({ status: 'error', message: 'Order not found' })
     }
@@ -80,7 +73,7 @@ export default class OrderController {
       payload.customerNotes || undefined
     )
 
-    const orderNumber = await this.commandBus.execute(command)
+    const orderNumber = await this.handleCommand<string>(command)
 
     return response.created({
       status: 'success',
@@ -101,7 +94,7 @@ export default class OrderController {
       payload.adminNotes || undefined
     )
 
-    await this.commandBus.execute(command)
+    await this.handleCommand(command)
 
     return response.ok({
       status: 'success',
@@ -117,7 +110,7 @@ export default class OrderController {
 
     const command = new CancelOrderCommand(params.id, payload.reason || undefined)
 
-    await this.commandBus.execute(command)
+    await this.handleCommand(command)
 
     return response.ok({
       status: 'success',
@@ -129,15 +122,17 @@ export default class OrderController {
    * Get orders by customer
    */
   async byCustomer({ params, response }: HttpContext) {
-    const result = await this.orderRepository.findByCustomerId(params.customerId)
+    const result = await this.handleQuery<PaginatedResultDto<Order>>(
+      new ListCustomerOrdersQuery(params.customerId)
+    )
     return response.ok({
       status: 'success',
-      data: result.data.map((o: any) => this.serializeOrder(o)),
+      data: result.data.map((o) => this.serializeOrder(o)),
       meta: result.meta,
     })
   }
 
-  private serializeOrder(order: any) {
+  private serializeOrder(order: Order) {
     return {
       id: order.getId(),
       orderNumber: order.getOrderNumber(),
@@ -163,7 +158,7 @@ export default class OrderController {
       cancelledAt: order.getCancelledAt(),
       createdAt: order.getCreatedAt(),
       updatedAt: order.getUpdatedAt(),
-      items: order.getItems()?.map((item: any) => ({
+      items: order.getItems()?.map((item) => ({
         id: item.getId(),
         productId: item.getProductId(),
         productName: item.getProductName(),

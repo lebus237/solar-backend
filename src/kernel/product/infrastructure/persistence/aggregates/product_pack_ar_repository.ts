@@ -9,9 +9,16 @@ import { ProductCategory } from '#kernel/product/domain/entity/product_category'
 import crypto from 'node:crypto'
 import { ProductPackNotFoundError } from '#kernel/product/domain/errors/product_pack_not_found_error'
 import { errors } from '@adonisjs/lucid'
+import {
+  ProductPackId,
+  asProductPackId,
+  asProductId,
+  asProductCategoryId,
+} from '#shared/domain/types/branded_types'
+import { DateTime } from 'luxon'
 
 export class ProductPackARRepository implements ProductPackRepository {
-  async find(id: any): Promise<ProductPack> {
+  async find(id: ProductPackId): Promise<ProductPack> {
     let pack: EntityActiveRecord
 
     try {
@@ -32,9 +39,12 @@ export class ProductPackARRepository implements ProductPackRepository {
       let product: Product | undefined
       if (item.product) {
         product = new Product(
-          item.product.id,
+          asProductId(item.product.id),
           item.product.designation,
-          new ProductCategory(item.product.categoryId, ''),
+          new ProductCategory(
+            item.product.categoryId ? asProductCategoryId(item.product.categoryId) : null,
+            ''
+          ),
           item.product.description,
           item.product.price,
           new ProductImage(item.product.mainImageId, item.product.mainImage?.url || null),
@@ -45,11 +55,16 @@ export class ProductPackARRepository implements ProductPackRepository {
           item.product.lowStockThreshold,
           item.product.isAvailable,
           item.product.isDeleted,
-          item.product.createdAt as any,
-          item.product.updatedAt as any
+          this.toDate(item.product.createdAt),
+          this.toDate(item.product.updatedAt)
         )
       }
-      return new ProductPackItem(item.productId, item.quantity, product, item.sortOrder)
+      return new ProductPackItem(
+        asProductId(item.productId),
+        item.quantity,
+        product,
+        item.sortOrder
+      )
     })
 
     const mainImage = pack.mainImageId
@@ -57,7 +72,7 @@ export class ProductPackARRepository implements ProductPackRepository {
       : null
 
     return new ProductPack(
-      pack.id,
+      asProductPackId(pack.id),
       pack.designation,
       pack.description,
       pack.price,
@@ -68,19 +83,19 @@ export class ProductPackARRepository implements ProductPackRepository {
       pack.lowStockThreshold,
       pack.isAvailable,
       pack.isDeleted,
-      pack.createdAt as any,
-      pack.updatedAt as any
+      this.toDate(pack.createdAt),
+      this.toDate(pack.updatedAt)
     )
   }
 
   async save(entity: ProductPack): Promise<void> {
     const object = {
-      id: entity.getId() as crypto.UUID,
+      id: entity.getId() as any,
       designation: entity.getDesignation(),
       description: entity.getDescription(),
       price: entity.getPrice(),
       mainImageId: entity.getMainImage()?.id as crypto.UUID | null,
-      slug: entity.getSlug() as string,
+      slug: entity.getSlug(),
       stockQuantity: entity.getStockQuantity(),
       lowStockThreshold: entity.getLowStockThreshold(),
       isAvailable: entity.getIsAvailable(),
@@ -90,9 +105,12 @@ export class ProductPackARRepository implements ProductPackRepository {
     let packRecord: EntityActiveRecord
 
     if (entity.getId()) {
-      packRecord = await EntityActiveRecord.updateOrCreate({ id: entity.getId() }, object)
+      packRecord = await EntityActiveRecord.updateOrCreate(
+        { id: entity.getId() as any },
+        object as any
+      )
     } else {
-      packRecord = await EntityActiveRecord.create(object)
+      packRecord = await EntityActiveRecord.create(object as any)
     }
 
     // Handle pack items
@@ -113,9 +131,14 @@ export class ProductPackARRepository implements ProductPackRepository {
     }
   }
 
-  async delete(id: any): Promise<void> {
+  async delete(id: ProductPackId): Promise<void> {
     const pack = await EntityActiveRecord.findOrFail(id)
     pack.isDeleted = true
     await pack.save()
+  }
+
+  private toDate(dateTime: DateTime | null | undefined): Date | undefined {
+    if (!dateTime) return undefined
+    return dateTime.toJSDate()
   }
 }

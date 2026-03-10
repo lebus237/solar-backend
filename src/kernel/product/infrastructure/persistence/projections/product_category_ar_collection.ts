@@ -55,9 +55,13 @@ export class ProductCategoryARCollection implements ProductCategoryCollection {
     query,
     order,
   }: ListProductsByCategoryQuery): Promise<PaginatedResultDto<CategoryProductListItemDto>> {
+    // Extract first sort entry or use defaults
+    const sortEntries = Object.entries(order.entries)
+    const [requestedField = 'created_at', requestedDirection = 'desc'] = sortEntries[0] ?? []
+
     const sort = QuerySort.from({
-      requestedField: order.field,
-      requestedDirection: order.direction,
+      requestedField,
+      requestedDirection,
       allowedFields: ProductCategoryARCollection.sortableFields,
       defaultField: 'created_at',
       defaultDirection: 'desc',

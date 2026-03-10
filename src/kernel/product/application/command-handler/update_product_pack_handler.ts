@@ -4,15 +4,17 @@ import { ProductPackRepository } from '#kernel/product/domain/repository/product
 import { ProductPack } from '#kernel/product/domain/entity/product_pack'
 import { ProductPackItem } from '#kernel/product/domain/entity/product_pack_item'
 import { ProductImage } from '#kernel/product/domain/entity/product_image'
+import { asProductPackId, asProductId } from '#shared/domain/types/branded_types'
 
 export class UpdateProductPackHandler implements CommandHandler<UpdateProductPackCommand> {
   constructor(private repository: ProductPackRepository) {}
 
   async handle(command: UpdateProductPackCommand): Promise<void> {
-    const pack = await this.repository.find(command.packId)
+    const pack = await this.repository.find(asProductPackId(command.packId))
 
     const items = command.items.map(
-      (item, index) => new ProductPackItem(item.productId, item.quantity, undefined, index)
+      (item, index) =>
+        new ProductPackItem(asProductId(item.productId), item.quantity, undefined, index)
     )
 
     const mainImage = command.mainImageId ? new ProductImage(command.mainImageId) : null

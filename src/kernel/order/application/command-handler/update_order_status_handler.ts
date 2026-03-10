@@ -2,16 +2,18 @@ import { CommandHandler } from '#shared/application/use-cases/command_handler'
 import { UpdateOrderStatusCommand } from '#kernel/order/application/command/update_order_status_command'
 import { OrderRepository } from '#kernel/order/domain/repository/order_repository'
 import { canTransitionTo } from '#kernel/order/domain/type/order_status'
+import { asOrderId } from '#shared/domain/types/branded_types'
+import { OrderStatusTransitionError } from '#kernel/order/domain/errors/order_status_transition_error'
 
 export class UpdateOrderStatusHandler implements CommandHandler<UpdateOrderStatusCommand> {
   constructor(private orderRepository: OrderRepository) {}
 
   async handle(command: UpdateOrderStatusCommand): Promise<void> {
-    const order = await this.orderRepository.findById(command.orderId)
+    const order = await this.orderRepository.findById(asOrderId(command.orderId))
 
     // Validate status transition
     if (!canTransitionTo(order.getStatus(), command.status)) {
-      throw new Error(`Cannot transition order from ${order.getStatus()} to ${command.status}`)
+      throw new OrderStatusTransitionError(order.getStatus(), command.status)
     }
 
     // Update status

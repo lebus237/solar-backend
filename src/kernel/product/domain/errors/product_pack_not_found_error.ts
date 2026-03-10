@@ -1,12 +1,10 @@
-export class ProductPackNotFoundError extends Error {
+import { DomainError } from '#shared/domain/errors/domain_error'
+
+export class ProductPackNotFoundError extends DomainError {
   constructor(
     public readonly packId: string,
     cause?: Error
   ) {
-    super(`Product pack with id "${packId}" not found`)
-    this.name = 'ProductPackNotFoundError'
-    if (cause) {
-      this.cause = cause
-    }
+    super('PRODUCT_PACK_NOT_FOUND', `Product pack with id "${packId}" not found`, { packId }, cause)
   }
 }

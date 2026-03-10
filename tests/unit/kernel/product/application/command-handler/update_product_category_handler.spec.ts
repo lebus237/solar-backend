@@ -3,11 +3,12 @@ import { UpdateProductCategoryHandler } from '#kernel/product/application/comman
 import { UpdateProductCategoryCommand } from '#kernel/product/application/command/update_product_category_command'
 import { ProductCategoryRepository } from '#kernel/product/domain/repository/product_category_repository'
 import { ProductCategory } from '#kernel/product/domain/entity/product_category'
+import { asProductCategoryId } from '#shared/domain/types/branded_types'
 
 test.group('UpdateProductCategoryHandler', () => {
   const createExistingCategory = () => {
     return new ProductCategory(
-      'cat-1',
+      asProductCategoryId('cat-1'),
       'Old Designation',
       'CATEGORY',
       null,

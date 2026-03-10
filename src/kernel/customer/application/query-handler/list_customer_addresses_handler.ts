@@ -2,6 +2,7 @@ import { QueryHandler } from '#shared/application/use-cases/query_handler'
 import { ListCustomerAddressesQuery } from '#kernel/customer/application/query/list_customer_addresses_query'
 import { Address } from '#kernel/customer/domain/entity/address'
 import type { AddressRepository } from '#kernel/customer/domain/repository/address_repository'
+import { asCustomerId } from '#shared/domain/types/branded_types'
 
 export interface AddressDTO {
   id: string | null
@@ -25,7 +26,7 @@ export class ListCustomerAddressesHandler implements QueryHandler<
   constructor(private addressRepository: AddressRepository) {}
 
   async handle(query: ListCustomerAddressesQuery): Promise<AddressDTO[]> {
-    const addresses = await this.addressRepository.findByCustomerId(query.customerId)
+    const addresses = await this.addressRepository.findByCustomerId(asCustomerId(query.customerId))
 
     return addresses.map((address: Address) => ({
       id: address.getId(),

@@ -47,8 +47,14 @@ export default class HttpExceptionHandler extends ExceptionHandler {
     switch (error.code) {
       case 'PRODUCT_IMAGE_LIMIT_REACHED':
         return 409
+      case 'PRODUCT_PACK_NOT_FOUND':
       case 'RESOURCE_NOT_FOUND':
+      case 'CUSTOMER_NOT_FOUND':
+      case 'IMAGE_NOT_FOUND':
         return 404
+      case 'ORDER_STATUS_TRANSITION_INVALID':
+      case 'PRODUCT_IMAGE_NOT_OWNED':
+        return 409
       default:
         return 422
     }

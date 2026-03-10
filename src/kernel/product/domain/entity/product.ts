@@ -1,10 +1,11 @@
 import string from '@adonisjs/core/helpers/string'
 import { ProductCategory } from '#kernel/product/domain/entity/product_category'
 import { ProductImage } from '#kernel/product/domain/entity/product_image'
+import { ProductId } from '#shared/domain/types/branded_types'
 
 export class Product {
   constructor(
-    private id: any,
+    private id: ProductId | null,
     private designation: string,
     private category: ProductCategory,
     private description: string,
@@ -27,7 +28,7 @@ export class Product {
     this.lowStockThreshold = lowStockThreshold ?? 10
   }
 
-  getId(): any {
+  getId(): ProductId | null {
     return this.id
   }
 
@@ -43,11 +44,11 @@ export class Product {
     return this.isDeleted
   }
 
-  getCreatedAt(): any {
+  getCreatedAt(): Date | undefined {
     return this.createdAt
   }
 
-  getUpdatedAt(): any {
+  getUpdatedAt(): Date | undefined {
     return this.updatedAt
   }
 

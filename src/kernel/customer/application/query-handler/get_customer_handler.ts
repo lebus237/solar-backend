@@ -3,12 +3,15 @@ import { GetCustomerQuery } from '#kernel/customer/application/query/get_custome
 import { Customer } from '#kernel/customer/domain/entity/customer'
 import type { CustomerRepository } from '#kernel/customer/domain/repository/customer_repository'
 import { CustomerDTO } from '#kernel/customer/application/query-handler/list_customers_handler'
+import { asCustomerId } from '#shared/domain/types/branded_types'
 
 export class GetCustomerHandler implements QueryHandler<GetCustomerQuery, CustomerDTO> {
   constructor(private customerRepository: CustomerRepository) {}
 
   async handle(query: GetCustomerQuery): Promise<CustomerDTO> {
-    const customer: Customer = await this.customerRepository.findById(query.customerId)
+    const customer: Customer = await this.customerRepository.findById(
+      asCustomerId(query.customerId)
+    )
 
     return {
       id: customer.getId(),

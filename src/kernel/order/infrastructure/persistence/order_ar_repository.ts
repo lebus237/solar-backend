@@ -5,15 +5,20 @@ import { Order } from '#kernel/order/domain/entity/order'
 import { OrderItem } from '#kernel/order/domain/entity/order_item'
 import { OrderStatus } from '#kernel/order/domain/type/order_status'
 import db from '@adonisjs/lucid/services/db'
+import { OrderId, CustomerId, asOrderId, asCustomerId } from '#shared/domain/types/branded_types'
+import { DateTime } from 'luxon'
 
 export class OrderARRepository implements OrderRepository {
-  async findById(id: string): Promise<Order> {
-    const order = await EntityActiveRecord.findOrFail(id)
+  async findById(id: OrderId): Promise<Order> {
+    const order = await EntityActiveRecord.query().where('id', id).preload('items').firstOrFail()
     return this.mapToEntity(order)
   }
 
   async findByOrderNumber(orderNumber: string): Promise<Order | null> {
-    const order = await EntityActiveRecord.findBy('order_number', orderNumber)
+    const order = await EntityActiveRecord.query()
+      .where('order_number', orderNumber)
+      .preload('items')
+      .first()
     if (!order) {
       return null
     }
@@ -21,7 +26,7 @@ export class OrderARRepository implements OrderRepository {
   }
 
   async findByCustomerId(
-    customerId: string,
+    customerId: CustomerId,
     page: number = 1,
     limit: number = 20
   ): Promise<{
@@ -30,11 +35,12 @@ export class OrderARRepository implements OrderRepository {
   }> {
     const result = await EntityActiveRecord.query()
       .where('customer_id', customerId)
+      .preload('items')
       .orderBy('created_at', 'desc')
       .paginate(page, limit)
 
     const paginatedResult = result.toJSON()
-    const orders = await Promise.all(paginatedResult.data.map((order) => this.mapToEntity(order)))
+    const orders = paginatedResult.data.map((order) => this.mapToEntity(order as any))
 
     return {
       data: orders,
@@ -43,7 +49,7 @@ export class OrderARRepository implements OrderRepository {
   }
 
   async findByStatus(
-    status: string,
+    status: OrderStatus,
     page: number = 1,
     limit: number = 20
   ): Promise<{
@@ -52,11 +58,12 @@ export class OrderARRepository implements OrderRepository {
   }> {
     const result = await EntityActiveRecord.query()
       .where('status', status)
+      .preload('items')
       .orderBy('created_at', 'desc')
       .paginate(page, limit)
 
     const paginatedResult = result.toJSON()
-    const orders = await Promise.all(paginatedResult.data.map((order) => this.mapToEntity(order)))
+    const orders = paginatedResult.data.map((order) => this.mapToEntity(order as any))
 
     return {
       data: orders,
@@ -67,7 +74,7 @@ export class OrderARRepository implements OrderRepository {
   async save(entity: Order): Promise<void> {
     const object = {
       orderNumber: entity.getOrderNumber(),
-      customerId: entity.getCustomerId() as any,
+      customerId: entity.getCustomerId(),
       status: entity.getStatus(),
       shippingFirstName: entity.getShippingFirstName(),
       shippingLastName: entity.getShippingLastName(),
@@ -83,10 +90,10 @@ export class OrderARRepository implements OrderRepository {
       total: entity.getTotal(),
       customerNotes: entity.getCustomerNotes(),
       adminNotes: entity.getAdminNotes(),
-      confirmedAt: entity.getConfirmedAt() as any,
-      shippedAt: entity.getShippedAt() as any,
-      deliveredAt: entity.getDeliveredAt() as any,
-      cancelledAt: entity.getCancelledAt() as any,
+      confirmedAt: entity.getConfirmedAt(),
+      shippedAt: entity.getShippedAt(),
+      deliveredAt: entity.getDeliveredAt(),
+      cancelledAt: entity.getCancelledAt(),
     }
 
     const trx = await db.transaction()
@@ -97,11 +104,13 @@ export class OrderARRepository implements OrderRepository {
       if (entity.getId()) {
         orderRecord = await EntityActiveRecord.updateOrCreate(
           { id: entity.getId() as any },
-          object,
-          { client: trx }
+          object as any,
+          {
+            client: trx,
+          }
         )
       } else {
-        orderRecord = await EntityActiveRecord.create(object, { client: trx })
+        orderRecord = await EntityActiveRecord.create(object as any, { client: trx })
       }
 
       // Save order items
@@ -136,38 +145,38 @@ export class OrderARRepository implements OrderRepository {
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: OrderId): Promise<void> {
     const order = await EntityActiveRecord.findOrFail(id)
     await order.delete()
   }
 
   async findAll(): Promise<Order[]> {
-    const orders = await EntityActiveRecord.all()
-    return Promise.all(orders.map((order) => this.mapToEntity(order)))
+    const orders = await EntityActiveRecord.query().preload('items')
+    return orders.map((order) => this.mapToEntity(order))
   }
 
-  private async mapToEntity(order: any): Promise<Order> {
-    // Load order items
-    const orderItems = await OrderItemActiveRecord.query().where('order_id', order.id)
+  private mapToEntity(order: EntityActiveRecord): Order {
+    // Use preloaded items instead of separate query
+    const orderItems = order.items || []
 
     const items: OrderItem[] = orderItems.map((item) => {
       return new OrderItem(
         item.id,
-        item.orderId,
-        item.productId,
+        item.orderId ?? '',
+        item.productId ?? null,
         item.productName,
         item.productSlug,
         item.quantity,
         item.unitPrice,
         item.totalPrice,
-        item.createdAt as any
+        this.toDate(item.createdAt)
       )
     })
 
     return new Order(
-      order.id,
+      asOrderId(order.id),
       order.orderNumber,
-      order.customerId,
+      order.customerId ? asCustomerId(order.customerId) : null,
       order.status as OrderStatus,
       order.shippingFirstName,
       order.shippingLastName,
@@ -184,12 +193,17 @@ export class OrderARRepository implements OrderRepository {
       order.customerNotes,
       order.adminNotes,
       items,
-      order.confirmedAt as any,
-      order.shippedAt as any,
-      order.deliveredAt as any,
-      order.cancelledAt as any,
-      order.createdAt as any,
-      order.updatedAt as any
+      this.toDate(order.confirmedAt),
+      this.toDate(order.shippedAt),
+      this.toDate(order.deliveredAt),
+      this.toDate(order.cancelledAt),
+      this.toDate(order.createdAt),
+      this.toDate(order.updatedAt)
     )
+  }
+
+  private toDate(dateTime: DateTime | null | undefined): Date | undefined {
+    if (!dateTime) return undefined
+    return dateTime.toJSDate()
   }
 }

@@ -2,16 +2,18 @@ import { CommandHandler } from '#shared/application/use-cases/command_handler'
 import { CancelOrderCommand } from '#kernel/order/application/command/cancel_order_command'
 import { OrderRepository } from '#kernel/order/domain/repository/order_repository'
 import { canTransitionTo, OrderStatus } from '#kernel/order/domain/type/order_status'
+import { asOrderId } from '#shared/domain/types/branded_types'
+import { OrderStatusTransitionError } from '#kernel/order/domain/errors/order_status_transition_error'
 
 export class CancelOrderHandler implements CommandHandler<CancelOrderCommand> {
   constructor(private orderRepository: OrderRepository) {}
 
   async handle(command: CancelOrderCommand): Promise<void> {
-    const order = await this.orderRepository.findById(command.orderId)
+    const order = await this.orderRepository.findById(asOrderId(command.orderId))
 
     // Validate status transition
     if (!canTransitionTo(order.getStatus(), OrderStatus.CANCELLED)) {
-      throw new Error(`Cannot cancel order in ${order.getStatus()} status`)
+      throw new OrderStatusTransitionError(order.getStatus(), OrderStatus.CANCELLED)
     }
 
     // Update status to cancelled
