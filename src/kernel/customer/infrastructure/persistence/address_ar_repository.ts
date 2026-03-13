@@ -2,21 +2,16 @@ import { AddressRepository } from '#kernel/customer/domain/repository/address_re
 import { default as EntityActiveRecord } from '#database/active-records/address'
 import { Address } from '#kernel/customer/domain/entity/address'
 import { AddressType } from '#kernel/customer/domain/type/address_type'
-import {
-  AddressId,
-  CustomerId,
-  asAddressId,
-  asCustomerId,
-} from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
 import { DateTime } from 'luxon'
 
 export class AddressARRepository implements AddressRepository {
-  async findById(id: AddressId): Promise<Address> {
-    const address = await EntityActiveRecord.findOrFail(id)
+  async findById(id: AppId): Promise<Address> {
+    const address = await EntityActiveRecord.findOrFail(id.value)
 
     return new Address(
-      asAddressId(address.id),
-      asCustomerId(address.customerId),
+      AppId.fromString(address.id),
+      AppId.fromString(address.customerId),
       address.type as AddressType,
       address.addressLine1,
       address.addressLine2,
@@ -30,13 +25,13 @@ export class AddressARRepository implements AddressRepository {
     )
   }
 
-  async findByCustomerId(customerId: CustomerId): Promise<Address[]> {
-    const addresses = await EntityActiveRecord.query().where('customer_id', customerId)
+  async findByCustomerId(customerId: AppId): Promise<Address[]> {
+    const addresses = await EntityActiveRecord.query().where('customer_id', customerId.value)
 
     return addresses.map((addr) => {
       return new Address(
-        asAddressId(addr.id),
-        asCustomerId(addr.customerId),
+        AppId.fromString(addr.id),
+        AppId.fromString(addr.customerId),
         addr.type as AddressType,
         addr.addressLine1,
         addr.addressLine2,
@@ -53,7 +48,7 @@ export class AddressARRepository implements AddressRepository {
 
   async save(entity: Address): Promise<void> {
     const object = {
-      customerId: entity.getCustomerId() as any,
+      customerId: entity.getCustomerId().value as any,
       type: entity.getType(),
       addressLine1: entity.getAddressLine1(),
       addressLine2: entity.getAddressLine2(),
@@ -65,14 +60,15 @@ export class AddressARRepository implements AddressRepository {
     }
 
     if (entity.getId()) {
-      await EntityActiveRecord.updateOrCreate({ id: entity.getId() as any }, object as any)
+      await EntityActiveRecord.updateOrCreate({ id: entity.getId()!.value as any }, object as any)
     } else {
-      await EntityActiveRecord.create(object as any)
+      const created = await EntityActiveRecord.create(object as any)
+      entity.setId(AppId.fromString(created.id))
     }
   }
 
-  async delete(id: AddressId): Promise<void> {
-    const address = await EntityActiveRecord.findOrFail(id)
+  async delete(id: AppId): Promise<void> {
+    const address = await EntityActiveRecord.findOrFail(id.value)
     await address.delete()
   }
 

@@ -7,18 +7,18 @@ import { ProductCategory } from '#kernel/product/domain/entity/product_category'
 import crypto from 'node:crypto'
 import { ProductNotFoundError } from '#kernel/product/application/errors/product_not_found_error'
 import { errors } from '@adonisjs/lucid'
-import { ProductId, asProductId, asProductCategoryId } from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
 import { DateTime } from 'luxon'
 
 const MAX_ADDITIONAL_IMAGES = 2
 
 export class ProductARRepository implements ProductRepository {
-  async find(id: ProductId): Promise<Product> {
+  async find(id: AppId): Promise<Product> {
     let product: EntityActiveRecord
 
     try {
       product = await EntityActiveRecord.query()
-        .where('id', id)
+        .where('id', id.value)
         .preload('images')
         .preload('category')
         .preload('mainImage')
@@ -33,18 +33,18 @@ export class ProductARRepository implements ProductRepository {
     }
 
     // Map additional images to ProductImage type
-    const images = (product.images || []).map((img) => new ProductImage(img.id))
+    const images = (product.images || []).map((img) => new ProductImage(AppId.fromString(img.id)))
 
     return new Product(
-      asProductId(product.id),
+      id,
       product.designation,
       new ProductCategory(
-        product.category?.id ? asProductCategoryId(product.category.id) : null,
+        product.category?.id ? AppId.fromString(product.category.id) : null,
         product.category?.designation || ''
       ),
       product.description,
       product.price,
-      new ProductImage(product.mainImage?.id || ''),
+      new ProductImage(AppId.fromString(product.mainImage?.id || '')),
       images,
       product.slug,
       product.brand,
@@ -59,10 +59,10 @@ export class ProductARRepository implements ProductRepository {
 
   async save(entity: Product): Promise<void> {
     const object = {
-      id: entity.getId() as any,
+      id: entity.getId()?.value,
       designation: entity.getDesignation(),
-      mainImageId: entity.getMainImage().id as crypto.UUID,
-      categoryId: entity.getCategory().getId() as any,
+      mainImageId: entity.getMainImage().id.value,
+      categoryId: entity.getCategory().getId()?.value,
       description: entity.getDescription(),
       price: entity.getPrice(),
       brand: entity.getBrand(),
@@ -76,15 +76,13 @@ export class ProductARRepository implements ProductRepository {
     let productRecord: EntityActiveRecord
 
     if (entity.getId()) {
-      productRecord = await EntityActiveRecord.updateOrCreate(
-        { id: entity.getId() as any },
-        object as any
-      )
+      productRecord = await EntityActiveRecord.updateOrCreate({ id: entity.getId()!.value }, object)
     } else {
-      productRecord = await EntityActiveRecord.create(object as any)
+      productRecord = await EntityActiveRecord.create(object)
+      entity.setId(AppId.fromString(productRecord.id))
     }
 
-    const imageIds = entity.getImages().map((item) => item.id)
+    const imageIds = entity.getImages().map((item) => item.id.value)
 
     // Handle additional images (max 2)
     if (imageIds.length > 0) {
@@ -104,10 +102,10 @@ export class ProductARRepository implements ProductRepository {
     }
   }
 
-  async delete(id: ProductId): Promise<void> {
+  async delete(id: AppId): Promise<void> {
     // Delete product images first (cascade should handle this, but being explicit)
-    await ProductImageAciveRecord.query().where('product_id', id).delete()
-    const product = await EntityActiveRecord.findOrFail(id)
+    await ProductImageAciveRecord.query().where('product_id', id.value).delete()
+    const product = await EntityActiveRecord.findOrFail(id.value)
     await product.delete()
   }
 

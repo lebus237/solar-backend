@@ -1,10 +1,10 @@
 import { Address } from '#kernel/customer/domain/entity/address'
-import { CustomerId, UserId } from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
 
 export class Customer {
   constructor(
-    private id: CustomerId | null,
-    private userId: UserId | null,
+    private id: AppId | null,
+    private userId: AppId | null,
     private firstName: string,
     private lastName: string,
     private phone: string,
@@ -14,11 +14,15 @@ export class Customer {
     private updatedAt?: Date
   ) {}
 
-  getId(): CustomerId | null {
+  getId(): AppId | null {
     return this.id
   }
 
-  getUserId(): UserId | null {
+  setId(id: AppId): void {
+    this.id = id
+  }
+
+  getUserId(): AppId | null {
     return this.userId
   }
 

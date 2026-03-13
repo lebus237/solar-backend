@@ -1,4 +1,7 @@
-import { ProductPackDetailsDto, ProductPackItemDto } from '#kernel/product/application/dto/product_pack_read_dto'
+import {
+  ProductPackDetailsDto,
+  ProductPackItemDto,
+} from '#kernel/product/application/dto/product_pack_read_dto'
 import { ProductPackReadModelContract } from '#kernel/product/application/query-handler/get_product_pack_handler'
 import { default as ProductPackActiveRecord } from '#database/active-records/product_pack'
 

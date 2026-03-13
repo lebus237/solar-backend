@@ -5,12 +5,15 @@ import { Order } from '#kernel/order/domain/entity/order'
 import { OrderItem } from '#kernel/order/domain/entity/order_item'
 import { OrderStatus } from '#kernel/order/domain/type/order_status'
 import db from '@adonisjs/lucid/services/db'
-import { OrderId, CustomerId, asOrderId, asCustomerId } from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
 import { DateTime } from 'luxon'
 
 export class OrderARRepository implements OrderRepository {
-  async findById(id: OrderId): Promise<Order> {
-    const order = await EntityActiveRecord.query().where('id', id).preload('items').firstOrFail()
+  async findById(id: AppId): Promise<Order> {
+    const order = await EntityActiveRecord.query()
+      .where('id', id.value)
+      .preload('items')
+      .firstOrFail()
     return this.mapToEntity(order)
   }
 
@@ -26,7 +29,7 @@ export class OrderARRepository implements OrderRepository {
   }
 
   async findByCustomerId(
-    customerId: CustomerId,
+    customerId: AppId,
     page: number = 1,
     limit: number = 20
   ): Promise<{
@@ -34,7 +37,7 @@ export class OrderARRepository implements OrderRepository {
     meta: { total: number; perPage: number; currentPage: number; lastPage: number }
   }> {
     const result = await EntityActiveRecord.query()
-      .where('customer_id', customerId)
+      .where('customer_id', customerId.value)
       .preload('items')
       .orderBy('created_at', 'desc')
       .paginate(page, limit)
@@ -74,7 +77,7 @@ export class OrderARRepository implements OrderRepository {
   async save(entity: Order): Promise<void> {
     const object = {
       orderNumber: entity.getOrderNumber(),
-      customerId: entity.getCustomerId(),
+      customerId: entity.getCustomerId()?.value ?? null,
       status: entity.getStatus(),
       shippingFirstName: entity.getShippingFirstName(),
       shippingLastName: entity.getShippingLastName(),
@@ -103,7 +106,7 @@ export class OrderARRepository implements OrderRepository {
 
       if (entity.getId()) {
         orderRecord = await EntityActiveRecord.updateOrCreate(
-          { id: entity.getId() as any },
+          { id: entity.getId()!.value as any },
           object as any,
           {
             client: trx,
@@ -111,6 +114,7 @@ export class OrderARRepository implements OrderRepository {
         )
       } else {
         orderRecord = await EntityActiveRecord.create(object as any, { client: trx })
+        entity.setId(AppId.fromString(orderRecord.id))
       }
 
       // Save order items
@@ -126,7 +130,7 @@ export class OrderARRepository implements OrderRepository {
           await OrderItemActiveRecord.create(
             {
               orderId: orderRecord.id,
-              productId: item.getProductId() as any,
+              productId: item.getProductId()?.value ?? null,
               productName: item.getProductName(),
               productSlug: item.getProductSlug(),
               quantity: item.getQuantity(),
@@ -145,8 +149,8 @@ export class OrderARRepository implements OrderRepository {
     }
   }
 
-  async delete(id: OrderId): Promise<void> {
-    const order = await EntityActiveRecord.findOrFail(id)
+  async delete(id: AppId): Promise<void> {
+    const order = await EntityActiveRecord.findOrFail(id.value)
     await order.delete()
   }
 
@@ -161,9 +165,9 @@ export class OrderARRepository implements OrderRepository {
 
     const items: OrderItem[] = orderItems.map((item) => {
       return new OrderItem(
-        item.id,
-        item.orderId ?? '',
-        item.productId ?? null,
+        item.id ? AppId.fromString(item.id) : null,
+        item.orderId ? AppId.fromString(item.orderId) : null,
+        item.productId ? AppId.fromString(item.productId) : null,
         item.productName,
         item.productSlug,
         item.quantity,
@@ -174,9 +178,9 @@ export class OrderARRepository implements OrderRepository {
     })
 
     return new Order(
-      asOrderId(order.id),
+      AppId.fromString(order.id),
       order.orderNumber,
-      order.customerId ? asCustomerId(order.customerId) : null,
+      order.customerId ? AppId.fromString(order.customerId) : null,
       order.status as OrderStatus,
       order.shippingFirstName,
       order.shippingLastName,

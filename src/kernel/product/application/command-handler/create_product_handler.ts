@@ -4,6 +4,7 @@ import { ProductRepository } from '#kernel/product/domain/repository/product_rep
 import { Product } from '#kernel/product/domain/entity/product'
 import { ProductCategory } from '#kernel/product/domain/entity/product_category'
 import { ProductImage } from '#kernel/product/domain/entity/product_image'
+import { AppId } from '#shared/domain/app_id'
 
 export class CreateProductHandler implements CommandHandler<CreateProductCommand> {
   constructor(private repository: ProductRepository) {}
@@ -11,11 +12,11 @@ export class CreateProductHandler implements CommandHandler<CreateProductCommand
     const product = new Product(
       null,
       command.designation,
-      new ProductCategory(command.categoryId, ''),
+      new ProductCategory(AppId.fromString(command.categoryId), ''),
       command.description,
       command.price,
-      new ProductImage(command.mainImageId),
-      command.imageIds.map((id) => new ProductImage(id)),
+      new ProductImage(AppId.fromString(command.mainImageId)),
+      command.imageIds.map((id) => new ProductImage(AppId.fromString(id))),
       undefined,
       command.brand
     )

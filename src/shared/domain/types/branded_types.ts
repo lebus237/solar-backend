@@ -10,6 +10,7 @@ export type Brand<T, TBrand> = T & { readonly [brand]: TBrand }
 export type ProductId = Brand<string, 'ProductId'>
 export type ProductCategoryId = Brand<string, 'ProductCategoryId'>
 export type ProductPackId = Brand<string, 'ProductPackId'>
+export type ProductPackItemId = Brand<string, 'ProductPackItemId'>
 export type ProductImageId = Brand<string, 'ProductImageId'>
 export type CustomerId = Brand<string, 'CustomerId'>
 export type AddressId = Brand<string, 'AddressId'>
@@ -53,6 +54,10 @@ export function isStoreId(value: string): value is StoreId {
  */
 export function asProductId(id: string): ProductId {
   return id as ProductId
+}
+
+export function asProductPackItemId(id: string): ProductPackItemId {
+  return id as ProductPackItemId
 }
 
 export function asProductCategoryId(id: string): ProductCategoryId {

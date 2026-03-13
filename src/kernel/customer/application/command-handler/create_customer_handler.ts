@@ -2,7 +2,7 @@ import { CommandHandler } from '#shared/application/use-cases/command_handler'
 import { CreateCustomerCommand } from '#kernel/customer/application/command/create_customer_command'
 import { CustomerRepository } from '#kernel/customer/domain/repository/customer_repository'
 import { Customer } from '#kernel/customer/domain/entity/customer'
-import { asUserId } from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
 
 export class CreateCustomerHandler implements CommandHandler<CreateCustomerCommand, string> {
   constructor(private customerRepository: CustomerRepository) {}
@@ -10,7 +10,7 @@ export class CreateCustomerHandler implements CommandHandler<CreateCustomerComma
   async handle(command: CreateCustomerCommand): Promise<string> {
     const customer = new Customer(
       null,
-      command.userId ? asUserId(command.userId) : null,
+      command.userId ? AppId.fromString(command.userId) : null,
       command.firstName,
       command.lastName,
       command.phone,
@@ -19,6 +19,6 @@ export class CreateCustomerHandler implements CommandHandler<CreateCustomerComma
 
     await this.customerRepository.save(customer)
 
-    return customer.getId() as string
+    return customer.getId()!.value
   }
 }

@@ -4,16 +4,27 @@ import { ProductPackRepository } from '#kernel/product/domain/repository/product
 import { ProductPack } from '#kernel/product/domain/entity/product_pack'
 import { ProductPackItem } from '#kernel/product/domain/entity/product_pack_item'
 import { ProductImage } from '#kernel/product/domain/entity/product_image'
+import crypto from 'node:crypto'
+import { AppId } from '#shared/domain/app_id'
 
 export class CreateProductPackHandler implements CommandHandler<CreateProductPackCommand> {
   constructor(private repository: ProductPackRepository) {}
 
   async handle(command: CreateProductPackCommand): Promise<void> {
     const items = command.items.map(
-      (item, index) => new ProductPackItem(item.productId, item.quantity, undefined, index)
+      (item, index) =>
+        new ProductPackItem(
+          AppId.fromString(crypto.randomUUID()),
+          AppId.fromString(item.productId),
+          item.quantity,
+          undefined,
+          index
+        )
     )
 
-    const mainImage = command.mainImageId ? new ProductImage(command.mainImageId) : null
+    const mainImage = command.mainImageId
+      ? new ProductImage(AppId.fromString(command.mainImageId))
+      : null
 
     const pack = new ProductPack(
       null,

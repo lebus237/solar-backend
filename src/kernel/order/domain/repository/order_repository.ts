@@ -1,15 +1,15 @@
 import { RepositoryInterface } from '#shared/infrastructure/repository_interface'
 import { Order } from '#kernel/order/domain/entity/order'
-import { OrderId, CustomerId } from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
 import { OrderStatus } from '#kernel/order/domain/type/order_status'
 
 export interface OrderRepository extends RepositoryInterface {
   save(entity: Order): Promise<void>
-  findById(id: OrderId): Promise<Order>
+  findById(id: AppId): Promise<Order>
   findAll(): Promise<Order[]>
   findByOrderNumber(orderNumber: string): Promise<Order | null>
   findByCustomerId(
-    customerId: CustomerId,
+    customerId: AppId,
     page?: number,
     limit?: number
   ): Promise<{
@@ -24,5 +24,5 @@ export interface OrderRepository extends RepositoryInterface {
     data: Order[]
     meta: { total: number; perPage: number; currentPage: number; lastPage: number }
   }>
-  delete(id: OrderId): Promise<void>
+  delete(id: AppId): Promise<void>
 }

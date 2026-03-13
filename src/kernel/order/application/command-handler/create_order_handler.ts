@@ -8,7 +8,7 @@ import { Order } from '#kernel/order/domain/entity/order'
 import { OrderItem } from '#kernel/order/domain/entity/order_item'
 import { OrderStatus } from '#kernel/order/domain/type/order_status'
 import { DateTime } from 'luxon'
-import { asCustomerId, asAddressId, asProductId } from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
 
 export class CreateOrderHandler implements CommandHandler<CreateOrderCommand, string> {
   constructor(
@@ -20,11 +20,11 @@ export class CreateOrderHandler implements CommandHandler<CreateOrderCommand, st
 
   async handle(command: CreateOrderCommand): Promise<string> {
     // Get customer
-    const customer = await this.customerRepository.findById(asCustomerId(command.customerId))
+    const customer = await this.customerRepository.findById(AppId.fromString(command.customerId))
 
     // Get shipping address
     const shippingAddress = await this.addressRepository.findById(
-      asAddressId(command.shippingAddressId)
+      AppId.fromString(command.shippingAddressId)
     )
 
     // Get products and calculate totals
@@ -32,14 +32,14 @@ export class CreateOrderHandler implements CommandHandler<CreateOrderCommand, st
     const orderItems: OrderItem[] = []
 
     for (const item of command.items) {
-      const product = await this.productRepository.find(asProductId(item.productId))
+      const product = await this.productRepository.find(AppId.fromString(item.productId))
       const unitPrice = product['price']
       const totalPrice = unitPrice * item.quantity
       subtotal += totalPrice
 
       const orderItem = new OrderItem(
         null,
-        '', // Will be set when order is saved
+        null,
         product.getId(),
         product['designation'],
         product.getSlug() || null,

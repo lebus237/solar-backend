@@ -1,8 +1,10 @@
+import { AppId } from '#shared/domain/app_id'
+
 export class OrderItem {
   constructor(
-    private id: string | null,
-    private orderId: string,
-    private productId: string | null,
+    private id: AppId | null,
+    private orderId: AppId | null,
+    private productId: AppId | null,
     private productName: string,
     private productSlug: string | null,
     private quantity: number,
@@ -11,15 +13,19 @@ export class OrderItem {
     private createdAt?: Date
   ) {}
 
-  getId(): string | null {
+  getId(): AppId | null {
     return this.id
   }
 
-  getOrderId(): string {
+  getOrderId(): AppId | null {
     return this.orderId
   }
 
-  getProductId(): string | null {
+  setOrderId(orderId: AppId): void {
+    this.orderId = orderId
+  }
+
+  getProductId(): AppId | null {
     return this.productId
   }
 

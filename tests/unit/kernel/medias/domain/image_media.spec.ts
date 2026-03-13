@@ -3,9 +3,13 @@ import { ImageMedia } from '#kernel/medias/domain/image_media'
 import { AppId } from '#shared/domain/app_id'
 
 test.group('ImageMedia Entity', () => {
+  const IMG_123 = '00000000-0000-4000-8000-000000000123'
+  const IMG_1 = '00000000-0000-4000-8000-000000000001'
+  const TEST_ID_123 = '00000000-0000-4000-8000-0000000000a1'
+
   const createMockImageMedia = () => {
     return new ImageMedia(
-      AppId.fromString('img-123'),
+      AppId.fromString(IMG_123),
       'Test Image',
       'https://example.com/image.jpg',
       'A test image description',
@@ -24,7 +28,7 @@ test.group('ImageMedia Entity', () => {
   test('should create image media with all properties', ({ assert }) => {
     const image = createMockImageMedia()
 
-    assert.equal(image.getId(), 'img-123')
+    assert.equal(image.getId(), IMG_123)
     assert.equal(image.getTitle(), 'Test Image')
     assert.equal(image.getUrl(), 'https://example.com/image.jpg')
     assert.equal(image.getAltDescription(), 'A test image description')
@@ -50,7 +54,7 @@ test.group('ImageMedia Entity', () => {
 
   test('should return id via getId', ({ assert }) => {
     const image = new ImageMedia(
-      AppId.fromString('test-id-123'),
+      AppId.fromString(TEST_ID_123),
       'Test',
       'https://example.com/test.jpg',
       'Alt',
@@ -59,11 +63,19 @@ test.group('ImageMedia Entity', () => {
       null
     )
 
-    assert.equal(image.getId(), 'test-id-123')
+    assert.equal(image.getId(), TEST_ID_123)
   })
 
   test('should return undefined id when null', ({ assert }) => {
-    const image = new ImageMedia(null, 'Test', 'https://example.com/test.jpg', 'Alt', {}, null, null)
+    const image = new ImageMedia(
+      null,
+      'Test',
+      'https://example.com/test.jpg',
+      'Alt',
+      {},
+      null,
+      null
+    )
 
     assert.isUndefined(image.getId())
   })
@@ -100,7 +112,7 @@ test.group('ImageMedia Entity', () => {
 
   test('should return undefined relativeKey when not provided', ({ assert }) => {
     const image = new ImageMedia(
-      AppId.fromString('img-1'),
+      AppId.fromString(IMG_1),
       'Test',
       'https://example.com/test.jpg',
       'Alt',
@@ -114,26 +126,26 @@ test.group('ImageMedia Entity', () => {
 
   test('should return createdAt via getCreatedAt', ({ assert }) => {
     const date = new Date('2024-01-01')
-    const image = new ImageMedia(AppId.fromString('img-1'), 'Test', 'url', 'Alt', {}, date, null)
+    const image = new ImageMedia(AppId.fromString(IMG_1), 'Test', 'url', 'Alt', {}, date, null)
 
     assert.deepEqual(image.getCreatedAt(), date)
   })
 
   test('should return null createdAt when not provided', ({ assert }) => {
-    const image = new ImageMedia(AppId.fromString('img-1'), 'Test', 'url', 'Alt', {}, null, null)
+    const image = new ImageMedia(AppId.fromString(IMG_1), 'Test', 'url', 'Alt', {}, null, null)
 
     assert.isNull(image.getCreatedAt())
   })
 
   test('should return updatedAt via getUpdatedAt', ({ assert }) => {
     const date = new Date('2024-01-15')
-    const image = new ImageMedia(AppId.fromString('img-1'), 'Test', 'url', 'Alt', {}, null, date)
+    const image = new ImageMedia(AppId.fromString(IMG_1), 'Test', 'url', 'Alt', {}, null, date)
 
     assert.deepEqual(image.getUpdatedAt(), date)
   })
 
   test('should return null updatedAt when not provided', ({ assert }) => {
-    const image = new ImageMedia(AppId.fromString('img-1'), 'Test', 'url', 'Alt', {}, null, null)
+    const image = new ImageMedia(AppId.fromString(IMG_1), 'Test', 'url', 'Alt', {}, null, null)
 
     assert.isNull(image.getUpdatedAt())
   })

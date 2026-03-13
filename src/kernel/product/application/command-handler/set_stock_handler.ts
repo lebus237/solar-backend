@@ -4,7 +4,7 @@ import { ProductRepository } from '#kernel/product/domain/repository/product_rep
 import { StockMovementRepository } from '#kernel/product/domain/repository/stock_movement_repository'
 import { StockMovement } from '#kernel/product/domain/entity/stock_movement'
 import { StockOperationType } from '#kernel/product/domain/type/stock_operation_type'
-import { asProductId } from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
 
 export class SetStockHandler implements CommandHandler<SetStockCommand> {
   constructor(
@@ -13,7 +13,7 @@ export class SetStockHandler implements CommandHandler<SetStockCommand> {
   ) {}
 
   async handle(command: SetStockCommand): Promise<void> {
-    const product = await this.productRepository.find(asProductId(command.productId))
+    const product = await this.productRepository.find(AppId.fromString(command.productId))
     const previousQuantity = product.getStockQuantity()
     const newQuantity = Math.max(0, command.quantity)
 

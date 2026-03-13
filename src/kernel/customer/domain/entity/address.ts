@@ -1,10 +1,10 @@
 import { AddressType } from '#kernel/customer/domain/type/address_type'
-import { AddressId, CustomerId } from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
 
 export class Address {
   constructor(
-    private id: AddressId | null,
-    private customerId: CustomerId,
+    private id: AppId | null,
+    private customerId: AppId,
     private type: AddressType,
     private addressLine1: string,
     private addressLine2: string | null,
@@ -17,12 +17,16 @@ export class Address {
     private updatedAt?: Date
   ) {}
 
-  getId(): AddressId | null {
+  getId(): AppId | null {
     return this.id
   }
 
-  getCustomerId(): CustomerId {
+  getCustomerId(): AppId {
     return this.customerId
+  }
+
+  setId(id: AppId): void {
+    this.id = id
   }
 
   getType(): AddressType {

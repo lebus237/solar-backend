@@ -3,12 +3,15 @@ import { UpdateProductCategoryHandler } from '#kernel/product/application/comman
 import { UpdateProductCategoryCommand } from '#kernel/product/application/command/update_product_category_command'
 import { ProductCategoryRepository } from '#kernel/product/domain/repository/product_category_repository'
 import { ProductCategory } from '#kernel/product/domain/entity/product_category'
-import { asProductCategoryId } from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
+
+const CAT_1 = '00000000-0000-4000-8000-0000000000c1'
+const PARENT_1 = '00000000-0000-4000-8000-0000000000c9'
 
 test.group('UpdateProductCategoryHandler', () => {
   const createExistingCategory = () => {
     return new ProductCategory(
-      asProductCategoryId('cat-1'),
+      AppId.fromString(CAT_1),
       'Old Designation',
       'CATEGORY',
       null,
@@ -25,13 +28,13 @@ test.group('UpdateProductCategoryHandler', () => {
       save: async () => {},
       find: async (id) => {
         findCalled = true
-        assert.equal(id, 'cat-1')
+        assert.equal(id.value, CAT_1)
         return existingCategory
       },
     }
 
     const handler = new UpdateProductCategoryHandler(mockRepository)
-    const command = new UpdateProductCategoryCommand('cat-1', 'New Designation', 'CATEGORY', null)
+    const command = new UpdateProductCategoryCommand(CAT_1, 'New Designation', 'CATEGORY', null)
 
     await handler.handle(command)
 
@@ -50,7 +53,7 @@ test.group('UpdateProductCategoryHandler', () => {
     }
 
     const handler = new UpdateProductCategoryHandler(mockRepository)
-    const command = new UpdateProductCategoryCommand('cat-1', 'Updated Category', 'CATEGORY', null)
+    const command = new UpdateProductCategoryCommand(CAT_1, 'Updated Category', 'CATEGORY', null)
 
     await handler.handle(command)
 
@@ -69,7 +72,7 @@ test.group('UpdateProductCategoryHandler', () => {
     }
 
     const handler = new UpdateProductCategoryHandler(mockRepository)
-    const command = new UpdateProductCategoryCommand('cat-1', 'Category', 'TAG', null)
+    const command = new UpdateProductCategoryCommand(CAT_1, 'Category', 'TAG', null)
 
     await handler.handle(command)
 
@@ -88,11 +91,11 @@ test.group('UpdateProductCategoryHandler', () => {
     }
 
     const handler = new UpdateProductCategoryHandler(mockRepository)
-    const command = new UpdateProductCategoryCommand('cat-1', 'Category', 'CATEGORY', 'parent-1')
+    const command = new UpdateProductCategoryCommand(CAT_1, 'Category', 'CATEGORY', PARENT_1)
 
     await handler.handle(command)
 
-    assert.equal(savedCategory!.getParentId(), 'parent-1')
+    assert.equal(savedCategory!.getParentId()!.value, PARENT_1)
   })
 
   test('should preserve existing slug', async ({ assert }) => {
@@ -107,7 +110,7 @@ test.group('UpdateProductCategoryHandler', () => {
     }
 
     const handler = new UpdateProductCategoryHandler(mockRepository)
-    const command = new UpdateProductCategoryCommand('cat-1', 'Updated', 'CATEGORY', null)
+    const command = new UpdateProductCategoryCommand(CAT_1, 'Updated', 'CATEGORY', null)
 
     await handler.handle(command)
 
@@ -126,7 +129,7 @@ test.group('UpdateProductCategoryHandler', () => {
     }
 
     const handler = new UpdateProductCategoryHandler(mockRepository)
-    const command = new UpdateProductCategoryCommand('cat-1', 'Updated', 'CATEGORY', null)
+    const command = new UpdateProductCategoryCommand(CAT_1, 'Updated', 'CATEGORY', null)
 
     await handler.handle(command)
 
@@ -145,10 +148,10 @@ test.group('UpdateProductCategoryHandler', () => {
     }
 
     const handler = new UpdateProductCategoryHandler(mockRepository)
-    const command = new UpdateProductCategoryCommand('cat-1', 'Updated', 'CATEGORY', null)
+    const command = new UpdateProductCategoryCommand(CAT_1, 'Updated', 'CATEGORY', null)
 
     await handler.handle(command)
 
-    assert.equal(savedCategory!.getId(), 'cat-1')
+    assert.equal(savedCategory!.getId()!.value, CAT_1)
   })
 })

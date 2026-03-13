@@ -20,7 +20,7 @@ export class ListCustomersHandler implements QueryHandler<ListCustomersQuery, Cu
     const customers = await this.customerRepository.findAll()
 
     return customers.map((customer: Customer) => ({
-      id: customer.getId(),
+      id: customer.getId()?.value ?? null,
       firstName: customer.getFirstName(),
       lastName: customer.getLastName(),
       phone: customer.getPhone(),

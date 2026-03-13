@@ -2,15 +2,24 @@ import { test } from '@japa/runner'
 import { Product } from '#kernel/product/domain/entity/product'
 import { ProductCategory } from '#kernel/product/domain/entity/product_category'
 import { ProductImage } from '#kernel/product/domain/entity/product_image'
-import { asProductId, asProductCategoryId } from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
+
+const asProductId = (value: string) => AppId.fromString(value)
+const asProductCategoryId = (value: string) => AppId.fromString(value)
 
 test.group('Product Entity', (group) => {
   let category: ProductCategory
   let mainImage: ProductImage
 
   group.setup(() => {
-    category = new ProductCategory(asProductCategoryId('cat-1'), 'Solar Panels')
-    mainImage = new ProductImage('img-1', 'https://example.com/image.jpg')
+    category = new ProductCategory(
+      asProductCategoryId('00000000-0000-4000-8000-0000000000c1'),
+      'Solar Panels'
+    )
+    mainImage = new ProductImage(
+      AppId.fromString('00000000-0000-4000-8000-000000000001'),
+      'https://example.com/image.jpg'
+    )
   })
 
   // ============================================
@@ -19,7 +28,7 @@ test.group('Product Entity', (group) => {
 
   test('should create product with all required properties', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       '300W Solar Panel',
       category,
       'High efficiency solar panel',
@@ -27,7 +36,7 @@ test.group('Product Entity', (group) => {
       mainImage
     )
 
-    assert.equal(product.getId(), 'prod-1')
+    assert.equal(product.getId()!.value, '00000000-0000-4000-8000-0000000000b1')
     assert.equal(product.getDesignation(), '300W Solar Panel')
     assert.equal(product.getDescription(), 'High efficiency solar panel')
     assert.equal(product.getPrice(), 299.99)
@@ -37,7 +46,7 @@ test.group('Product Entity', (group) => {
 
   test('should auto-generate slug if not provided', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       '300W Solar Panel',
       category,
       'High efficiency solar panel',
@@ -53,7 +62,7 @@ test.group('Product Entity', (group) => {
 
   test('should use provided slug when specified', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       '300W Solar Panel',
       category,
       'High efficiency solar panel',
@@ -68,7 +77,7 @@ test.group('Product Entity', (group) => {
 
   test('should default isAvailable to false', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       '300W Solar Panel',
       category,
       'High efficiency solar panel',
@@ -81,7 +90,7 @@ test.group('Product Entity', (group) => {
 
   test('should default isDeleted to false', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       '300W Solar Panel',
       category,
       'High efficiency solar panel',
@@ -94,7 +103,7 @@ test.group('Product Entity', (group) => {
 
   test('should default stockQuantity to 0', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       '300W Solar Panel',
       category,
       'High efficiency solar panel',
@@ -107,7 +116,7 @@ test.group('Product Entity', (group) => {
 
   test('should default lowStockThreshold to 10', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       '300W Solar Panel',
       category,
       'High efficiency solar panel',
@@ -120,7 +129,7 @@ test.group('Product Entity', (group) => {
 
   test('should accept custom stockQuantity and lowStockThreshold', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       '300W Solar Panel',
       category,
       'High efficiency solar panel',
@@ -138,11 +147,11 @@ test.group('Product Entity', (group) => {
   })
 
   test('should accept images array', ({ assert }) => {
-    const image1 = new ProductImage('img-2')
-    const image2 = new ProductImage('img-3')
+    const image1 = new ProductImage(AppId.fromString('00000000-0000-4000-8000-000000000002'))
+    const image2 = new ProductImage(AppId.fromString('00000000-0000-4000-8000-000000000003'))
 
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       '300W Solar Panel',
       category,
       'High efficiency solar panel',
@@ -156,7 +165,7 @@ test.group('Product Entity', (group) => {
 
   test('should accept brand', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       '300W Solar Panel',
       category,
       'High efficiency solar panel',
@@ -175,13 +184,20 @@ test.group('Product Entity', (group) => {
   // ============================================
 
   test('should return id via getId', ({ assert }) => {
-    const product = new Product(asProductId('prod-123'), 'Test', category, 'Desc', 100, mainImage)
-    assert.equal(product.getId(), 'prod-123')
+    const product = new Product(
+      asProductId('00000000-0000-4000-8000-0000000000b2'),
+      'Test',
+      category,
+      'Desc',
+      100,
+      mainImage
+    )
+    assert.equal(product.getId()!.value, '00000000-0000-4000-8000-0000000000b2')
   })
 
   test('should return designation via getDesignation', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       'Test Product',
       category,
       'Desc',
@@ -192,13 +208,20 @@ test.group('Product Entity', (group) => {
   })
 
   test('should return category via getCategory', ({ assert }) => {
-    const product = new Product(asProductId('prod-1'), 'Test', category, 'Desc', 100, mainImage)
+    const product = new Product(
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
+      'Test',
+      category,
+      'Desc',
+      100,
+      mainImage
+    )
     assert.deepEqual(product.getCategory(), category)
   })
 
   test('should return description via getDescription', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       'Test',
       category,
       'Test Description',
@@ -209,19 +232,36 @@ test.group('Product Entity', (group) => {
   })
 
   test('should return price via getPrice', ({ assert }) => {
-    const product = new Product(asProductId('prod-1'), 'Test', category, 'Desc', 599.99, mainImage)
+    const product = new Product(
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
+      'Test',
+      category,
+      'Desc',
+      599.99,
+      mainImage
+    )
     assert.equal(product.getPrice(), 599.99)
   })
 
   test('should return mainImage via getMainImage', ({ assert }) => {
-    const product = new Product(asProductId('prod-1'), 'Test', category, 'Desc', 100, mainImage)
+    const product = new Product(
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
+      'Test',
+      category,
+      'Desc',
+      100,
+      mainImage
+    )
     assert.deepEqual(product.getMainImage(), mainImage)
   })
 
   test('should return images via getImages', ({ assert }) => {
-    const images = [new ProductImage('img-2'), new ProductImage('img-3')]
+    const images = [
+      new ProductImage(AppId.fromString('00000000-0000-4000-8000-000000000002')),
+      new ProductImage(AppId.fromString('00000000-0000-4000-8000-000000000003')),
+    ]
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       'Test',
       category,
       'Desc',
@@ -235,7 +275,7 @@ test.group('Product Entity', (group) => {
   test('should return createdAt via getCreatedAt', ({ assert }) => {
     const date = new Date('2024-01-15')
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       'Test',
       category,
       'Desc',
@@ -256,7 +296,7 @@ test.group('Product Entity', (group) => {
   test('should return updatedAt via getUpdatedAt', ({ assert }) => {
     const date = new Date('2024-01-20')
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       'Test',
       category,
       'Desc',
@@ -281,7 +321,7 @@ test.group('Product Entity', (group) => {
 
   test('isLowStock returns true when stock > 0 and <= threshold', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       'Test',
       category,
       'Desc',
@@ -299,7 +339,7 @@ test.group('Product Entity', (group) => {
 
   test('isLowStock returns true when stock equals threshold', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       'Test',
       category,
       'Desc',
@@ -317,7 +357,7 @@ test.group('Product Entity', (group) => {
 
   test('isLowStock returns false when stock = 0', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       'Test',
       category,
       'Desc',
@@ -335,7 +375,7 @@ test.group('Product Entity', (group) => {
 
   test('isLowStock returns false when stock > threshold', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       'Test',
       category,
       'Desc',
@@ -353,7 +393,7 @@ test.group('Product Entity', (group) => {
 
   test('isOutOfStock returns true when stock <= 0', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       'Test',
       category,
       'Desc',
@@ -371,7 +411,7 @@ test.group('Product Entity', (group) => {
 
   test('isOutOfStock returns true when stock is negative', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       'Test',
       category,
       'Desc',
@@ -389,7 +429,7 @@ test.group('Product Entity', (group) => {
 
   test('isOutOfStock returns false when stock > 0', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       'Test',
       category,
       'Desc',
@@ -411,7 +451,7 @@ test.group('Product Entity', (group) => {
 
   test('setStockQuantity updates stock quantity', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       'Test',
       category,
       'Desc',
@@ -431,7 +471,7 @@ test.group('Product Entity', (group) => {
 
   test('setLowStockThreshold updates threshold', ({ assert }) => {
     const product = new Product(
-      asProductId('prod-1'),
+      asProductId('00000000-0000-4000-8000-0000000000b1'),
       'Test',
       category,
       'Desc',

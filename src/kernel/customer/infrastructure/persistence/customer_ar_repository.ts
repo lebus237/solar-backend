@@ -3,20 +3,20 @@ import { default as EntityActiveRecord } from '#database/active-records/customer
 import { Customer } from '#kernel/customer/domain/entity/customer'
 import { Address } from '#kernel/customer/domain/entity/address'
 import { AddressType } from '#kernel/customer/domain/type/address_type'
-import { CustomerId, asCustomerId, asUserId, asAddressId } from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
 import { DateTime } from 'luxon'
 
 export class CustomerARRepository implements CustomerRepository {
-  async findById(id: CustomerId): Promise<Customer> {
+  async findById(id: AppId): Promise<Customer> {
     const customer = await EntityActiveRecord.query()
-      .where('id', id)
+      .where('id', id.value)
       .preload('addresses')
       .firstOrFail()
 
     const addresses = (customer.addresses || []).map((addr) => {
       return new Address(
-        asAddressId(addr.id),
-        asCustomerId(addr.customerId),
+        AppId.fromString(addr.id),
+        AppId.fromString(addr.customerId),
         addr.type as AddressType,
         addr.addressLine1,
         addr.addressLine2,
@@ -31,8 +31,8 @@ export class CustomerARRepository implements CustomerRepository {
     })
 
     return new Customer(
-      asCustomerId(customer.id),
-      customer.userId ? asUserId(customer.userId) : null,
+      AppId.fromString(customer.id),
+      customer.userId ? AppId.fromString(customer.userId) : null,
       customer.firstName,
       customer.lastName,
       customer.phone,
@@ -54,8 +54,8 @@ export class CustomerARRepository implements CustomerRepository {
 
     const addresses = (customer.addresses || []).map((addr) => {
       return new Address(
-        asAddressId(addr.id),
-        asCustomerId(addr.customerId),
+        AppId.fromString(addr.id),
+        AppId.fromString(addr.customerId),
         addr.type as AddressType,
         addr.addressLine1,
         addr.addressLine2,
@@ -70,8 +70,8 @@ export class CustomerARRepository implements CustomerRepository {
     })
 
     return new Customer(
-      asCustomerId(customer.id),
-      customer.userId ? asUserId(customer.userId) : null,
+      AppId.fromString(customer.id),
+      customer.userId ? AppId.fromString(customer.userId) : null,
       customer.firstName,
       customer.lastName,
       customer.phone,
@@ -84,7 +84,7 @@ export class CustomerARRepository implements CustomerRepository {
 
   async save(entity: Customer): Promise<void> {
     const object = {
-      userId: entity.getUserId() as string | null,
+      userId: entity.getUserId()?.value ?? null,
       firstName: entity.getFirstName(),
       lastName: entity.getLastName(),
       email: entity.getEmail(),
@@ -92,14 +92,15 @@ export class CustomerARRepository implements CustomerRepository {
     }
 
     if (entity.getId()) {
-      await EntityActiveRecord.updateOrCreate({ id: entity.getId() as any }, object as any)
+      await EntityActiveRecord.updateOrCreate({ id: entity.getId()!.value as any }, object as any)
     } else {
-      await EntityActiveRecord.create(object as any)
+      const created = await EntityActiveRecord.create(object as any)
+      entity.setId(AppId.fromString(created.id))
     }
   }
 
-  async delete(id: CustomerId): Promise<void> {
-    const customer = await EntityActiveRecord.findOrFail(id)
+  async delete(id: AppId): Promise<void> {
+    const customer = await EntityActiveRecord.findOrFail(id.value)
     await customer.delete()
   }
 
@@ -109,8 +110,8 @@ export class CustomerARRepository implements CustomerRepository {
     return customers.map((customer) => {
       const addresses = (customer.addresses || []).map((addr) => {
         return new Address(
-          asAddressId(addr.id),
-          asCustomerId(addr.customerId),
+          AppId.fromString(addr.id),
+          AppId.fromString(addr.customerId),
           addr.type as AddressType,
           addr.addressLine1,
           addr.addressLine2,
@@ -125,8 +126,8 @@ export class CustomerARRepository implements CustomerRepository {
       })
 
       return new Customer(
-        asCustomerId(customer.id),
-        customer.userId ? asUserId(customer.userId) : null,
+        AppId.fromString(customer.id),
+        customer.userId ? AppId.fromString(customer.userId) : null,
         customer.firstName,
         customer.lastName,
         customer.phone,

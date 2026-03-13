@@ -1,10 +1,10 @@
 import { RepositoryInterface } from '#shared/infrastructure/repository_interface'
 import { Address } from '#kernel/customer/domain/entity/address'
-import { AddressId, CustomerId } from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
 
 export interface AddressRepository extends RepositoryInterface {
   save(entity: Address): Promise<void>
-  findById(id: AddressId): Promise<Address>
-  findByCustomerId(customerId: CustomerId): Promise<Address[]>
-  delete(id: AddressId): Promise<void>
+  findById(id: AppId): Promise<Address>
+  findByCustomerId(customerId: AppId): Promise<Address[]>
+  delete(id: AppId): Promise<void>
 }

@@ -5,16 +5,34 @@ import { ProductRepository } from '#kernel/product/domain/repository/product_rep
 import { Product } from '#kernel/product/domain/entity/product'
 import { ProductCategory } from '#kernel/product/domain/entity/product_category'
 import { ProductImage } from '#kernel/product/domain/entity/product_image'
-import { asProductId, asProductCategoryId } from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
+
+const asProductId = (value: string) => AppId.fromString(value)
+const asProductCategoryId = (value: string) => AppId.fromString(value)
+
+const PROD_1 = '00000000-0000-4000-8000-0000000000b1'
+const OLD_CAT = '00000000-0000-4000-8000-0000000000c1'
+const NEW_CAT = '00000000-0000-4000-8000-0000000000c2'
+const NEW_CAT_456 = '00000000-0000-4000-8000-000000000456'
+const CAT_1 = '00000000-0000-4000-8000-0000000000c3'
+const OLD_MAIN_IMG = '00000000-0000-4000-8000-000000000111'
+const IMG_2 = '00000000-0000-4000-8000-000000000002'
+const IMG_3 = '00000000-0000-4000-8000-000000000003'
 
 test.group('UpdateProductHandler', () => {
   const createExistingProduct = () => {
-    const category = new ProductCategory(asProductCategoryId('old-cat'), 'Old Category')
-    const mainImage = new ProductImage('old-main-img', 'https://example.com/old.jpg')
-    const images = [new ProductImage('img-2'), new ProductImage('img-3')]
+    const category = new ProductCategory(asProductCategoryId(OLD_CAT), 'Old Category')
+    const mainImage = new ProductImage(
+      AppId.fromString(OLD_MAIN_IMG),
+      'https://example.com/old.jpg'
+    )
+    const images = [
+      new ProductImage(AppId.fromString(IMG_2)),
+      new ProductImage(AppId.fromString(IMG_3)),
+    ]
 
     return new Product(
-      asProductId('prod-1'),
+      asProductId(PROD_1),
       'Old Designation',
       category,
       'Old Description',
@@ -40,7 +58,7 @@ test.group('UpdateProductHandler', () => {
       save: async () => {},
       find: async (id) => {
         findCalled = true
-        assert.equal(id, 'prod-1')
+        assert.equal(id.value, PROD_1)
         return existingProduct
       },
       delete: async () => {
@@ -50,9 +68,9 @@ test.group('UpdateProductHandler', () => {
 
     const handler = new UpdateProductHandler(mockRepository)
     const command = new UpdateProductCommand(
-      'prod-1',
+      PROD_1,
       'New Designation',
-      'new-cat',
+      NEW_CAT,
       'New Description',
       200,
       'NewBrand'
@@ -79,9 +97,9 @@ test.group('UpdateProductHandler', () => {
 
     const handler = new UpdateProductHandler(mockRepository)
     const command = new UpdateProductCommand(
-      'prod-1',
+      PROD_1,
       'Updated Product',
-      'new-cat-456',
+      NEW_CAT_456,
       'Updated Description',
       299.99,
       'UpdatedBrand'
@@ -93,7 +111,7 @@ test.group('UpdateProductHandler', () => {
     assert.equal(savedProduct!.getDescription(), 'Updated Description')
     assert.equal(savedProduct!.getPrice(), 299.99)
     assert.equal(savedProduct!.getBrand(), 'UpdatedBrand')
-    assert.equal(savedProduct!.getCategory().getId(), 'new-cat-456')
+    assert.equal(savedProduct!.getCategory().getId()!.value, NEW_CAT_456)
   })
 
   test('should preserve existing images', async ({ assert }) => {
@@ -112,7 +130,7 @@ test.group('UpdateProductHandler', () => {
     }
 
     const handler = new UpdateProductHandler(mockRepository)
-    const command = new UpdateProductCommand('prod-1', 'Updated', 'cat-1', 'Desc', 100)
+    const command = new UpdateProductCommand(PROD_1, 'Updated', CAT_1, 'Desc', 100)
 
     await handler.handle(command)
 
@@ -134,7 +152,7 @@ test.group('UpdateProductHandler', () => {
     }
 
     const handler = new UpdateProductHandler(mockRepository)
-    const command = new UpdateProductCommand('prod-1', 'Updated', 'cat-1', 'Desc', 100)
+    const command = new UpdateProductCommand(PROD_1, 'Updated', CAT_1, 'Desc', 100)
 
     await handler.handle(command)
 
@@ -156,7 +174,7 @@ test.group('UpdateProductHandler', () => {
     }
 
     const handler = new UpdateProductHandler(mockRepository)
-    const command = new UpdateProductCommand('prod-1', 'Updated', 'cat-1', 'Desc', 100)
+    const command = new UpdateProductCommand(PROD_1, 'Updated', CAT_1, 'Desc', 100)
 
     await handler.handle(command)
 
@@ -179,7 +197,7 @@ test.group('UpdateProductHandler', () => {
     }
 
     const handler = new UpdateProductHandler(mockRepository)
-    const command = new UpdateProductCommand('prod-1', 'Updated', 'cat-1', 'Desc', 100)
+    const command = new UpdateProductCommand(PROD_1, 'Updated', CAT_1, 'Desc', 100)
 
     await handler.handle(command)
 
@@ -202,11 +220,11 @@ test.group('UpdateProductHandler', () => {
     }
 
     const handler = new UpdateProductHandler(mockRepository)
-    const command = new UpdateProductCommand('prod-1', 'Updated', 'cat-1', 'Desc', 100)
+    const command = new UpdateProductCommand(PROD_1, 'Updated', CAT_1, 'Desc', 100)
 
     await handler.handle(command)
 
-    assert.equal(savedProduct!.getMainImage().id, 'old-main-img')
+    assert.equal(savedProduct!.getMainImage().id.value, OLD_MAIN_IMG)
   })
 
   test('should preserve product id', async ({ assert }) => {
@@ -224,10 +242,10 @@ test.group('UpdateProductHandler', () => {
     }
 
     const handler = new UpdateProductHandler(mockRepository)
-    const command = new UpdateProductCommand('prod-1', 'Updated', 'cat-1', 'Desc', 100)
+    const command = new UpdateProductCommand(PROD_1, 'Updated', CAT_1, 'Desc', 100)
 
     await handler.handle(command)
 
-    assert.equal(savedProduct!.getId(), 'prod-1')
+    assert.equal(savedProduct!.getId()!.value, PROD_1)
   })
 })

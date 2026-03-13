@@ -13,7 +13,12 @@ export default class extends BaseSchema {
 
       table.double('price').notNullable().unsigned()
 
-      table.uuid('main_image_id').references('id').inTable('image_medias').onDelete('SET NULL').nullable()
+      table
+        .uuid('main_image_id')
+        .references('id')
+        .inTable('image_medias')
+        .onDelete('SET NULL')
+        .nullable()
 
       table.integer('stock_quantity').nullable()
       table.integer('low_stock_threshold').defaultTo(10)

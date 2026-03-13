@@ -1,12 +1,12 @@
 import { OrderStatus } from '#kernel/order/domain/type/order_status'
 import { OrderItem } from '#kernel/order/domain/entity/order_item'
-import { OrderId, CustomerId } from '#shared/domain/types/branded_types'
+import { AppId } from '#shared/domain/app_id'
 
 export class Order {
   constructor(
-    private id: OrderId | null,
+    private id: AppId | null,
     private orderNumber: string,
-    private customerId: CustomerId | null,
+    private customerId: AppId | null,
     private status: OrderStatus,
     // Shipping Address
     private shippingFirstName: string,
@@ -36,15 +36,19 @@ export class Order {
     private updatedAt?: Date
   ) {}
 
-  getId(): OrderId | null {
+  getId(): AppId | null {
     return this.id
+  }
+
+  setId(id: AppId): void {
+    this.id = id
   }
 
   getOrderNumber(): string {
     return this.orderNumber
   }
 
-  getCustomerId(): CustomerId | null {
+  getCustomerId(): AppId | null {
     return this.customerId
   }
 

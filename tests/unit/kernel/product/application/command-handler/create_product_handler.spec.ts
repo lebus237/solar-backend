@@ -5,6 +5,13 @@ import { ProductRepository } from '#kernel/product/domain/repository/product_rep
 import { Product } from '#kernel/product/domain/entity/product'
 
 test.group('CreateProductHandler', () => {
+  const IMG_1 = '00000000-0000-4000-8000-000000000001'
+  const IMG_2 = '00000000-0000-4000-8000-000000000002'
+  const IMG_3 = '00000000-0000-4000-8000-000000000003'
+  const MAIN_IMG_123 = '00000000-0000-4000-8000-000000000123'
+  const CAT_1 = '00000000-0000-4000-8000-0000000000c1'
+  const CAT_456 = '00000000-0000-4000-8000-000000000456'
+
   test('should create product with valid command data', async ({ assert }) => {
     let savedProduct: Product | null = null
 
@@ -23,12 +30,12 @@ test.group('CreateProductHandler', () => {
     const handler = new CreateProductHandler(mockRepository)
     const command = new CreateProductCommand(
       '300W Solar Panel',
-      'img-1',
-      'cat-1',
+      IMG_1,
+      CAT_1,
       'High efficiency solar panel',
       299.99,
       'SunPower',
-      ['img-2', 'img-3']
+      [IMG_2, IMG_3]
     )
 
     await handler.handle(command)
@@ -58,7 +65,7 @@ test.group('CreateProductHandler', () => {
     }
 
     const handler = new CreateProductHandler(mockRepository)
-    const command = new CreateProductCommand('Test Product', 'img-1', 'cat-1', 'Description', 100)
+    const command = new CreateProductCommand('Test Product', IMG_1, CAT_1, 'Description', 100)
 
     await handler.handle(command)
 
@@ -82,17 +89,17 @@ test.group('CreateProductHandler', () => {
     }
 
     const handler = new CreateProductHandler(mockRepository)
-    const command = new CreateProductCommand('Test', 'img-1', 'cat-1', 'Desc', 100, undefined, [
-      'img-2',
-      'img-3',
+    const command = new CreateProductCommand('Test', IMG_1, CAT_1, 'Desc', 100, undefined, [
+      IMG_2,
+      IMG_3,
     ])
 
     await handler.handle(command)
 
     const images = savedProduct!.getImages()
     assert.lengthOf(images, 2)
-    assert.equal(images[0].id, 'img-2')
-    assert.equal(images[1].id, 'img-3')
+    assert.equal(images[0].id.value, IMG_2)
+    assert.equal(images[1].id.value, IMG_3)
   })
 
   test('should set mainImage from mainImageId', async ({ assert }) => {
@@ -111,11 +118,11 @@ test.group('CreateProductHandler', () => {
     }
 
     const handler = new CreateProductHandler(mockRepository)
-    const command = new CreateProductCommand('Test', 'main-img-123', 'cat-1', 'Desc', 100)
+    const command = new CreateProductCommand('Test', MAIN_IMG_123, CAT_1, 'Desc', 100)
 
     await handler.handle(command)
 
-    assert.equal(savedProduct!.getMainImage().id, 'main-img-123')
+    assert.equal(savedProduct!.getMainImage().id.value, MAIN_IMG_123)
   })
 
   test('should set category from categoryId', async ({ assert }) => {
@@ -134,11 +141,11 @@ test.group('CreateProductHandler', () => {
     }
 
     const handler = new CreateProductHandler(mockRepository)
-    const command = new CreateProductCommand('Test', 'img-1', 'cat-456', 'Desc', 100)
+    const command = new CreateProductCommand('Test', IMG_1, CAT_456, 'Desc', 100)
 
     await handler.handle(command)
 
-    assert.equal(savedProduct!.getCategory().getId(), 'cat-456')
+    assert.equal(savedProduct!.getCategory().getId()!.value, CAT_456)
   })
 
   test('should handle empty imageIds array', async ({ assert }) => {
@@ -157,7 +164,7 @@ test.group('CreateProductHandler', () => {
     }
 
     const handler = new CreateProductHandler(mockRepository)
-    const command = new CreateProductCommand('Test', 'img-1', 'cat-1', 'Desc', 100, undefined, [])
+    const command = new CreateProductCommand('Test', IMG_1, CAT_1, 'Desc', 100, undefined, [])
 
     await handler.handle(command)
 

@@ -8,9 +8,13 @@ import { ImageMedia } from '#kernel/medias/domain/image_media'
 import { AppId } from '#shared/domain/app_id'
 
 test.group('DeleteImageHandler', () => {
+  const IMG_123 = '00000000-0000-4000-8000-000000000123'
+  const IMG_456 = '00000000-0000-4000-8000-000000000456'
+  const NON_EXISTENT = '00000000-0000-4000-8000-00000000ffff'
+
   const createMockImage = (): ImageMedia => {
     return new ImageMedia(
-      AppId.fromString('img-123'),
+      AppId.fromString(IMG_123),
       'Test Image',
       'https://example.com/image.jpg',
       'Alt text',
@@ -63,7 +67,7 @@ test.group('DeleteImageHandler', () => {
     }
 
     const handler = new DeleteImageHandler(mockRepository, mockMediaManager)
-    const command = new DeleteImageCommand(AppId.fromString('img-123'))
+    const command = new DeleteImageCommand(AppId.fromString(IMG_123))
 
     await handler.handle(command)
 
@@ -78,14 +82,14 @@ test.group('DeleteImageHandler', () => {
     const mockMediaManager = createMockMediaManager()
 
     const handler = new DeleteImageHandler(mockRepository, mockMediaManager)
-    const command = new DeleteImageCommand(AppId.fromString('non-existent'))
+    const command = new DeleteImageCommand(AppId.fromString(NON_EXISTENT))
 
     try {
       await handler.handle(command)
       assert.fail('Should have thrown an error')
     } catch (error) {
       assert.instanceOf(error, Error)
-      assert.include((error as Error).message, 'Image record for id: non-existent not found')
+      assert.include((error as Error).message, `Image record for id: "${NON_EXISTENT}" not found`)
     }
   })
 
@@ -103,11 +107,11 @@ test.group('DeleteImageHandler', () => {
     const mockMediaManager = createMockMediaManager()
 
     const handler = new DeleteImageHandler(mockRepository, mockMediaManager)
-    const command = new DeleteImageCommand(AppId.fromString('img-456'))
+    const command = new DeleteImageCommand(AppId.fromString(IMG_456))
 
     await handler.handle(command)
 
-    assert.equal(capturedId, 'img-456')
+    assert.equal(capturedId, IMG_456)
   })
 
   test('should not delete from repository if file does not exist', async ({ assert }) => {
@@ -126,7 +130,7 @@ test.group('DeleteImageHandler', () => {
     }
 
     const handler = new DeleteImageHandler(mockRepository, mockMediaManager)
-    const command = new DeleteImageCommand(AppId.fromString('img-123'))
+    const command = new DeleteImageCommand(AppId.fromString(IMG_123))
 
     await handler.handle(command)
 
@@ -149,7 +153,7 @@ test.group('DeleteImageHandler', () => {
     }
 
     const handler = new DeleteImageHandler(mockRepository, mockMediaManager)
-    const command = new DeleteImageCommand(AppId.fromString('img-123'))
+    const command = new DeleteImageCommand(AppId.fromString(IMG_123))
 
     await handler.handle(command)
 
@@ -170,7 +174,7 @@ test.group('DeleteImageHandler', () => {
     }
 
     const handler = new DeleteImageHandler(mockRepository, mockMediaManager)
-    const command = new DeleteImageCommand(AppId.fromString('img-123'))
+    const command = new DeleteImageCommand(AppId.fromString(IMG_123))
 
     await handler.handle(command)
 
@@ -191,7 +195,7 @@ test.group('DeleteImageHandler', () => {
     }
 
     const handler = new DeleteImageHandler(mockRepository, mockMediaManager)
-    const command = new DeleteImageCommand(AppId.fromString('img-123'))
+    const command = new DeleteImageCommand(AppId.fromString(IMG_123))
 
     await handler.handle(command)
 

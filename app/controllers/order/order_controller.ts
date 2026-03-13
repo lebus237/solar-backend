@@ -134,9 +134,9 @@ export default class OrderController extends AppAbstractController {
 
   private serializeOrder(order: Order) {
     return {
-      id: order.getId(),
+      id: order.getId()?.value ?? null,
       orderNumber: order.getOrderNumber(),
-      customerId: order.getCustomerId(),
+      customerId: order.getCustomerId()?.value ?? null,
       status: order.getStatus(),
       customerFirstName: order.getShippingFirstName(),
       customerLastName: order.getShippingLastName(),
@@ -159,8 +159,8 @@ export default class OrderController extends AppAbstractController {
       createdAt: order.getCreatedAt(),
       updatedAt: order.getUpdatedAt(),
       items: order.getItems()?.map((item) => ({
-        id: item.getId(),
-        productId: item.getProductId(),
+        id: item.getId()?.value ?? null,
+        productId: item.getProductId()?.value ?? null,
         productName: item.getProductName(),
         productSlug: item.getProductSlug(),
         quantity: item.getQuantity(),
