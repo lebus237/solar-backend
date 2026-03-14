@@ -15,10 +15,10 @@ const MAX_ADDITIONAL_IMAGES = 2
 
 export class ProductARRepository implements ProductRepository {
   async find(id: AppId): Promise<Product> {
-    let product: EntityActiveRecord
+    let productAR: EntityActiveRecord
 
     try {
-      product = await EntityActiveRecord.query()
+      productAR = await EntityActiveRecord.query()
         .where('id', id.value)
         .preload('images')
         .preload('category')
@@ -34,27 +34,27 @@ export class ProductARRepository implements ProductRepository {
     }
 
     // Map additional images to ProductImage type
-    const images = (product.images || []).map((img) => new ProductImage(AppId.fromString(img.id)))
+    const images = (productAR.images || []).map((img) => new ProductImage(AppId.fromString(img.id)))
 
     return new Product(
       id,
-      product.designation,
+      productAR.designation,
       new ProductCategory(
-        product.category?.id ? AppId.fromString(product.category.id) : null,
-        product.category?.designation || ''
+        productAR.category?.id ? AppId.fromString(productAR.category.id) : null,
+        productAR.category?.designation || ''
       ),
-      product.description,
-      product.price,
-      new ProductImage(AppId.fromString(product.mainImage?.id || '')),
+      productAR.description,
+      productAR.price,
+      new ProductImage(AppId.fromString(productAR.mainImage?.id || '')),
       images,
-      product.slug,
-      product.brand,
-      product.stockQuantity,
-      product.lowStockThreshold,
-      product.isAvailable,
-      product.isDeleted,
-      this.toDate(product.createdAt),
-      this.toDate(product.updatedAt)
+      productAR.slug,
+      productAR.brand,
+      productAR.stockQuantity,
+      productAR.lowStockThreshold,
+      productAR.isAvailable,
+      productAR.isDeleted,
+      this.toDate(productAR.createdAt),
+      this.toDate(productAR.updatedAt)
     )
   }
 

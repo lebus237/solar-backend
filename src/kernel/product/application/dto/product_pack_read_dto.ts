@@ -1,10 +1,11 @@
 export interface ProductPackItemDto {
+  id: string
   productId: string
   productName: string
-  productSlug: string
-  productPrice: number
-  quantity: number
-  sortOrder: number
+  // productSlug: string
+  // productPrice: number
+  // quantity: number
+  // sortOrder: number
   productMainImageUrl: string | null
 }
 
@@ -16,9 +17,9 @@ export interface ProductPackDetailsDto {
   price: number
   mainImageUrl: string | null
   stockQuantity: number | null
-  lowStockThreshold: number
+  // lowStockThreshold: number
   isAvailable: boolean
-  isDeleted: boolean
+  // isDeleted: boolean
   items: ProductPackItemDto[]
   createdAt: string
   updatedAt: string
