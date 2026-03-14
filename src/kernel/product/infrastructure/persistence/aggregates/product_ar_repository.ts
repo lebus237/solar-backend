@@ -7,6 +7,7 @@ import { ProductCategory } from '#kernel/product/domain/entity/product_category'
 import crypto from 'node:crypto'
 import { ProductNotFoundError } from '#kernel/product/application/errors/product_not_found_error'
 import { errors } from '@adonisjs/lucid'
+import db from '@adonisjs/lucid/services/db'
 import { AppId } from '#shared/domain/app_id'
 import { DateTime } from 'luxon'
 
@@ -73,40 +74,66 @@ export class ProductARRepository implements ProductRepository {
       lowStockThreshold: entity.getLowStockThreshold(),
     }
 
-    let productRecord: EntityActiveRecord
+    const trx = await db.transaction()
 
-    if (entity.getId()) {
-      productRecord = await EntityActiveRecord.updateOrCreate({ id: entity.getId()!.value }, object)
-    } else {
-      productRecord = await EntityActiveRecord.create(object)
-      entity.setId(AppId.fromString(productRecord.id))
-    }
+    try {
+      let productRecord: EntityActiveRecord
 
-    const imageIds = entity.getImages().map((item) => item.id.value)
-
-    // Handle additional images (max 2)
-    if (imageIds.length > 0) {
-      // Delete existing product images
-      await ProductImageAciveRecord.query().where('product_id', productRecord.id).delete()
-
-      // Insert new product images (limit to MAX_ADDITIONAL_IMAGES)
-      const limitedImageIds = imageIds.slice(0, MAX_ADDITIONAL_IMAGES)
-      let sortOrder = 0
-      for (const imageId of limitedImageIds) {
-        await ProductImageAciveRecord.create({
-          productId: productRecord.id,
-          imageId: imageId as crypto.UUID,
-          sortOrder: sortOrder++,
-        })
+      if (entity.getId()) {
+        productRecord = await EntityActiveRecord.updateOrCreate(
+          { id: entity.getId()!.value },
+          object,
+          { client: trx }
+        )
+      } else {
+        productRecord = await EntityActiveRecord.create(object, { client: trx })
+        entity.setId(AppId.fromString(productRecord.id))
       }
+
+      const imageIds = entity.getImages().map((item) => item.id.value)
+
+      // Handle additional images (max 2)
+      if (imageIds.length > 0) {
+        // Delete existing product images
+        await ProductImageAciveRecord.query({ client: trx })
+          .where('product_id', productRecord.id)
+          .delete()
+
+        // Insert new product images (limit to MAX_ADDITIONAL_IMAGES)
+        const limitedImageIds = imageIds.slice(0, MAX_ADDITIONAL_IMAGES)
+        let sortOrder = 0
+        for (const imageId of limitedImageIds) {
+          await ProductImageAciveRecord.create(
+            {
+              productId: productRecord.id,
+              imageId: imageId as crypto.UUID,
+              sortOrder: sortOrder++,
+            },
+            { client: trx }
+          )
+        }
+      }
+
+      await trx.commit()
+    } catch (error) {
+      await trx.rollback()
+      throw error
     }
   }
 
   async delete(id: AppId): Promise<void> {
-    // Delete product images first (cascade should handle this, but being explicit)
-    await ProductImageAciveRecord.query().where('product_id', id.value).delete()
-    const product = await EntityActiveRecord.findOrFail(id.value)
-    await product.delete()
+    const trx = await db.transaction()
+
+    try {
+      // Delete product images first (cascade should handle this, but being explicit)
+      await ProductImageAciveRecord.query({ client: trx }).where('product_id', id.value).delete()
+      const product = await EntityActiveRecord.findOrFail(id.value, { client: trx })
+      await product.delete()
+      await trx.commit()
+    } catch (error) {
+      await trx.rollback()
+      throw error
+    }
   }
 
   private toDate(dateTime: DateTime | null | undefined): Date | undefined {

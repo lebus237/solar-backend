@@ -6,6 +6,7 @@ import { ProductPackItem } from '#kernel/product/domain/entity/product_pack_item
 import { ProductImage } from '#kernel/product/domain/entity/product_image'
 import { ProductPackNotFoundError } from '#kernel/product/domain/errors/product_pack_not_found_error'
 import { errors } from '@adonisjs/lucid'
+import db from '@adonisjs/lucid/services/db'
 import { AppId } from '#shared/domain/app_id'
 import { DateTime } from 'luxon'
 
@@ -72,33 +73,48 @@ export class ProductPackARRepository implements ProductPackRepository {
       isDeleted: entity.getIsDeleted(),
     }
 
-    let packRecord: EntityActiveRecord
+    const trx = await db.transaction()
 
-    if (entity.getId()) {
-      packRecord = await EntityActiveRecord.updateOrCreate(
-        { id: entity.getId()?.value },
-        object as any
-      )
-    } else {
-      packRecord = await EntityActiveRecord.create(object as any)
-      entity.setId(AppId.fromString(packRecord.id))
-    }
+    try {
+      let packRecord: EntityActiveRecord
 
-    // Handle pack items
-    const items = entity.getItems()
-    if (items.length > 0) {
-      // Delete existing items
-      await ProductPackItemActiveRecord.query().where('pack_id', packRecord.id).delete()
-
-      // Insert new items
-      for (const item of items) {
-        await ProductPackItemActiveRecord.create({
-          packId: packRecord.id,
-          productId: item.getProductId().value,
-          quantity: item.getQuantity(),
-          sortOrder: item.getSortOrder(),
-        })
+      if (entity.getId()) {
+        packRecord = await EntityActiveRecord.updateOrCreate(
+          { id: entity.getId()?.value },
+          object as any,
+          { client: trx }
+        )
+      } else {
+        packRecord = await EntityActiveRecord.create(object as any, { client: trx })
+        entity.setId(AppId.fromString(packRecord.id))
       }
+
+      // Handle pack items
+      const items = entity.getItems()
+      if (items.length > 0) {
+        // Delete existing items
+        await ProductPackItemActiveRecord.query({ client: trx })
+          .where('pack_id', packRecord.id)
+          .delete()
+
+        // Insert new items
+        for (const item of items) {
+          await ProductPackItemActiveRecord.create(
+            {
+              packId: packRecord.id,
+              productId: item.getProductId().value,
+              quantity: item.getQuantity(),
+              sortOrder: item.getSortOrder(),
+            },
+            { client: trx }
+          )
+        }
+      }
+
+      await trx.commit()
+    } catch (error) {
+      await trx.rollback()
+      throw error
     }
   }
 
