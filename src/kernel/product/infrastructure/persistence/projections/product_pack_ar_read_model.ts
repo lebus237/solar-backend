@@ -19,6 +19,7 @@ export class ProductPackARReadModel implements ProductPackReadModelContract {
     }
 
     const items: ProductPackItemDto[] = pack.packItems.map((item) => ({
+      id: item.id,
       productId: item.productId,
       productName: item.product?.designation || '',
       productSlug: item.product?.slug || '',
@@ -36,9 +37,9 @@ export class ProductPackARReadModel implements ProductPackReadModelContract {
       price: pack.price,
       mainImageUrl: pack.mainImage?.url || null,
       stockQuantity: pack.stockQuantity,
-      lowStockThreshold: pack.lowStockThreshold,
+      // lowStockThreshold: pack.lowStockThreshold,
       isAvailable: pack.isAvailable,
-      isDeleted: pack.isDeleted,
+      // isDeleted: pack.isDeleted,
       items,
       createdAt: pack.createdAt.toISO()!,
       updatedAt: pack.updatedAt.toISO()!,
@@ -58,6 +59,7 @@ export class ProductPackARReadModel implements ProductPackReadModelContract {
     }
 
     const items: ProductPackItemDto[] = pack.packItems.map((item) => ({
+      id: item.id,
       productId: item.productId,
       productName: item.product?.designation || '',
       productSlug: item.product?.slug || '',
@@ -75,9 +77,9 @@ export class ProductPackARReadModel implements ProductPackReadModelContract {
       price: pack.price,
       mainImageUrl: pack.mainImage?.url || null,
       stockQuantity: pack.stockQuantity,
-      lowStockThreshold: pack.lowStockThreshold,
+      // lowStockThreshold: pack.lowStockThreshold,
       isAvailable: pack.isAvailable,
-      isDeleted: pack.isDeleted,
+      // isDeleted: pack.isDeleted,
       items,
       createdAt: pack.createdAt.toISO()!,
       updatedAt: pack.updatedAt.toISO()!,
