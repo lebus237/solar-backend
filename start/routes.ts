@@ -21,6 +21,7 @@ const StockController = () => import('#controllers/product/stock_controller')
 const CustomerController = () => import('#controllers/customer/customer_controller')
 const OrderController = () => import('#controllers/order/order_controller')
 const ProductPackController = () => import('#controllers/product/product_pack_controller')
+const MarketProductController = () => import('#controllers/market/market_product_controller')
 
 router
   .group(() => {
@@ -138,5 +139,15 @@ router
       })
       .prefix('product-packs')
       .use(middleware.auth())
+
+    // Market routes
+    router
+      .group(() => {
+        router.get('/products', [MarketProductController, 'index'])
+        router.get('/products/:id', [MarketProductController, 'show'])
+        router.get('/products/categories', [MarketProductController, 'categories'])
+        router.get('/products/grouped-by-category', [MarketProductController, 'groupedByCategory'])
+      })
+      .prefix('market')
   })
   .prefix('/api')
