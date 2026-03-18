@@ -1,0 +1,34 @@
+meta {
+  name: List Staff Members
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/staff-members
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+params:query {
+  ~page: 1
+  ~limit: 10
+  ~search: 
+  ~sort[created_at]: desc
+}
+
+tests {
+  test("should return 200 on success", function() {
+    expect(res.status).toBe(200);
+  });
+
+  test("should return paginated staff members", function() {
+    const body = res.body;
+    expect(body.data).toBeTruthy();
+    expect(Array.isArray(body.data)).toBeTruthy();
+    expect(body.meta).toBeTruthy();
+  });
+}

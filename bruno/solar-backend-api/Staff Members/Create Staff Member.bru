@@ -1,0 +1,40 @@
+meta {
+  name: Create Staff Member
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/staff-members
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "userId": null,
+    "fullName": "John Doe",
+    "email": "john.doe@example.com",
+    "phone": "+2348012345678",
+    "emergencyContact": {
+      "name": "Jane Doe",
+      "phone": "+2348098765432"
+    },
+    "jobTitle": "Solar Engineer",
+    "department": "Engineering",
+    "employmentType": "full_time",
+    "role": "staff",
+    "profileImageId": null,
+    "profileImageUrl": "https://example.com/profile.jpg"
+  }
+}
+
+tests {
+  test("should return 201 on success", function() {
+    expect(res.status).toBe(201);
+  });
+}

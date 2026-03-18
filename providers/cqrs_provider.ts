@@ -48,6 +48,13 @@ import { GetOrderHandler } from '#kernel/order/application/query-handler/get_ord
 import { GetOrderByNumberHandler } from '#kernel/order/application/query-handler/get_order_by_number_handler'
 import { ListCustomerOrdersHandler } from '#kernel/order/application/query-handler/list_customer_orders_handler'
 import { RemoveProductPackItemHandler } from '#kernel/product/application/command-handler/remove_product_pack_item_handler'
+import { ListMarketServicesHandler } from '#kernel/market/application/query-handler/list_market_services_handler'
+import { GetMarketServiceHandler } from '#kernel/market/application/query-handler/get_market_service_handler'
+import { CreateStaffMemberHandler } from '#kernel/staff/application/command-handler/create_staff_member_handler'
+import { UpdateStaffMemberHandler } from '#kernel/staff/application/command-handler/update_staff_member_handler'
+import { DeleteStaffMemberHandler } from '#kernel/staff/application/command-handler/delete_staff_member_handler'
+import { ListStaffMembersHandler } from '#kernel/staff/application/query-handler/list_staff_members_handler'
+import { GetStaffMemberHandler } from '#kernel/staff/application/query-handler/get_staff_member_handler'
 
 export default class CqrsProvider {
   constructor(protected app: ApplicationService) {}
@@ -150,6 +157,17 @@ export default class CqrsProvider {
         'ProductPackRepository',
       ])
 
+      //STAFF MEMBER COMMANDS
+      commandBus.register('CreateStaffMemberCommand', CreateStaffMemberHandler, [
+        'StaffMemberRepository',
+      ])
+      commandBus.register('UpdateStaffMemberCommand', UpdateStaffMemberHandler, [
+        'StaffMemberRepository',
+      ])
+      commandBus.register('DeleteStaffMemberCommand', DeleteStaffMemberHandler, [
+        'StaffMemberRepository',
+      ])
+
       return commandBus
     })
 
@@ -198,6 +216,18 @@ export default class CqrsProvider {
       queryBus.register('GetOrderQuery', GetOrderHandler, ['OrderRepository'])
       queryBus.register('GetOrderByNumberQuery', GetOrderByNumberHandler, ['OrderRepository'])
       queryBus.register('ListCustomerOrdersQuery', ListCustomerOrdersHandler, ['OrderRepository'])
+
+      //MARKET SERVICE QUERIES
+      queryBus.register('ListMarketServicesQuery', ListMarketServicesHandler, [
+        'MarketServiceCollection',
+      ])
+      queryBus.register('GetMarketServiceQuery', GetMarketServiceHandler, [
+        'MarketServiceReadModel',
+      ])
+
+      //STAFF MEMBER QUERIES
+      queryBus.register('ListStaffMembersQuery', ListStaffMembersHandler, ['StaffMemberCollection'])
+      queryBus.register('GetStaffMemberQuery', GetStaffMemberHandler, ['StaffMemberRepository'])
 
       return queryBus
     })

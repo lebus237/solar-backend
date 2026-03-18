@@ -22,6 +22,7 @@ const CustomerController = () => import('#controllers/customer/customer_controll
 const OrderController = () => import('#controllers/order/order_controller')
 const ProductPackController = () => import('#controllers/product/product_pack_controller')
 const MarketProductController = () => import('#controllers/market/market_product_controller')
+const StaffMembersController = () => import('#controllers/staff/staff_members_controller')
 
 router
   .group(() => {
@@ -149,5 +150,17 @@ router
         router.get('/products/grouped-by-category', [MarketProductController, 'groupedByCategory'])
       })
       .prefix('market')
+
+    // Staff members routes
+    router
+      .group(() => {
+        router.get('/', [StaffMembersController, 'index'])
+        router.post('/', [StaffMembersController, 'store'])
+        router.get('/:id', [StaffMembersController, 'show'])
+        router.put('/:id', [StaffMembersController, 'update'])
+        router.delete('/:id', [StaffMembersController, 'destroy'])
+      })
+      .prefix('staff-members')
+      .use(middleware.auth())
   })
   .prefix('/api')

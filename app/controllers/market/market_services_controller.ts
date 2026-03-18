@@ -1,11 +1,17 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import ActiveRecord from '#database/active-records/market_service'
 import { createMarketServiceSchema, updateMarketServiceSchema } from '#validators/market_validtor'
 import { AppAbstractController } from '#shared/user_interface/controller/app_abstract_controller'
 import { CreateMarketServiceCommand } from '#kernel/market/application/command/create_market_service_command'
 import { AppId } from '#shared/domain/app_id'
 import { UpdateMarketServiceCommand } from '#kernel/market/application/command/update_market_service.command'
 import { DeleteMarketServiceCommand } from '#kernel/market/application/command/delete_market_service.command'
+import { ListMarketServicesQuery } from '#kernel/market/application/query/list_market_services_query'
+import { GetMarketServiceQuery } from '#kernel/market/application/query/get_market_service_query'
+import { PaginatedResultDto } from '#shared/application/collection/paginated_result'
+import {
+  MarketServiceListItemDto,
+  MarketServiceDetailsDto,
+} from '#kernel/market/application/dto/market_service_read_dto'
 
 export default class MarketServicesController extends AppAbstractController {
   constructor() {
@@ -14,10 +20,17 @@ export default class MarketServicesController extends AppAbstractController {
   /**
    * Display a list of resource
    */
-  async index({ response }: HttpContext) {
-    const collection = await ActiveRecord.all()
+  async index({ request, response }: HttpContext) {
+    const query = request.qs()
+    const result = await this.handleQuery<PaginatedResultDto<MarketServiceListItemDto>>(
+      new ListMarketServicesQuery(
+        this.parseQueryPagination(query),
+        this.parseQuerySearch(query),
+        this.parseQuerySort(query)
+      )
+    )
 
-    return response.accepted({ data: collection })
+    return response.ok(result)
   }
 
   /**
@@ -42,10 +55,13 @@ export default class MarketServicesController extends AppAbstractController {
   /**
    * Show individual record
    */
-  async show({ params, response }: HttpContext) {
-    const service = await ActiveRecord.findOrFail(params.id)
+  async show({ request, response }: HttpContext) {
+    const marketServiceId = await request.param('id')
+    const service = await this.handleQuery<MarketServiceDetailsDto | null>(
+      new GetMarketServiceQuery(marketServiceId)
+    )
 
-    return response.accepted({ data: service })
+    return response.ok({ data: service })
   }
 
   /**

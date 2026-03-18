@@ -19,6 +19,10 @@ import { ProductPackARRepository } from '#kernel/product/infrastructure/persiste
 import { ProductPackARCollection } from '#kernel/product/infrastructure/persistence/projections/product_pack_ar_collection'
 import { ProductPackARReadModel } from '#kernel/product/infrastructure/persistence/projections/product_pack_ar_read_model'
 import { ProductPackItemARRepository } from '#kernel/product/infrastructure/persistence/aggregates/product_pack_item_ar_repository'
+import { MarketServiceARCollection } from '#kernel/market/infrastructure/persistence/projections/market_service_ar_collection'
+import { MarketServiceARReadModel } from '#kernel/market/infrastructure/persistence/projections/market_service_ar_read_model'
+import { StaffMemberARRepository } from '#kernel/staff/infrastructure/persistence/staff_member_ar_repository'
+import { StaffMemberARCollection } from '#kernel/staff/infrastructure/persistence/projections/staff_member_ar_collection'
 
 export default class RepositoryProvider {
   constructor(protected app: ApplicationService) {}
@@ -90,6 +94,18 @@ export default class RepositoryProvider {
       })
       this.app.container.bind('ProductPackReadModel', () => {
         return new ProductPackARReadModel()
+      })
+      this.app.container.bind('MarketServiceCollection', () => {
+        return new MarketServiceARCollection()
+      })
+      this.app.container.bind('MarketServiceReadModel', () => {
+        return new MarketServiceARReadModel()
+      })
+      this.app.container.bind('StaffMemberRepository', () => {
+        return new StaffMemberARRepository()
+      })
+      this.app.container.bind('StaffMemberCollection', () => {
+        return new StaffMemberARCollection()
       })
     }
   }

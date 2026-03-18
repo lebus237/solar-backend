@@ -1,0 +1,40 @@
+meta {
+  name: Update Staff Member
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{base_url}}/api/staff-members/{{staff_member_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "fullName": "Updated Name",
+    "email": "updated@example.com",
+    "phone": "+2348012345678",
+    "emergencyContact": {
+      "name": "Emergency Contact",
+      "phone": "+2348098765432"
+    },
+    "jobTitle": "Senior Engineer",
+    "department": "Operations",
+    "employmentType": "part_time",
+    "role": "manager",
+    "status": "active",
+    "profileImageId": null,
+    "profileImageUrl": "https://example.com/new-profile.jpg"
+  }
+}
+
+tests {
+  test("should return 204 on success", function() {
+    expect(res.status).toBe(204);
+  });
+}

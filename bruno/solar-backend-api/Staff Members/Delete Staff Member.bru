@@ -1,0 +1,20 @@
+meta {
+  name: Delete Staff Member
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{base_url}}/api/staff-members/{{staff_member_id}}
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("should return 204 on success", function() {
+    expect(res.status).toBe(204);
+  });
+}
