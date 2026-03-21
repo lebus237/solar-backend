@@ -1,10 +1,15 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { createMarketServiceSchema, updateMarketServiceSchema } from '#validators/market_validtor'
+import {
+  createMarketServiceSchema,
+  updateMarketServiceSchema,
+  replaceThumbnailSchema,
+} from '#validators/market_validtor'
 import { AppAbstractController } from '#shared/user_interface/controller/app_abstract_controller'
 import { CreateMarketServiceCommand } from '#kernel/market/application/command/create_market_service_command'
 import { AppId } from '#shared/domain/app_id'
-import { UpdateMarketServiceCommand } from '#kernel/market/application/command/update_market_service.command'
-import { DeleteMarketServiceCommand } from '#kernel/market/application/command/delete_market_service.command'
+import { UpdateMarketServiceCommand } from '#kernel/market/application/command/update_market_service_command'
+import { ReplaceMarketServiceThumbnailCommand } from '#kernel/market/application/command/replace_market_service_thumbnail_command'
+import { DeleteMarketServiceCommand } from '#kernel/market/application/command/delete_market_service_command'
 import { ListMarketServicesQuery } from '#kernel/market/application/query/list_market_services_query'
 import { GetMarketServiceQuery } from '#kernel/market/application/query/get_market_service_query'
 import { PaginatedResultDto } from '#shared/application/collection/paginated_result'
@@ -42,8 +47,8 @@ export default class MarketServicesController extends AppAbstractController {
     await this.handleCommand(
       new CreateMarketServiceCommand(
         service.designation,
-        service.thumbnailUrl,
         AppId.fromString(service.thumbnailId),
+        service.contentDescription,
         service.shortDescription,
         service.features
       )
@@ -74,10 +79,25 @@ export default class MarketServicesController extends AppAbstractController {
       new UpdateMarketServiceCommand(
         AppId.fromString(params.id),
         service.designation,
-        service.thumbnailUrl,
-        AppId.fromString(service.thumbnailId),
+        service.contentDescription,
         service.shortDescription,
         service.features
+      )
+    )
+
+    return response.noContent()
+  }
+
+  /**
+   * Replace thumbnail for a market service
+   */
+  async replaceThumbnail({ params, request, response }: HttpContext) {
+    const { thumbnailId } = await request.validateUsing(replaceThumbnailSchema)
+
+    await this.handleCommand(
+      new ReplaceMarketServiceThumbnailCommand(
+        AppId.fromString(params.serviceId),
+        AppId.fromString(thumbnailId)
       )
     )
 

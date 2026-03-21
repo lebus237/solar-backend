@@ -45,8 +45,6 @@ export class StorageProviderFactory {
   static createFromEnv(): StorageProviderInterface {
     const providerType = env.get('STORAGE_PROVIDER') as ProviderType
 
-    console.log(providerType)
-
     if (!providerType) {
       throw new Error('STORAGE_PROVIDER environment variable is not set')
     }

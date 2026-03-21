@@ -1,7 +1,7 @@
 import { MarketService } from '#kernel/market/domain/entity/market_service'
 import { MarketServiceRepository } from '#kernel/market/domain/repository/market_service_repository'
 import { CommandHandler } from '#shared/application/use-cases/command_handler'
-import { UpdateMarketServiceDescriptionCommand } from '#kernel/market/application/command/update_market_service_description.command'
+import { UpdateMarketServiceDescriptionCommand } from '#kernel/market/application/command/update_market_service_description_command'
 
 export class UpdateMarketServiceDescriptionHandler implements CommandHandler<UpdateMarketServiceDescriptionCommand> {
   constructor(public repository: MarketServiceRepository) {}
@@ -13,8 +13,7 @@ export class UpdateMarketServiceDescriptionHandler implements CommandHandler<Upd
       new MarketService(
         marketService.getId(),
         marketService.getDesignation(),
-        marketService.getThumbnailUrl(),
-        marketService.getThumbnailId(),
+        marketService.getThumbnail(),
         command.content,
         marketService.getShortDescription(),
         marketService.getFeatures(),

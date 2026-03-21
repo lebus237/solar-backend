@@ -5,7 +5,8 @@ meta {
 }
 
 get {
-  url: {{base_url}}/api/market/services
+  url: {{base_url}}/api/market-services
+  body: none
   auth: bearer
 }
 
@@ -17,7 +18,7 @@ tests {
   test("should return 202 on success", function() {
     expect(res.status).toBe(202);
   });
-
+  
   test("should return services array", function() {
     const body = res.body;
     expect(body.data).toBeTruthy();

@@ -5,7 +5,8 @@ meta {
 }
 
 get {
-  url: {{base_url}}/api/market/services/{{service_id}}
+  url: {{base_url}}/api/market-services/{{service_id}}
+  body: none
   auth: bearer
 }
 
@@ -13,11 +14,15 @@ auth:bearer {
   token: {{access_token}}
 }
 
+vars:pre-request {
+  service_id: 5913ebf6-8cdf-4733-ade6-26c7f2ec160c
+}
+
 tests {
   test("should return 202 on success", function() {
     expect(res.status).toBe(202);
   });
-
+  
   test("should return service data", function() {
     const body = res.body;
     expect(body.data).toBeTruthy();

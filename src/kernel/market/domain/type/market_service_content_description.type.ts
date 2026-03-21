@@ -1,1 +1,1 @@
-export type MarketServiceContentDescription = any
+export type MarketServiceContentDescription = string | null

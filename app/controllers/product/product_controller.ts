@@ -35,6 +35,8 @@ export default class ProductController extends AppAbstractController {
   public async store({ request, response }: HttpContext) {
     const payload = await request.validateUsing(createProductSchema)
 
+    console.log({ payload })
+
     await this.handleCommand(
       new CreateProductCommand(
         payload.designation,

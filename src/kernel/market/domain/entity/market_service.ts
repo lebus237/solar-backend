@@ -2,6 +2,7 @@ import { AppId } from '#shared/domain/app_id'
 import string from '@adonisjs/core/helpers/string'
 import { MarketServiceFeature } from '#kernel/market/domain/type/market_service_feature_type'
 import { MarketServiceContentDescription } from '#kernel/market/domain/type/market_service_content_description.type'
+import { ImageMedia } from '#kernel/medias/domain/image_media'
 
 export class MarketService {
   private slug: string
@@ -9,8 +10,7 @@ export class MarketService {
   constructor(
     private id: AppId | null,
     private readonly designation: string,
-    private readonly thumbnailUrl: string,
-    private readonly thumbnailId: AppId | null,
+    private readonly thumbnail: ImageMedia | null,
     private contentDescription: MarketServiceContentDescription,
     private readonly shortDescription?: string,
     private readonly features?: Array<MarketServiceFeature>,
@@ -37,12 +37,12 @@ export class MarketService {
     return this.slug
   }
 
-  getThumbnailUrl(): string {
-    return this.thumbnailUrl
+  getThumbnail(): ImageMedia | null {
+    return this.thumbnail
   }
 
   getThumbnailId(): AppId | null {
-    return this.thumbnailId
+    return this.thumbnail?.getId() ? AppId.fromString(this.thumbnail.getId() as string) : null
   }
 
   getShortDescription(): string | undefined {

@@ -11,6 +11,7 @@ import { StoreImageHandler } from '#kernel/medias/application/command_handler/st
 import { DeleteImageHandler } from '#kernel/medias/application/command_handler/delete_image_handler'
 import { CreateMarketServiceHandler } from '#kernel/market/application/command_handler/create_market_service_handler'
 import { UpdateMarketServiceHandler } from '#kernel/market/application/command_handler/update_market_service_handler'
+import { ReplaceMarketServiceThumbnailHandler } from '#kernel/market/application/command_handler/replace_market_service_thumbnail_handler'
 import { UpdateMarketServiceDescriptionHandler } from '#kernel/market/application/command_handler/update_market_service_description.handler'
 import { DeleteMarketServiceHandler } from '#kernel/market/application/command_handler/delete_market_service_handler'
 import { AddStockHandler } from '#kernel/product/application/command-handler/add_stock_handler'
@@ -78,10 +79,16 @@ export default class CqrsProvider {
       //MARKET SERVICES COMMAND
       commandBus.register('CreateMarketServiceCommand', CreateMarketServiceHandler, [
         'MarketServiceRepository',
+        'ImageMediaRepository',
       ])
       commandBus.register('UpdateMarketServiceCommand', UpdateMarketServiceHandler, [
         'MarketServiceRepository',
       ])
+      commandBus.register(
+        'ReplaceMarketServiceThumbnailCommand',
+        ReplaceMarketServiceThumbnailHandler,
+        ['MarketServiceRepository', 'ImageMediaRepository', 'MediaUploadService']
+      )
       commandBus.register(
         'UpdateMarketServiceDescriptionCommand',
         UpdateMarketServiceDescriptionHandler,

@@ -1,0 +1,31 @@
+meta {
+  name: Replace Thumbnail
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{base_url}}/api/market-services/{{service_id}}/thumbnail
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "thumbnailId": "04f15224-3fb6-468c-b725-2761ac82484c"
+  }
+}
+
+vars:pre-request {
+  service_id: 5913ebf6-8cdf-4733-ade6-26c7f2ec160c
+}
+
+tests {
+  test("should return 204 on success", function() {
+    expect(res.status).toBe(204);
+  });
+}

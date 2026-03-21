@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon'
-import { BaseModel, beforeCreate, column } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeCreate, column, belongsTo } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/orm'
 import crypto from 'node:crypto'
+import ImageMedia from '#database/active-records/image_media'
 
 export default class MarketService extends BaseModel {
   @column({ isPrimary: true })
@@ -18,11 +20,13 @@ export default class MarketService extends BaseModel {
   @column({ columnName: 'thumbnail_id' })
   declare thumbnailId: string
 
-  @column({ columnName: 'thumbnail_url' })
-  declare thumbnailUrl: string
+  @belongsTo(() => ImageMedia, {
+    foreignKey: 'thumbnailId',
+  })
+  declare thumbnail: BelongsTo<typeof ImageMedia>
 
   @column({ columnName: 'content_description' })
-  declare contentDescription: any
+  declare contentDescription: string | null
 
   @column({ columnName: 'features_list' })
   declare features: any

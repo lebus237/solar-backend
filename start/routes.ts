@@ -14,7 +14,7 @@ const ImageMediasController = () => import('#controllers/media/image_medias_cont
 const ProductCategoryController = () => import('#controllers/product/product_category_controller')
 const ProductController = () => import('#controllers/product/product_controller')
 const ProductMediaController = () => import('#controllers/product/product_media_controller')
-const MarketServiceController = () => import('#controllers/market/market_services_controller')
+const MarketServiceController = () => import('#controllers/services/market_services_controller')
 const StoreController = () => import('#controllers/store/store_controller')
 const AuthController = () => import('#controllers/authentication/auth_controller')
 const StockController = () => import('#controllers/product/stock_controller')
@@ -87,15 +87,17 @@ router
       router.get('/products/low-stock', [StockController, 'lowStock']).use(middleware.auth())
     })
 
-    router
-      .group(() => {
-        router
-          .resource('services', MarketServiceController)
-          .apiOnly()
-          .only(['index', 'store', 'show', 'update', 'destroy'])
-          .use('*', middleware.auth())
-      })
-      .prefix('/market')
+    // Services
+    router.group(() => {
+      router
+        .resource('market-services', MarketServiceController)
+        .apiOnly()
+        .only(['index', 'store', 'show', 'update', 'destroy'])
+        .use('*', middleware.auth())
+      router
+        .put('/market-services/:serviceId/thumbnail', [MarketServiceController, 'replaceThumbnail'])
+        .use(middleware.auth())
+    })
 
     // Customer routes
     router

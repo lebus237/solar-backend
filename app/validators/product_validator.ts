@@ -1,3 +1,4 @@
+import { MAX_PRODUCT_IMAGES } from '#kernel/product/domain/constant/index'
 import vine from '@vinejs/vine'
 
 export const createProductSchema = vine.compile(
@@ -6,9 +7,12 @@ export const createProductSchema = vine.compile(
     description: vine.string(),
     categoryId: vine.string().uuid(),
     mainImageId: vine.string().uuid(),
-    price: vine.number(),
+    price: vine.number().positive(),
     brand: vine.string().optional(),
-    imageIds: vine.array(vine.string().uuid()).maxLength(2).optional(),
+    imageIds: vine
+      .array(vine.string().uuid())
+      .maxLength(MAX_PRODUCT_IMAGES - 1)
+      .optional(),
   })
 )
 
@@ -17,7 +21,7 @@ export const updateProductSchema = vine.compile(
     designation: vine.string().minLength(2),
     description: vine.string(),
     categoryId: vine.string().uuid(),
-    price: vine.number(),
+    price: vine.number().positive(),
     brand: vine.string().optional(),
   })
 )

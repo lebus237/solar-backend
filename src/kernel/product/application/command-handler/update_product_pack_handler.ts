@@ -31,8 +31,6 @@ export class UpdateProductPackHandler implements CommandHandler<UpdateProductPac
           )
       )
 
-    console.log('items', items)
-
     const mainImage = command.mainImageId
       ? new ProductImage(AppId.fromString(command.mainImageId))
       : null

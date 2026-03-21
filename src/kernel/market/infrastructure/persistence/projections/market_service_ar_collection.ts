@@ -18,13 +18,15 @@ export class MarketServiceARCollection
     queryBuilder.whereILike('designation', `%${query.searchQuery.search}%`)
     this.applySort(query.order, ['created_at'], queryBuilder)
 
+    queryBuilder.preload('thumbnail')
+
     const result = await this.applyPaginate(query.pagination, queryBuilder)
 
     return mapPaginatedResult<any, MarketServiceListItemDto>(result as any, (ms) => ({
       id: ms.id,
       slug: ms.slug,
       designation: ms.designation,
-      thumbnailUrl: ms.thumbnailUrl,
+      thumbnailUrl: ms.thumbnail?.url ?? null,
       shortDescription: ms.shortDescription ?? null,
       createdAt: ms.createdAt,
       updatedAt: ms.updatedAt,

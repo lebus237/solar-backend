@@ -5,7 +5,7 @@ meta {
 }
 
 put {
-  url: {{base_url}}/api/market/services/{{service_id}}
+  url: {{base_url}}/api/market-services/{{service_id}}
   body: json
   auth: bearer
 }
@@ -17,8 +17,7 @@ auth:bearer {
 body:json {
   {
     "designation": "Updated Service Name",
-    "thumbnailId": "",
-    "thumbnailUrl": "https://example.com/thumb.jpg",
+    "contentDescription": "<p>Updated content description</p>",
     "shortDescription": "Updated short description",
     "features": []
   }

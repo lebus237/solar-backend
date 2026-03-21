@@ -4,7 +4,7 @@ import { MarketServiceDetailsDto } from '#kernel/market/application/dto/market_s
 
 export class MarketServiceARReadModel implements MarketServiceReadModel {
   async getById(marketServiceId: string): Promise<MarketServiceDetailsDto | null> {
-    const ms = await EntityManager.find(marketServiceId)
+    const ms = await EntityManager.query().where('id', marketServiceId).preload('thumbnail').first()
 
     if (!ms) {
       return null
@@ -14,7 +14,7 @@ export class MarketServiceARReadModel implements MarketServiceReadModel {
       id: ms.id,
       slug: ms.slug,
       designation: ms.designation,
-      thumbnailUrl: ms.thumbnailUrl,
+      thumbnailUrl: ms.thumbnail?.url ?? null,
       thumbnailId: ms.thumbnailId ?? null,
       shortDescription: ms.shortDescription ?? null,
       contentDescription: ms.contentDescription ?? null,
