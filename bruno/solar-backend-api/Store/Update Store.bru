@@ -1,11 +1,11 @@
 meta {
   name: Update Store
   type: http
-  seq: 3
+  seq: 4
 }
 
 put {
-  url: {{base_url}}/api/store/:id
+  url: {{base_url}}/api/store/{{store_id}}
   body: json
   auth: bearer
 }
@@ -14,22 +14,18 @@ auth:bearer {
   token: {{access_token}}
 }
 
-params:path {
-  id: 550e8400-e29b-41d4-a716-446655440000
-}
-
 body:json {
   {
-    "designation": "Main Branch - Updated",
+    "designation": "Bafoussam Branch",
     "address": {
-      "street": "456 Solar Avenue",
+      "street": "123 Solar Street",
       "city": "Douala",
       "country": "Cameroon",
-      "postalCode": "00001"
+      "postalCode": "00000"
     },
     "phoneNumber1": {
       "countryCode": "237",
-      "number": "699112244"
+      "number": "699112233"
     },
     "businessHours": [
       {
@@ -41,80 +37,61 @@ body:json {
         "day": 1,
         "startTime": 8,
         "endTime": 17
-      },
-      {
-        "day": 2,
-        "startTime": 9,
-        "endTime": 18
       }
     ],
     "phoneNumber2": {
-      "countryCode": "237",
-      "number": "677445577"
+      "countryCode": "238",
+      "number": "677445566"
     },
     "whatsappNumber": {
       "countryCode": "237",
-      "number": "655001133"
+      "number": "655001122"
     }
   }
 }
 
+vars:pre-request {
+  store_id: e677bfb1-f28b-4f28-bc45-31d884dd5303
+}
+
 tests {
-  test("should return 204 on success", function() {
-    expect(res.status).toBe(204);
+  test("should return 201 on success", function() {
+    expect(res.status).toBe(201);
   });
 }
 
 docs {
-  # Update Store
-
-  Updates an existing store by ID.
-
-  ## Endpoint
-
-  `PUT /api/store/:id`
-
-  ## Authentication
-
-  Bearer token required.
-
-  ## Path Parameters
-
-  | Parameter | Type | Required | Description |
-  |-----------|------|----------|-------------|
-  | id | uuid | Yes | Store identifier |
-
+  # Create Store
+  
+  Creates a new store.
+  
   ## Request Body
-
+  
   | Field | Type | Required | Description |
   |-------|------|----------|-------------|
-  | designation | string | Yes | Store designation (minimum 1 character) |
-  | address | object | Yes | Store address |
+  | designation | string | Yes | Store designation (min 1 character) |
+  | address | object | Yes | Store address object |
   | address.street | string | Yes | Street name and number |
   | address.city | string | Yes | City name |
   | address.country | string | No | Country name |
-  | address.postalCode | string | No | Postal/ZIP code |
+  | address.postalCode | string | No | Postal or ZIP code |
   | phoneNumber1 | object | Yes | Primary phone contact |
   | phoneNumber1.countryCode | string | Yes | Country dialing code (digits only, no `+`) |
   | phoneNumber1.number | string | Yes | Phone number (digits only) |
   | businessHours | array<object> | Yes | Business hours entries |
-  | businessHours[].day | number | Yes | Day index (0=Monday, 1=Tuesday, 2=Wednesday, 3=Thursday, 4=Friday) |
-  | businessHours[].startTime | number | Yes | Opening hour in 24-hour format (0-23) |
-  | businessHours[].endTime | number | Yes | Closing hour in 24-hour format (0-23) |
+  | businessHours[].day | number | Yes | Business day index (0=Monday, 1=Tuesday, 2=Wednesday, 3=Thursday, 4=Friday) |
+  | businessHours[].startTime | number | Yes | Opening hour in 24h format (0-23) |
+  | businessHours[].endTime | number | Yes | Closing hour in 24h format (0-23) |
   | phoneNumber2 | object | No | Secondary phone contact |
-  | phoneNumber2.countryCode | string | Yes* | Required if `phoneNumber2` is provided |
-  | phoneNumber2.number | string | Yes* | Required if `phoneNumber2` is provided |
-  | whatsappNumber | object | No | WhatsApp phone contact |
-  | whatsappNumber.countryCode | string | Yes* | Required if `whatsappNumber` is provided |
-  | whatsappNumber.number | string | Yes* | Required if `whatsappNumber` is provided |
-
-  ## Example Success Response
-
-  Status: `204 No Content`
-
-  ## Error Responses
-
+  | phoneNumber2.countryCode | string | Yes (if object provided) | Country dialing code |
+  | phoneNumber2.number | string | Yes (if object provided) | Phone number |
+  | whatsappNumber | object | No | WhatsApp contact |
+  | whatsappNumber.countryCode | string | Yes (if object provided) | Country dialing code |
+  | whatsappNumber.number | string | Yes (if object provided) | Phone number |
+  
+  ## Response
+  
+  - **201 Created**: Store created successfully
+  - **422 Unprocessable Entity**: Validation error
   - **401 Unauthorized**: Missing or invalid bearer token
-  - **404 Not Found**: Store not found
-  - **422 Unprocessable Entity**: Validation error (invalid payload shape or field values)
 }

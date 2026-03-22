@@ -8,6 +8,7 @@ import { BusinessHours } from '#shared/domain/value-objects/business_hours'
 import { BusinessDay } from '#shared/domain/value-objects/business_day'
 import { UpdateStoreCommand } from '#kernel/store/application/command/update_store_command'
 import Store from '#database/active-records/store'
+import { AppId } from '#shared/domain/app_id'
 
 export default class StoreController extends AppAbstractController {
   constructor() {
@@ -59,7 +60,7 @@ export default class StoreController extends AppAbstractController {
 
     await this.handleCommand(
       new UpdateStoreCommand(
-        storeId,
+        AppId.fromString(storeId),
         payload.designation,
         Address.of(payload.address),
         PhoneNumber.of(payload.phoneNumber1),
@@ -70,8 +71,8 @@ export default class StoreController extends AppAbstractController {
             close: value.endTime,
           })
         ),
-        payload.whatsappNumber ? PhoneNumber.of(payload.whatsappNumber) : undefined,
-        payload.phoneNumber2 ? PhoneNumber.of(payload.phoneNumber2) : undefined
+        payload.whatsappNumber ? PhoneNumber.of(payload.whatsappNumber) : null,
+        payload.phoneNumber2 ? PhoneNumber.of(payload.phoneNumber2) : null
       )
     )
 

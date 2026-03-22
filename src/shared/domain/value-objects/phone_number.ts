@@ -18,6 +18,7 @@ export class PhoneNumber {
 
   /** From explicit parts */
   static of(phone: { countryCode: string; number: string }): PhoneNumber {
+    console.log(`PhoneNumber.of: ${JSON.stringify(phone)}`)
     if (!/^\d{1,3}$/.test(phone.countryCode))
       throw new Error(`Invalid country code: "${phone.countryCode}"`)
     if (!/^\d{6,14}$/.test(phone.number))

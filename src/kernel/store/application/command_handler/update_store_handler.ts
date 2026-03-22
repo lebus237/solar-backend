@@ -19,9 +19,9 @@ export class UpdateStoreHandler implements CommandHandler<UpdateStoreCommand> {
       command.designation,
       command.address,
       command.phoneContact1,
-      command.businessHours ?? store.getBusinessHours(),
-      command.whatsAppContact ?? store.getWhatsAppContact(),
-      command.phoneContact2 ?? store.getPhoneContact2(),
+      command.businessHours,
+      command.whatsAppContact,
+      command.phoneContact2,
       store.getStatus(),
       store.getCreatedAt()
     )
