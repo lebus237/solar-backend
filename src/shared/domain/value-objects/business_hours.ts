@@ -1,5 +1,5 @@
-import { Hours } from './app_hour'
-import { BusinessDay, DayOfWeek } from './business_day'
+import { Hours } from '#shared/domain/value-objects/app_hour'
+import { BusinessDay, DayOfWeek } from '#shared/domain/value-objects/business_day'
 
 export class BusinessHours {
   private constructor(

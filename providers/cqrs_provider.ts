@@ -56,6 +56,7 @@ import { UpdateStaffMemberHandler } from '#kernel/staff/application/command-hand
 import { DeleteStaffMemberHandler } from '#kernel/staff/application/command-handler/delete_staff_member_handler'
 import { ListStaffMembersHandler } from '#kernel/staff/application/query-handler/list_staff_members_handler'
 import { GetStaffMemberHandler } from '#kernel/staff/application/query-handler/get_staff_member_handler'
+import { ChangeStoreStatusHandler } from '#kernel/store/application/command_handler/change_store_status_hanler'
 
 export default class CqrsProvider {
   constructor(protected app: ApplicationService) {}
@@ -64,9 +65,12 @@ export default class CqrsProvider {
     this.app.container.singleton('CQRS/CommandBus', () => {
       const commandBus = new CommandBus(this.app)
 
-      //PRODUCT COMMANDS
+      //STORE COMMANDS
       commandBus.register('CreateStoreCommand', CreateStoreHandler, ['StoreRepository'])
       commandBus.register('UpdateStoreCommand', UpdateStoreHandler, ['StoreRepository'])
+      commandBus.register('ChangeStoreStatusCommand', ChangeStoreStatusHandler, ['StoreRepository'])
+
+      //PRODUCT COMMANDS
       commandBus.register('CreateProductCommand', CreateProductHandler, ['ProductRepository'])
       commandBus.register('UpdateProductCommand', UpdateProductHandler, ['ProductRepository'])
       commandBus.register('CreateProductCategoryCommand', CreateProductCategoryHandler, [
