@@ -21,8 +21,8 @@ export class StoreARRepository implements StoreRepository {
         Address.of(store.address),
         PhoneNumber.of(store.phoneContact1),
         businessHours.map((bh) => BusinessHours.from(bh.day, bh.open, bh.close)),
-        PhoneNumber.of(store.whatsAppContact ?? { countryCode: '', number: '' }),
-        PhoneNumber.of(store.phoneContact2 ?? { countryCode: '', number: '' }),
+        store.whatsAppContact ? PhoneNumber.of(store.whatsAppContact) : null,
+        store.phoneContact2 ? PhoneNumber.of(store.phoneContact2) : null,
         { status: store.status, reason: store.statusReason || undefined },
         store.createdAt.toJSDate(),
         store.updatedAt.toJSDate()
