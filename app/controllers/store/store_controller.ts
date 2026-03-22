@@ -1,18 +1,80 @@
 import { HttpContext } from '@adonisjs/core/http'
 import { CreateStoreCommand } from '#kernel/store/application/command/create_store_command'
 import { AppAbstractController } from '#shared/user_interface/controller/app_abstract_controller'
+import { createStoreSchema, updateStoreSchema } from '#validators/store_validator'
+import { Address } from '#shared/domain/value-objects/address'
+import { PhoneNumber } from '#shared/domain/value-objects/phone_number'
+import { BusinessHours } from '#shared/domain/value-objects/business_hours'
+import { BusinessDay } from '#shared/domain/value-objects/business_day'
+import { UpdateStoreCommand } from '#kernel/store/application/command/update_store_command'
+import Store from '#database/active-records/store'
 
 export default class StoreController extends AppAbstractController {
   constructor() {
     super()
   }
 
+  public async index({ response }: HttpContext) {
+    const stores = await Store.all()
+
+    response.status(200).json(stores)
+  }
+
+  public async show({ request, response }: HttpContext) {
+    const storeId = request.param('id')
+    const store = await Store.find(storeId)
+
+    if (!store) {
+      return response.notFound()
+    }
+
+    response.status(200).json(store)
+  }
+
   public async store({ request, response }: HttpContext) {
-    const payload = request.body()
+    const payload = await request.validateUsing(createStoreSchema)
 
     await this.handleCommand(
-      new CreateStoreCommand(payload.designation, payload.domainUrl, payload.description)
+      new CreateStoreCommand(
+        payload.designation,
+        Address.of(payload.address),
+        PhoneNumber.of(payload.phoneNumber1),
+        payload.businessHours.map((value) =>
+          BusinessHours.fromJson({
+            day: BusinessDay.of(value.day).toName(),
+            open: value.startTime,
+            close: value.endTime,
+          })
+        ),
+        payload.whatsappNumber ? PhoneNumber.of(payload.whatsappNumber) : undefined,
+        payload.phoneNumber2 ? PhoneNumber.of(payload.phoneNumber2) : undefined
+      )
     )
     return response.created()
+  }
+
+  public async update({ request, response }: HttpContext) {
+    const payload = await request.validateUsing(updateStoreSchema)
+    const storeId = request.param('id')
+
+    await this.handleCommand(
+      new UpdateStoreCommand(
+        storeId,
+        payload.designation,
+        Address.of(payload.address),
+        PhoneNumber.of(payload.phoneNumber1),
+        payload.businessHours.map((value) =>
+          BusinessHours.fromJson({
+            day: BusinessDay.of(value.day).toName(),
+            open: value.startTime,
+            close: value.endTime,
+          })
+        ),
+        payload.whatsappNumber ? PhoneNumber.of(payload.whatsappNumber) : undefined,
+        payload.phoneNumber2 ? PhoneNumber.of(payload.phoneNumber2) : undefined
+      )
+    )
+
+    return response.noContent()
   }
 }

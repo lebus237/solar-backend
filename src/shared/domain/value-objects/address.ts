@@ -2,26 +2,26 @@ export class Address {
   private constructor(
     readonly street: string,
     readonly city: string,
-    readonly country: string,
+    readonly country?: string,
     readonly postalCode?: string,
     readonly region?: string // state / province / department
   ) {
     if (!street.trim()) throw new Error('Street is required')
     if (!city.trim()) throw new Error('City is required')
-    if (!country.trim()) throw new Error('Country is required')
+    if (!country?.trim()) throw new Error('Country is required')
   }
 
   static of(props: {
     street: string
     city: string
-    country: string
+    country?: string
     postalCode?: string
     region?: string
   }): Address {
     return new Address(
       props.street.trim(),
       props.city.trim(),
-      props.country.trim(),
+      props.country?.trim(),
       props.postalCode?.trim(),
       props.region?.trim()
     )
@@ -39,7 +39,7 @@ export class Address {
 
   // --- Display ---
 
-  toLines(): string[] {
+  toLines(): (string | undefined)[] {
     return [
       this.street,
       [this.city, this.region, this.postalCode].filter(Boolean).join(', '),

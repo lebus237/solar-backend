@@ -16,8 +16,10 @@ export class BusinessDay {
   }
 
   /** From a day name */
-  static of(day: DayOfWeek): BusinessDay {
-    return new BusinessDay(BusinessDay.DAYS.indexOf(day))
+  static of(day: DayOfWeek | number): BusinessDay {
+    return typeof day === 'number'
+      ? new BusinessDay(day)
+      : new BusinessDay(BusinessDay.DAYS.indexOf(day))
   }
 
   /** From ISO weekday number: 1 (Mon) – 5 (Fri) */
