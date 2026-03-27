@@ -15,7 +15,7 @@ export class StoreARCollection extends ModelQueryBuilderHelper implements StoreC
   async collection(query: ListStoreQuery): Promise<PaginatedResultDto<StoreListItemDto>> {
     const storeBuilder = StoreRecord.query()
 
-    storeBuilder.where('designation', 'ilike', `%${query.search.search}%`)
+    storeBuilder.whereILike('designation', `%${query.search.search}%`)
     const result = await this.applyPaginate(query.pagination, storeBuilder)
 
     return mapPaginatedResult<
