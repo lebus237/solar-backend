@@ -8,7 +8,7 @@ export interface StoreDetailsDto {
   phoneNumber1: PhoneNumber
   phoneNumber2?: PhoneNumber
   whatsappNumber?: PhoneNumber
-  businessHours: Array<BusinessHours>
+  businessHours: Array<ReturnType<typeof BusinessHours.toJson>>
   address: ReturnType<typeof Address.toJson>
   createdAt: Date
   updatedAt: Date

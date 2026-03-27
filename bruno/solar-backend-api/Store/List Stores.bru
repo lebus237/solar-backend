@@ -5,17 +5,17 @@ meta {
 }
 
 get {
-  url: {{base_url}}/api/store
+  url: {{base_url}}/api/store?q=Bafoussam 
   body: none
   auth: bearer
 }
 
-auth:bearer {
-  token: {{access_token}}
+query {
+  q: Bafoussam 
 }
 
-vars:pre-request {
-  q: Bafoussam 
+auth:bearer {
+  token: {{access_token}}
 }
 
 tests {

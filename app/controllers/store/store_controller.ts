@@ -7,9 +7,9 @@ import { PhoneNumber } from '#shared/domain/value-objects/phone_number'
 import { BusinessHours } from '#shared/domain/value-objects/business_hours'
 import { BusinessDay } from '#shared/domain/value-objects/business_day'
 import { UpdateStoreCommand } from '#kernel/store/application/command/update_store_command'
-import Store from '#database/active-records/store'
 import { AppId } from '#shared/domain/app_id'
 import { ListStoreQuery } from '#kernel/store/application/query/list_stores_query'
+import { GetStoreQuery } from '#kernel/store/application/query/get_store_query'
 
 export default class StoreController extends AppAbstractController {
   constructor() {
@@ -27,13 +27,9 @@ export default class StoreController extends AppAbstractController {
 
   public async show({ request, response }: HttpContext) {
     const storeId = request.param('id')
-    const store = await Store.find(storeId)
+    const result = await this.handleQuery(new GetStoreQuery(AppId.fromString(storeId)))
 
-    if (!store) {
-      return response.notFound()
-    }
-
-    response.status(200).json(store)
+    response.status(200).json(result)
   }
 
   public async store({ request, response }: HttpContext) {
