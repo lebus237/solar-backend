@@ -48,8 +48,8 @@ export default class MarketServicesController extends AppAbstractController {
       new CreateMarketServiceCommand(
         service.designation,
         AppId.fromString(service.thumbnailId),
-        service.contentDescription,
         service.shortDescription,
+        service.contentDescription,
         service.features
       )
     )

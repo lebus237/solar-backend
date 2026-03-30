@@ -60,7 +60,7 @@ test.group('Store Entity', () => {
   test('should create store with all properties', ({ assert }) => {
     const store = makeStore()
 
-    assert.equal(store.getId().value, STORE_ID)
+    assert.equal(store.getId()!.value, STORE_ID)
     assert.equal(store.getDesignation(), 'Bonamoussadi Branch')
     assert.equal(store.getAddress().toInline(), makeAddress().toInline())
     assert.equal(store.getPhoneContact1().toE164(), makePhone1().toE164())

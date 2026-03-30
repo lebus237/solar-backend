@@ -126,7 +126,7 @@ test.group('UpdateStoreHandler', () => {
     await handler.handle(command)
 
     assert.isDefined(savedStore)
-    assert.equal(savedStore!.getId().value, STORE_ID)
+    assert.equal(savedStore!.getId()!.value, STORE_ID)
     assert.equal(savedStore!.getDesignation(), 'Updated Main Store')
     assert.equal(savedStore!.getAddress().city, 'Buea')
     assert.equal(savedStore!.getPhoneContact1().toE164(), '+237633333333')

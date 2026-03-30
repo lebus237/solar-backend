@@ -6,25 +6,27 @@ const STAFF_ID = '00000000-0000-4000-8000-000000000001'
 const USER_ID = '00000000-0000-4000-8000-000000000002'
 const IMG_ID = '00000000-0000-4000-8000-000000000003'
 
-const makeStaffMember = (overrides: Partial<ConstructorParameters<typeof StaffMember>[0]> = {}) => {
-  return new StaffMember(
-    AppId.fromString(STAFF_ID),
-    AppId.fromString(USER_ID),
-    'John Doe',
-    'john.doe@example.com',
-    '+2348012345678',
-    { name: 'Jane Doe', phone: '+2348098765432' },
-    'Solar Engineer',
-    'Engineering',
-    'full_time',
-    'staff',
-    'active',
-    AppId.fromString(IMG_ID),
-    'https://example.com/profile.jpg',
-    new Date('2024-01-01'),
-    new Date('2024-01-15')
-  )
-}
+const makeStaffMember = () =>
+  // overrides: Partial<ConstructorParameters<typeof StaffMember>[0]> = {}
+  {
+    return new StaffMember(
+      AppId.fromString(STAFF_ID),
+      AppId.fromString(USER_ID),
+      'John Doe',
+      'john.doe@example.com',
+      '+2348012345678',
+      { name: 'Jane Doe', phone: '+2348098765432' },
+      'Solar Engineer',
+      'Engineering',
+      'full_time',
+      'staff',
+      'active',
+      AppId.fromString(IMG_ID),
+      'https://example.com/profile.jpg',
+      new Date('2024-01-01'),
+      new Date('2024-01-15')
+    )
+  }
 
 test.group('StaffMember Entity', () => {
   // ============================================

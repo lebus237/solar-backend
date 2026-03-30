@@ -9,9 +9,9 @@ export class CreateMarketServiceCommand implements Command {
   constructor(
     public designation: string,
     public thumbnailId: AppId,
-    public contentDescription?: MarketServiceContentDescription,
-    public shortDescription?: string,
-    public features?: Array<MarketServiceFeature>
+    public shortDescription: string,
+    public contentDescription: MarketServiceContentDescription = null,
+    public features: Array<MarketServiceFeature> = []
   ) {
     this.timestamp = new Date()
   }

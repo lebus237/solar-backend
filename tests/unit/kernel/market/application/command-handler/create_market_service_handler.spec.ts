@@ -35,8 +35,11 @@ test.group('CreateMarketServiceHandler', () => {
     },
   })
 
-  const createMockImageRepository = (image: ImageMedia | null = createMockImage()): ImageMediaRepository => ({
+  const createMockImageRepository = (
+    image: ImageMedia | null = createMockImage()
+  ): ImageMediaRepository => ({
     save: async () => {},
+
     findById: async () => image,
     findByUrl: async () => null,
     delete: async () => {},
@@ -150,8 +153,8 @@ test.group('CreateMarketServiceHandler', () => {
     const command = new CreateMarketServiceCommand(
       'Solar Installation',
       AppId.fromString(IMG_123),
-      undefined,
-      'Short desc'
+      'Short desc',
+      null
     )
 
     await handler.handle(command)
