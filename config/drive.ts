@@ -46,6 +46,31 @@ const driveConfig = defineConfig({
        */
       supportsACL: false,
     }),
+
+    /**
+     * S3-compatible driver — used in production (Contabo Object Storage).
+     * Contabo provides S3-compatible object storage for VPS deployments via Coolify.
+     * Uses path-style URLs similar to other S3-compatible providers.
+     */
+    contabo: services.s3({
+      credentials: {
+        accessKeyId: env.get('CONTABO_STORAGE_ACCESS_KEY_ID', ''),
+        secretAccessKey: env.get('CONTABO_STORAGE_SECRET_ACCESS_KEY', ''),
+      },
+      region: env.get('CONTABO_STORAGE_REGION', 'auto'),
+      endpoint: env.get('CONTABO_STORAGE_ENDPOINT', ''),
+      bucket: env.get('CONTABO_STORAGE_BUCKET', ''),
+      visibility: 'private',
+      /**
+       * Contabo Object Storage uses path-style URLs
+       * (e.g. https://endpoint/<bucket>/<key>).
+       */
+      forcePathStyle: true,
+      /**
+       * Contabo storage does not support ACL.
+       */
+      supportsACL: false,
+    }),
   },
 })
 

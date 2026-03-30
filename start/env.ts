@@ -37,8 +37,9 @@ export default await Env.create(new URL('../', import.meta.url), {
   /**
    * 'fs'  → local filesystem (development)
    * 's3'  → Railway S3-compatible object storage (production)
+   * 'contabo' → Contabo S3-compatible object storage (production)
    */
-  DRIVE_DISK: Env.schema.enum(['fs', 's3'] as const),
+  DRIVE_DISK: Env.schema.enum(['fs', 's3', 'contabo'] as const),
 
   /*
   |----------------------------------------------------------
@@ -61,6 +62,18 @@ export default await Env.create(new URL('../', import.meta.url), {
   RAILWAY_STORAGE_SECRET_ACCESS_KEY: Env.schema.string.optional(),
   RAILWAY_STORAGE_BUCKET: Env.schema.string.optional(),
   RAILWAY_STORAGE_REGION: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring Contabo object storage
+  | (S3-compatible; required when DRIVE_DISK=contabo)
+  |----------------------------------------------------------
+  */
+  CONTABO_STORAGE_ENDPOINT: Env.schema.string.optional(),
+  CONTABO_STORAGE_ACCESS_KEY_ID: Env.schema.string.optional(),
+  CONTABO_STORAGE_SECRET_ACCESS_KEY: Env.schema.string.optional(),
+  CONTABO_STORAGE_BUCKET: Env.schema.string.optional(),
+  CONTABO_STORAGE_REGION: Env.schema.string.optional(),
 
   /*
   |----------------------------------------------------------

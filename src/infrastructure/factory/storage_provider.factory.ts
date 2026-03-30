@@ -1,16 +1,19 @@
 import { LocalProviderConfig, LocalStorageProvider } from '#infra/local_storage_provider'
 import { RailwayStorageProvider } from '#infra/railway_storage_provider'
+import { ContaboStorageProvider } from '#infra/contabo_storage_provider'
 import { StorageProviderInterface } from '#shared/application/services/upload/storage_provider_interface'
 import env from '#start/env'
 
 export enum ProviderType {
   LOCAL = 'LOCAL',
   RAILWAY = 'RAILWAY',
+  CONTABO = 'CONTABO',
 }
 
 export type ProviderConfig =
   | { type: ProviderType.LOCAL; config: LocalProviderConfig }
   | { type: ProviderType.RAILWAY }
+  | { type: ProviderType.CONTABO }
 
 export class StorageProviderFactory {
   /**
@@ -26,6 +29,13 @@ export class StorageProviderFactory {
 
       case ProviderType.RAILWAY:
         return new RailwayStorageProvider({
+          basePath: env.get('STORAGE_BASE_PATH'),
+          imageBasePath: env.get('IMAGE_STORAGE_BASE_PATH'),
+          documentBasePath: env.get('DOCUMENT_STORAGE_BASE_PATH'),
+        })
+
+      case ProviderType.CONTABO:
+        return new ContaboStorageProvider({
           basePath: env.get('STORAGE_BASE_PATH'),
           imageBasePath: env.get('IMAGE_STORAGE_BASE_PATH'),
           documentBasePath: env.get('DOCUMENT_STORAGE_BASE_PATH'),
@@ -61,6 +71,13 @@ export class StorageProviderFactory {
 
       case ProviderType.RAILWAY:
         return new RailwayStorageProvider({
+          basePath: env.get('STORAGE_BASE_PATH'),
+          imageBasePath: env.get('IMAGE_STORAGE_BASE_PATH'),
+          documentBasePath: env.get('DOCUMENT_STORAGE_BASE_PATH'),
+        })
+
+      case ProviderType.CONTABO:
+        return new ContaboStorageProvider({
           basePath: env.get('STORAGE_BASE_PATH'),
           imageBasePath: env.get('IMAGE_STORAGE_BASE_PATH'),
           documentBasePath: env.get('DOCUMENT_STORAGE_BASE_PATH'),
