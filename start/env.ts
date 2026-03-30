@@ -57,11 +57,11 @@ export default await Env.create(new URL('../', import.meta.url), {
   | (S3-compatible; required when DRIVE_DISK=s3)
   |----------------------------------------------------------
   */
-  RAILWAY_STORAGE_ENDPOINT: Env.schema.string.optional(),
-  RAILWAY_STORAGE_ACCESS_KEY_ID: Env.schema.string.optional(),
-  RAILWAY_STORAGE_SECRET_ACCESS_KEY: Env.schema.string.optional(),
-  RAILWAY_STORAGE_BUCKET: Env.schema.string.optional(),
-  RAILWAY_STORAGE_REGION: Env.schema.string.optional(),
+  // RAILWAY_STORAGE_ENDPOINT: Env.schema.string.optional(),
+  // RAILWAY_STORAGE_ACCESS_KEY_ID: Env.schema.string.optional(),
+  // RAILWAY_STORAGE_SECRET_ACCESS_KEY: Env.schema.string.optional(),
+  // RAILWAY_STORAGE_BUCKET: Env.schema.string.optional(),
+  // RAILWAY_STORAGE_REGION: Env.schema.string.optional(),
 
   /*
   |----------------------------------------------------------

@@ -4,7 +4,10 @@ import { StaffMemberDetailsDto } from '#kernel/staff/application/dto/staff_membe
 import { StaffMemberRepository } from '#kernel/staff/domain/repository/staff_member_repository'
 import { AppId } from '#shared/domain/app_id'
 
-export class GetStaffMemberHandler implements QueryHandler<GetStaffMemberQuery, StaffMemberDetailsDto> {
+export class GetStaffMemberHandler implements QueryHandler<
+  GetStaffMemberQuery,
+  StaffMemberDetailsDto
+> {
   constructor(private readonly repository: StaffMemberRepository) {}
 
   async handle(query: GetStaffMemberQuery): Promise<StaffMemberDetailsDto> {

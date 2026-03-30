@@ -1,5 +1,5 @@
 import { LocalProviderConfig, LocalStorageProvider } from '#infra/local_storage_provider'
-import { RailwayStorageProvider } from '#infra/railway_storage_provider'
+// import { RailwayStorageProvider } from '#infra/railway_storage_provider'
 import { ContaboStorageProvider } from '#infra/contabo_storage_provider'
 import { StorageProviderInterface } from '#shared/application/services/upload/storage_provider_interface'
 import env from '#start/env'
@@ -27,12 +27,12 @@ export class StorageProviderFactory {
       case ProviderType.LOCAL:
         return new LocalStorageProvider(providerConfig.config)
 
-      case ProviderType.RAILWAY:
-        return new RailwayStorageProvider({
-          basePath: env.get('STORAGE_BASE_PATH'),
-          imageBasePath: env.get('IMAGE_STORAGE_BASE_PATH'),
-          documentBasePath: env.get('DOCUMENT_STORAGE_BASE_PATH'),
-        })
+      // case ProviderType.RAILWAY:
+      //   return new RailwayStorageProvider({
+      //     basePath: env.get('STORAGE_BASE_PATH'),
+      //     imageBasePath: env.get('IMAGE_STORAGE_BASE_PATH'),
+      //     documentBasePath: env.get('DOCUMENT_STORAGE_BASE_PATH'),
+      //   })
 
       case ProviderType.CONTABO:
         return new ContaboStorageProvider({
@@ -69,12 +69,12 @@ export class StorageProviderFactory {
           documentBasePath: env.get('DOCUMENT_STORAGE_BASE_PATH'),
         })
 
-      case ProviderType.RAILWAY:
-        return new RailwayStorageProvider({
-          basePath: env.get('STORAGE_BASE_PATH'),
-          imageBasePath: env.get('IMAGE_STORAGE_BASE_PATH'),
-          documentBasePath: env.get('DOCUMENT_STORAGE_BASE_PATH'),
-        })
+      // case ProviderType.RAILWAY:
+      //   return new RailwayStorageProvider({
+      //     basePath: env.get('STORAGE_BASE_PATH'),
+      //     imageBasePath: env.get('IMAGE_STORAGE_BASE_PATH'),
+      //     documentBasePath: env.get('DOCUMENT_STORAGE_BASE_PATH'),
+      //   })
 
       case ProviderType.CONTABO:
         return new ContaboStorageProvider({
